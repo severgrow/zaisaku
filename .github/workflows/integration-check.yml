@@ -36,7 +36,6 @@ jobs:
           E2E_OUT: /tmp/zaisaku-e2e
         run: |
           which google-chrome
-          which ffmpeg
           npx tsx web/e2e/nav-proof.ts
       - name: Preserve actual gameplay captures
         if: always()
