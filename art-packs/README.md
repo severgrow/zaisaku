@@ -61,6 +61,24 @@ Nothing here replaces Pack 02, Pack 04, Pack 05, or Pack 06B. The upload is stor
 
 The zip is the byte-for-byte upload `ZAISAKU_07_Catalogue_and_Joins_b6fd.zip`. It carries twenty catalogue plates at 128 and 64, ceramic corner joins, east and west openings, the extended roof with its wall bridge, the layered glass case, and the north-door canopy. Status in the game stays `temporary`. Do not mark the pack approved from this archive.
 
+## Pack 08 — superseded, do not integrate
+
+Pack 08, the district-identity archive, is superseded by Pack 08B. It is not on this branch. Do not upload it and do not import it. Its concept sheets, building facades, district gate, foundation course, character poses, and portrait were not validated.
+
+## Pack 08B — validated runtime subset
+
+Supersedes Pack 08 for runtime delivery. Packs 02–07 are untouched. The upload is stored unchanged under `art-packs/pack-08b/`. It is 349,334 bytes, under 10 MB. The checksum in `art-packs/pack-08b/SHA256SUMS` matches the digest below.
+
+| Stored file | Bytes | SHA-256 |
+|---|---:|---|
+| pack-08b/ZAISAKU_08B_Validated_Runtime_e4c7.zip | 349334 | a9df7c9827e8dabf2283d1ba76af142b3ac03be6d0713d02b80ca32a6cbd7c7b |
+
+The file is the byte-for-byte upload named `ZAISAKU_08B_Validated_Runtime_e4c7.zip` (the same bytes as ZAISAKU_08B_Validated_Runtime.zip). It contains individual runtime PNGs, `manifest.json`, `validation.json`, and integration notes in the README. Sprites stay `temporary` until a person approves screenshots. This zip has no source sheets.
+
+From this point, reject a pack that does not include individual runtime PNGs, a manifest, technical validation, and explicit integration metadata. Do not import concept artwork, mismatched character poses, or unverified architectural components.
+
 ## Ongoing workflow
 
 Stage numbered immutable ZIP files and checksums here. Keep each ZIP below 10,000,000 bytes. Use a separate runtime archive and source archive(s). Cursor fetches the staging branch, checks hashes, imports the runtime pack into the active development branch, and records asset approval after screenshots. No gameplay changes or confidential lore in asset staging.
+
+Reject a delivery that lacks individual runtime PNGs, a manifest, technical validation, and explicit integration metadata. Pack 08 is superseded and must not be integrated.
