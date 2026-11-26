@@ -1,0 +1,33 @@
+name: ZAISAKU integration checks
+
+on:
+  push:
+    branches:
+      - codex/za-integrated-2026-11-26
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Typecheck and unit tests
+        run: npm run check
+      - name: Catalogue and artwork integrity
+        run: |
+          npm run catalogue
+          npm run assets
+      - name: Build web client
+        run: npm run web:build
