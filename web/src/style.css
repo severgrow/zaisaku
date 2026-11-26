@@ -448,7 +448,7 @@ html.large-text { font-size: 118%; }
   padding: 16px;
   touch-action: pan-y;
 }
-.world-panel.talk { max-height: 34vh; width: min(420px, calc(100% - 16px)); }
+.world-panel.talk { display: block; max-height: min(42dvh, 380px); width: min(420px, calc(100% - 16px)); }
 .world-panel.talk h2 { font-family: var(--serif); font-size: 22px; font-weight: 500; margin: 0 0 6px; }
 .world-panel.talk p { margin: 0 0 12px; }
 .workshop { display: grid; gap: 12px; }
@@ -464,15 +464,15 @@ html.large-text { font-size: 118%; }
   .world-panel.talk p { margin: 0 0 8px; }
 }
 
-.talk {
+.world-panel > .talk {
   display: grid;
   grid-template-columns: 96px minmax(0, 1fr);
   gap: 10px;
   align-items: center;
   margin: 0 0 10px;
 }
-.talk h2 { margin: 0 0 4px; font-size: 20px; font-weight: 500; }
-.talk p { margin: 0; }
+.world-panel > .talk h2 { margin: 0 0 4px; font-size: 20px; font-weight: 500; }
+.world-panel > .talk p { margin: 0; }
 .bust {
   width: 96px;
   height: 96px;
@@ -481,7 +481,7 @@ html.large-text { font-size: 118%; }
   image-rendering: crisp-edges;
 }
 @media (max-width: 420px) {
-  .talk { grid-template-columns: 72px minmax(0, 1fr); }
+  .world-panel > .talk { grid-template-columns: 72px minmax(0, 1fr); }
   .bust { width: 72px; height: 72px; }
 }
 
