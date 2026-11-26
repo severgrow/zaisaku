@@ -6,12 +6,12 @@ export type Route = 'home' | 'duel' | 'market' | 'auction' | 'vault' | 'contract
 
 export type Panel = 'merchant' | 'auction' | 'research' | 'contract' | 'storage' | 'display' | 'talk' | 'duel';
 
-<<<<<<< HEAD
 export interface TalkFocus {
   id: string;
   name: string;
   line: string;
-=======
+}
+
 export interface TalkAction {
   label: string;
   opens: string | null;
@@ -23,7 +23,6 @@ export interface TalkCard {
   line: string;
   actorId: string;
   actions: TalkAction[];
->>>>>>> 4573b6953b957eecd99aba8461d38108e64e39c4
 }
 
 export const ROUTES: readonly Route[] = ['home', 'duel', 'market', 'auction', 'vault', 'contracts', 'results', 'settings', 'world', 'workshop'];
@@ -43,11 +42,8 @@ export interface Session {
   revision: number;
   panel: Panel | null;
   displaySlot: string | null;
-<<<<<<< HEAD
   focus: TalkFocus | null;
-=======
   talk: TalkCard | null;
->>>>>>> 4573b6953b957eecd99aba8461d38108e64e39c4
 }
 
 export const routeOf = (hash: string): Route => {
