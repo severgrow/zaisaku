@@ -47,6 +47,8 @@ Set `form` to `person`, `terminal`, `flora`, or `furnishing`. A person gets a co
 
 Interaction range is 1.65 tiles, in `inRange` and `nearest`. The actor's own cell is solid unless `kind` is `resonance`. Put the spawn on a walkable neighbour. `reachable` from the gate is the test that the path is real.
 
+A tap does not need a new navigator. `offeredActions` and `anchorsAround` in `src/world/` read `kind`, `form`, and `facing`. Prefer the facing as the side the player should stand on. See [WORLD-ARCHITECTURE.md](WORLD-ARCHITECTURE.md).
+
 ## Collision
 
 `SOLID_TILES` blocks roofs, walls, windows, doors, counters, pipes, vents, trees, reeds, veinflora, lanterns, and interior. Lamps and awnings stay walkable. Movement slides on one axis. Diagonal speed matches cardinal speed (`wish`).

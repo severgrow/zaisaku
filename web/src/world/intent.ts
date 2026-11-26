@@ -1,8 +1,9 @@
-/** Shared input. The DOM joystick and the Phaser keyboard both write here. One reader in the scene. */
-export const intent = { x: 0, y: 0, interact: false };
+/**
+ * One navigation generation. A new tap replaces the live course inside the scene.
+ * Menus, travel, and leaving World Mode bump the epoch so a stale interact cannot fire.
+ */
+export const navigation = { epoch: 0, suspended: false };
 
-export const clearIntent = (): void => {
-  intent.x = 0;
-  intent.y = 0;
-  intent.interact = false;
+export const bumpNavigation = (): void => {
+  navigation.epoch += 1;
 };

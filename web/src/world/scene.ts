@@ -2,16 +2,20 @@ import Phaser from 'phaser';
 import { definition } from '../../../src/engine/definitions.js';
 import { ARTWORK } from '../../../src/world/artwork.js';
 import { DIRS, cornerDiagonal, floorKey, openingFile, pieceFile, stepOf, type Dir, type FloorMaterial } from '../../../src/world/connectors.js';
-import { locationById } from '../../../src/world/locations.js';
+import { LOCATIONS, locationById } from '../../../src/world/locations.js';
 import { feetOf, move, nearest, tileAt, wish } from '../../../src/world/movement.js';
+import { advanceNavigation, interpretTap, targetBoxes, pickTarget } from '../../../src/world/navigation.js';
+import type { ApproachDecision, MoveDecision, NavActor, NavExit } from '../../../src/world/navigation.js';
+import { layPoints, planRoute, recoverFeet } from '../../../src/world/path.js';
 import { paletteById } from '../../../src/world/palettes.js';
 import { DISTRICT_RESONANCE, ringRadius } from '../../../src/world/resonance.js';
 import { TILE, TILE_SIZE } from '../../../src/world/tiles.js';
 import { localTransport } from '../../../src/world/transport.js';
-import type { Facing, LocationDef } from '../../../src/world/types.js';
-import { session, travelTo, openWorldThing } from '../controller.js';
+import type { ExitDef, Facing, LocationDef } from '../../../src/world/types.js';
+import { openWorldThing, persist, session, showTalk, travelTo } from '../controller.js';
+import { cue } from '../sound.js';
 import { paintActor, paintPlate, paintTile } from './art.js';
-import { intent } from './intent.js';
+import { navigation } from './intent.js';
 import {
   ARCHITECTURE_FILES,
   FLOOR_FILES,
@@ -29,6 +33,25 @@ import {
 const transport = localTransport();
 const SPEED = 88;
 const RADIUS = 6;
+
+interface LiveCourse {
+  decision: MoveDecision | ApproachDecision;
+  index: number;
+  replanned: boolean;
+  stuck: number;
+}
+
+interface Gesture {
+  id: number;
+  x: number;
+  y: number;
+  worldX: number;
+  worldY: number;
+  t: number;
+  dragged: boolean;
+  swallowed: boolean;
+  hinted: boolean;
+}
 const OVERLAY: Readonly<Record<number, string>> = {
   [TILE.counter]: 'counter',
   [TILE.pipe]: 'pipe',
@@ -54,6 +77,28 @@ export class DistrictScene extends Phaser.Scene {
   private displayKey = '';
   private samples = 0;
   private sampleMs = 0;
+  private course: LiveCourse | null = null;
+  private seenEpoch = 0;
+  private userZoom = 2;
+  private camX = 0;
+  private camY = 0;
+  private camReady = false;
+  private snapCamera = true;
+  private occluders: Phaser.GameObjects.Image[] = [];
+  private markGfx: Phaser.GameObjects.Graphics | null = null;
+  private selectGfx: Phaser.GameObjects.Graphics | null = null;
+  private mark: { x: number; y: number; dying: number | null } | null = null;
+  private selection: { left: number; top: number; right: number; bottom: number; dying: number | null } | null = null;
+  private gesture: Gesture | null = null;
+  private pointers = new Set<number>();
+  private pinch = false;
+  private pinchDist = 0;
+  private pinchZoom = 2;
+  private travelling = false;
+  private exitMute = 0;
+  private noteUntil = 0;
+  private keyed = false;
+  private movedSinceSave = false;
 
   constructor() {
     super('district');
@@ -91,25 +136,39 @@ export class DistrictScene extends Phaser.Scene {
     this.keys = (this.input.keyboard?.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT,E,SPACE') ?? {}) as Record<string, Phaser.Input.Keyboard.Key>;
     this.cameras.main.setBackgroundColor('#5c5348');
     this.cameras.main.roundPixels = true;
-    this.input.on('pointerdown', () => {
-      intent.interact = true;
-    });
-    this.scale.on('resize', () => this.frameCamera());
+    this.markGfx = this.add.graphics();
+    this.selectGfx = this.add.graphics().setDepth(50_000);
+    this.input.addPointer(2);
+    this.input.on('pointerdown', this.onDown, this);
+    this.input.on('pointermove', this.onMove, this);
+    this.input.on('pointerup', this.onUp, this);
+    this.input.on('pointerupoutside', this.onUp, this);
+    this.scale.on('resize', this.onResize, this);
     this.events.once('shutdown', () => {
+      this.input.off('pointerdown', this.onDown, this);
+      this.input.off('pointermove', this.onMove, this);
+      this.input.off('pointerup', this.onUp, this);
+      this.input.off('pointerupoutside', this.onUp, this);
+      this.scale.off('resize', this.onResize, this);
       this.input.keyboard?.removeAllKeys(true);
     });
+    this.seenEpoch = navigation.epoch;
     this.bootPlace();
   }
 
+  private onResize = (): void => {
+    this.frameCamera();
+  };
+
   private frameCamera(): void {
-    const zoom = 2;
+    const zoom = this.userZoom;
     this.cameras.main.setZoom(zoom);
     const worldW = this.place.width * TILE_SIZE;
     const worldH = this.place.height * TILE_SIZE;
     const padX = Math.max(0, this.scale.width / zoom - worldW) / 2;
     const padY = Math.max(0, this.scale.height / zoom - worldH) / 2;
     this.cameras.main.setBounds(-padX, -padY, worldW + padX * 2, worldH + padY * 2);
-    if (this.body) this.lookAt(this.body.x, this.body.y);
+    if (this.body) this.look(0, true);
   }
 
   private nearest(key: string): void {
@@ -129,7 +188,14 @@ export class DistrictScene extends Phaser.Scene {
     this.rings?.destroy();
     this.body = null;
     this.rings = null;
+    this.occluders = [];
     this.place = locationById(session.world.locationId);
+    const fixed = recoverFeet(this.place.solid, session.world.x, session.world.y, RADIUS);
+    if (Math.abs(fixed.x - session.world.x) > 0.5 || Math.abs(fixed.y - session.world.y) > 0.5) {
+      session.world.x = fixed.x;
+      session.world.y = fixed.y;
+      persist();
+    }
     this.displayKey = JSON.stringify(session.world.displays);
     const palette = paletteById(this.place.paletteId);
     this.cameras.main.setBackgroundColor(palette.groundDeep);
@@ -303,6 +369,7 @@ export class DistrictScene extends Phaser.Scene {
     image.setDisplaySize(TILE_SIZE, TILE_SIZE);
     image.setDepth((y + 1) * TILE_SIZE);
     this.props.push(image);
+    if (key === 'tree' || key.startsWith('roof')) this.occluders.push(image);
   }
 
   private ensureFallback(palette: ReturnType<typeof paletteById>): void {
@@ -334,48 +401,549 @@ export class DistrictScene extends Phaser.Scene {
       if (this.samples === 40) document.documentElement.dataset.frameMs = (this.sampleMs / 40).toFixed(2);
     }
     if (!this.body) return;
-    const shown = JSON.stringify(session.world.displays);
-    if (this.place.id !== session.world.locationId || shown !== this.displayKey) {
-      this.bootPlace();
-      return;
+    this.syncPlace();
+    if (!this.body) return;
+    this.longPress();
+    const frozen = session.panel !== null || navigation.suspended || this.travelling;
+    if (frozen && this.course) {
+      this.course = null;
+      this.fadeMark();
+      this.fadeSelection();
     }
+    if (!frozen && this.keyboardStep(delta)) {
+      if (this.noteUntil <= this.time.now) this.setPrompt(null);
+    } else if (!frozen) {
+      this.tryShortcut();
+      if (this.course) {
+        this.follow(delta);
+        if (this.noteUntil <= this.time.now) this.setPrompt(null);
+      } else {
+        this.paintBody(session.world.facing, 0, session.world.x, session.world.y);
+        if (this.noteUntil <= this.time.now) this.idlePrompt();
+      }
+    } else if (this.noteUntil <= this.time.now) this.setPrompt(null);
+    this.look(delta, false);
+    this.drawCue();
+    this.fadeOcclusion();
     this.drawRings(document.documentElement.classList.contains('reduce') ? 0 : this.time.now);
-    if (session.panel) {
-      intent.interact = false;
-      return;
-    }
-    const ix = (this.down('A') || this.down('LEFT') ? -1 : 0) + (this.down('D') || this.down('RIGHT') ? 1 : 0) + intent.x;
-    const iy = (this.down('W') || this.down('UP') ? -1 : 0) + (this.down('S') || this.down('DOWN') ? 1 : 0) + intent.y;
-    const step = wish(ix, iy, SPEED, delta / 1000);
-    const next = move(this.place.solid, session.world.x, session.world.y, step.dx, step.dy, RADIUS);
-    const facing = facingOf(step.dx, step.dy, session.world.facing);
-    if (next.x !== session.world.x || next.y !== session.world.y) this.walked += Math.hypot(next.x - session.world.x, next.y - session.world.y);
-    const frame = step.dx === 0 && step.dy === 0 ? 0 : Math.floor(this.walked / 8) % 4;
-    session.world.x = next.x;
-    session.world.y = next.y;
-    session.world.facing = facing;
-    this.body.setPosition(Math.round(next.x), Math.round(next.y));
-    this.body.setTexture(`you-${facing}-${frame}`);
-    this.body.setDisplaySize(24, 32);
-    this.body.setDepth(next.y);
-    this.lookAt(next.x, next.y);
-    this.seq += 1;
-    if (this.seq % 30 === 0) transport.send({ locationId: this.place.id, x: next.x, y: next.y, facing, seq: this.seq });
-    const here = tileAt(next.x, next.y - 10);
-    const actor = nearest(this.place.actors, here.tx, here.ty);
-    const exit = nearest(this.place.exits, here.tx, here.ty);
-    const prompt = actor?.name ?? exit?.label ?? null;
-    this.setPrompt(prompt ? `${prompt} · Use` : null);
-    const pressed = intent.interact || this.just('E') || this.just('SPACE');
-    if (!pressed) return;
-    intent.interact = false;
-    if (actor) openWorldThing(actor);
-    else if (exit) travelTo(exit.to, exit.spawn);
+    this.publish();
   }
 
-  private lookAt(x: number, y: number): void {
-    const lift = this.scale.height < 520 ? 72 : 0;
-    this.cameras.main.centerOn(Math.round(x), Math.round(y + lift));
+  private syncPlace(): void {
+    if (this.seenEpoch !== navigation.epoch) {
+      this.seenEpoch = navigation.epoch;
+      this.course = null;
+      this.fadeMark();
+      this.fadeSelection();
+    }
+    const shown = JSON.stringify(session.world.displays);
+    if (this.place.id !== session.world.locationId || shown !== this.displayKey) {
+      this.course = null;
+      this.bootPlace();
+      this.snapCamera = true;
+    }
+  }
+
+  private look(delta: number, snap: boolean): void {
+    if (!this.body) return;
+    const reduce = document.documentElement.classList.contains('reduce');
+    const lift = session.panel && this.scale.width < 900 ? Math.min(84, this.scale.height * 0.16) : 0;
+    const targetX = this.body.x;
+    const targetY = this.body.y + lift;
+    if (!this.camReady || reduce || snap || this.snapCamera) {
+      this.camX = targetX;
+      this.camY = targetY;
+      this.camReady = true;
+      this.snapCamera = false;
+    } else {
+      const blend = 1 - Math.exp(-delta / 160);
+      this.camX += (targetX - this.camX) * blend;
+      this.camY += (targetY - this.camY) * blend;
+    }
+    this.cameras.main.centerOn(Math.round(this.camX), Math.round(this.camY));
+  }
+
+  private keyboardStep(delta: number): boolean {
+    const ix = (this.down('A') || this.down('LEFT') ? -1 : 0) + (this.down('D') || this.down('RIGHT') ? 1 : 0);
+    const iy = (this.down('W') || this.down('UP') ? -1 : 0) + (this.down('S') || this.down('DOWN') ? 1 : 0);
+    if (ix === 0 && iy === 0) {
+      if (this.keyed) {
+        this.keyed = false;
+        this.savePose();
+      }
+      return false;
+    }
+    this.keyed = true;
+    if (this.course) {
+      this.course = null;
+      this.fadeMark();
+      this.fadeSelection();
+    }
+    const step = wish(ix, iy, SPEED, delta / 1000);
+    const next = move(this.place.solid, session.world.x, session.world.y, step.dx, step.dy, RADIUS);
+    this.commitMotion(next.x, next.y, step.dx, step.dy, true);
+    return true;
+  }
+
+  private follow(delta: number): void {
+    const live = this.course;
+    if (!live) return;
+    const step = advanceNavigation(
+      this.place.solid,
+      session.world.x,
+      session.world.y,
+      live.decision.points,
+      live.index,
+      SPEED,
+      delta / 1000,
+      RADIUS,
+    );
+    if (step.stuck) {
+      live.stuck += 1;
+      if (live.stuck >= 8) {
+        if (!live.replanned && this.replan(live)) {
+          live.stuck = 0;
+          return;
+        }
+        this.fail('No way through.');
+      }
+      return;
+    }
+    live.stuck = 0;
+    live.index = step.index;
+    const dx = step.x - session.world.x;
+    const dy = step.y - session.world.y;
+    this.commitMotion(step.x, step.y, dx, dy, Math.hypot(dx, dy) > 0.2);
+    if (step.arrived) this.arrive(live.decision);
+  }
+
+  private replan(live: LiveCourse): boolean {
+    live.replanned = true;
+    const from = tileAt(session.world.x, session.world.y);
+    const route = planRoute(this.place.solid, from, live.decision.goal);
+    if (!route || (route.goal.tx === from.tx && route.goal.ty === from.ty)) return false;
+    const end = live.decision.points[live.decision.points.length - 1] ?? { x: session.world.x, y: session.world.y };
+    live.decision = {
+      ...live.decision,
+      points: layPoints(this.place.solid, session.world.x, session.world.y, route.cells, end.x, end.y, RADIUS),
+    };
+    live.index = 0;
+    return true;
+  }
+
+  private arrive(decision: MoveDecision | ApproachDecision): void {
+    this.course = null;
+    if (decision.type === 'move') {
+      this.fadeMark();
+      this.savePose();
+      return;
+    }
+    session.world.facing = decision.facing;
+    this.paintBody(decision.facing, 0, session.world.x, session.world.y);
+    this.fulfill(decision);
+  }
+
+  private fulfill(decision: ApproachDecision): void {
+    this.course = null;
+    session.world.facing = decision.facing;
+    this.paintBody(decision.facing, 0, session.world.x, session.world.y);
+    this.fadeSelection();
+    if (decision.role === 'exit') {
+      const exit = this.place.exits.find((item) => item.id === decision.targetId);
+      if (!exit) {
+        this.fail('The way is shut.');
+        return;
+      }
+      this.beginTravel(exit);
+      return;
+    }
+    const actor = this.place.actors.find((item) => item.id === decision.targetId);
+    if (!actor) return;
+    if (decision.arrival === 'direct') {
+      cue(session.settings.sound, 'open');
+      openWorldThing(actor);
+      this.movedSinceSave = false;
+      return;
+    }
+    cue(session.settings.sound, 'arrive');
+    showTalk(
+      actor,
+      decision.actions.map((item) => ({ label: item.label, opens: item.opens })),
+    );
+    this.movedSinceSave = false;
+  }
+
+  private beginTravel(exit: ExitDef): void {
+    if (this.travelling || this.time.now < this.exitMute) return;
+    if (!Object.prototype.hasOwnProperty.call(LOCATIONS, exit.to)) {
+      this.fail('The way is shut.');
+      return;
+    }
+    this.travelling = true;
+    this.course = null;
+    const veil = this.veil();
+    veil.classList.add('on');
+    const reduce = document.documentElement.classList.contains('reduce');
+    this.time.delayedCall(reduce ? 40 : 260, () => {
+      cue(session.settings.sound, 'enter');
+      travelTo(exit.to, exit.spawn);
+      this.snapCamera = true;
+      this.movedSinceSave = false;
+      this.time.delayedCall(reduce ? 50 : 240, () => {
+        veil.classList.remove('on');
+        this.travelling = false;
+        this.exitMute = this.time.now + 450;
+      });
+    });
+  }
+
+  private veil(): HTMLElement {
+    const existing = document.querySelector('#world-veil');
+    if (existing instanceof HTMLElement) return existing;
+    const node = document.createElement('div');
+    node.id = 'world-veil';
+    document.querySelector('#world-host')?.appendChild(node);
+    return node;
+  }
+
+  private commitTap(worldX: number, worldY: number, touch: boolean): void {
+    if (session.panel || this.travelling || navigation.suspended || this.keysHeld()) return;
+    const decision = interpretTap({
+      solid: this.place.solid,
+      actors: this.navActors(),
+      exits: this.navExits(),
+      playerX: session.world.x,
+      playerY: session.world.y,
+      worldX,
+      worldY,
+      pad: touch ? 14 : 6,
+      radius: RADIUS,
+    });
+    if (decision.type === 'none' || (decision.type === 'move' && decision.trivial)) return;
+    if (decision.type === 'blocked') {
+      this.fail('No way through.');
+      return;
+    }
+    if (decision.type === 'approach' && decision.immediate) {
+      this.fadeMark();
+      this.showSelection(decision);
+      this.fulfill(decision);
+      return;
+    }
+    this.course = { decision, index: decision.points.length > 1 ? 1 : 0, replanned: false, stuck: 0 };
+    if (decision.type === 'move') {
+      const end = decision.points[decision.points.length - 1];
+      if (end) this.showMark(end.x, end.y);
+      this.clearSelection();
+      cue(session.settings.sound, 'go');
+      return;
+    }
+    this.fadeMark();
+    this.showSelection(decision);
+  }
+
+  private tryShortcut(): void {
+    if (!this.just('E') && !this.just('SPACE')) return;
+    const here = tileAt(session.world.x, session.world.y - 10);
+    const actor = nearest(this.place.actors, here.tx, here.ty);
+    const exit = nearest(this.place.exits, here.tx, here.ty);
+    const target = actor ?? exit;
+    if (!target) return;
+    const feet = feetOf(target.tx, target.ty);
+    const decision = interpretTap({
+      solid: this.place.solid,
+      actors: this.navActors(),
+      exits: this.navExits(),
+      playerX: session.world.x,
+      playerY: session.world.y,
+      worldX: feet.x,
+      worldY: actor ? feet.y - 8 : target.ty * TILE_SIZE + TILE_SIZE / 2,
+      pad: 18,
+      radius: RADIUS,
+    });
+    if (decision.type !== 'approach') return;
+    this.course = null;
+    this.fadeMark();
+    this.fulfill(decision);
+  }
+
+  private navActors(): NavActor[] {
+    return this.place.actors.map((item) => ({
+      id: item.id,
+      name: item.name,
+      tx: item.tx,
+      ty: item.ty,
+      facing: item.facing,
+      kind: item.kind,
+      form: item.form,
+      line: item.line,
+    }));
+  }
+
+  private navExits(): NavExit[] {
+    return this.place.exits.map((item) => ({
+      id: item.id,
+      name: item.label,
+      tx: item.tx,
+      ty: item.ty,
+      symbol: item.symbol,
+      to: item.to,
+    }));
+  }
+
+  private onDown(pointer: Phaser.Input.Pointer): void {
+    if (pointer.button !== 0) return;
+    this.pointers.add(pointer.id);
+    if (this.pointers.size >= 2) {
+      this.pinch = true;
+      this.gesture = null;
+      this.pinchDist = this.span();
+      this.pinchZoom = this.userZoom;
+      return;
+    }
+    const blocked = session.panel !== null || this.travelling || navigation.suspended;
+    this.gesture = {
+      id: pointer.id,
+      x: pointer.x,
+      y: pointer.y,
+      worldX: pointer.worldX,
+      worldY: pointer.worldY,
+      t: this.time.now,
+      dragged: blocked,
+      swallowed: blocked,
+      hinted: false,
+    };
+  }
+
+  private onMove(pointer: Phaser.Input.Pointer): void {
+    if (this.pinch && this.pointers.size >= 2) {
+      const dist = this.span();
+      if (this.pinchDist > 8 && dist > 0) {
+        const raw = Phaser.Math.Clamp(this.pinchZoom * (dist / this.pinchDist), 1, 3);
+        const next = Math.round(raw * 2) / 2;
+        if (next !== this.userZoom) {
+          this.userZoom = next;
+          this.frameCamera();
+        }
+      }
+      return;
+    }
+    const gesture = this.gesture;
+    if (!gesture || gesture.id !== pointer.id) return;
+    if (Math.hypot(pointer.x - gesture.x, pointer.y - gesture.y) > 16) gesture.dragged = true;
+  }
+
+  private onUp(pointer: Phaser.Input.Pointer): void {
+    this.pointers.delete(pointer.id);
+    if (this.pinch || this.pointers.size > 0) {
+      this.gesture = null;
+      if (this.pointers.size === 0) this.pinch = false;
+      return;
+    }
+    const gesture = this.gesture;
+    this.gesture = null;
+    if (!gesture || gesture.id !== pointer.id || gesture.dragged || gesture.swallowed) return;
+    this.commitTap(pointer.worldX, pointer.worldY, pointer.wasTouch === true);
+  }
+
+  private span(): number {
+    const a = this.input.pointer1;
+    const b = this.input.pointer2;
+    if (!a?.isDown || !b?.isDown) return 0;
+    return Math.hypot(a.x - b.x, a.y - b.y);
+  }
+
+  private longPress(): void {
+    const gesture = this.gesture;
+    if (!gesture || gesture.dragged || gesture.swallowed || gesture.hinted) return;
+    if (this.time.now - gesture.t < 480) return;
+    gesture.hinted = true;
+    const hit = pickTarget(targetBoxes(this.navActors(), this.navExits(), 14), gesture.worldX, gesture.worldY);
+    if (hit) this.feedback(hit.name);
+  }
+
+  private commitMotion(x: number, y: number, dx: number, dy: number, animate: boolean): void {
+    const facing = facingOf(dx, dy, session.world.facing);
+    if (x !== session.world.x || y !== session.world.y) {
+      this.walked += Math.hypot(x - session.world.x, y - session.world.y);
+      this.movedSinceSave = true;
+    }
+    const frame = animate ? Math.floor(this.walked / 8) % 4 : 0;
+    session.world.x = x;
+    session.world.y = y;
+    session.world.facing = facing;
+    this.paintBody(facing, frame, x, y);
+    this.seq += 1;
+    if (this.seq % 30 === 0) transport.send({ locationId: this.place.id, x, y, facing, seq: this.seq });
+  }
+
+  private paintBody(facing: Facing, frame: number, x: number, y: number): void {
+    if (!this.body) return;
+    this.body.setPosition(Math.round(x), Math.round(y));
+    this.body.setTexture(`you-${facing}-${frame}`);
+    this.body.setDisplaySize(24, 32);
+    this.body.setDepth(y);
+  }
+
+  private savePose(): void {
+    if (!this.movedSinceSave) return;
+    this.movedSinceSave = false;
+    persist();
+  }
+
+  private fail(text: string): void {
+    this.course = null;
+    this.fadeMark();
+    this.feedback(text);
+    cue(session.settings.sound, 'blocked');
+  }
+
+  private feedback(text: string): void {
+    this.setPrompt(text);
+    this.noteUntil = this.time.now + 1800;
+  }
+
+  private idlePrompt(): void {
+    const here = tileAt(session.world.x, session.world.y - 10);
+    const actor = nearest(this.place.actors, here.tx, here.ty);
+    const exit = nearest(this.place.exits, here.tx, here.ty);
+    this.setPrompt(actor?.name ?? exit?.label ?? null);
+  }
+
+  private showMark(x: number, y: number): void {
+    this.mark = { x, y, dying: null };
+  }
+
+  private fadeMark(): void {
+    if (this.mark && this.mark.dying === null) this.mark.dying = this.time.now;
+  }
+
+  private clearSelection(): void {
+    this.selection = null;
+  }
+
+  private fadeSelection(): void {
+    if (this.selection && this.selection.dying === null) this.selection.dying = this.time.now;
+  }
+
+  private showSelection(decision: ApproachDecision): void {
+    if (decision.role === 'actor') {
+      const actor = this.place.actors.find((item) => item.id === decision.targetId);
+      if (!actor) return;
+      const feet = feetOf(actor.tx, actor.ty);
+      this.selection =
+        actor.form === 'person'
+          ? { left: feet.x - 14, top: feet.y - 34, right: feet.x + 14, bottom: feet.y + 2, dying: null }
+          : { left: actor.tx * TILE_SIZE, top: actor.ty * TILE_SIZE, right: (actor.tx + 1) * TILE_SIZE, bottom: (actor.ty + 1) * TILE_SIZE, dying: null };
+      return;
+    }
+    const exit = this.place.exits.find((item) => item.id === decision.targetId);
+    if (!exit) return;
+    this.selection = {
+      left: exit.tx * TILE_SIZE,
+      top: exit.ty * TILE_SIZE,
+      right: (exit.tx + 1) * TILE_SIZE,
+      bottom: (exit.ty + 1) * TILE_SIZE,
+      dying: null,
+    };
+  }
+
+  private drawCue(): void {
+    const reduce = document.documentElement.classList.contains('reduce');
+    this.drawMark(reduce);
+    this.drawSelection(reduce);
+  }
+
+  private fading(dying: number | null, reduce: boolean): number {
+    if (dying === null) return 0.9;
+    if (reduce) return 0;
+    const t = (this.time.now - dying) / 320;
+    return t >= 1 ? 0 : 0.9 * (1 - t);
+  }
+
+  private drawMark(reduce: boolean): void {
+    const pen = this.markGfx;
+    if (!pen) return;
+    pen.clear();
+    const mark = this.mark;
+    if (!mark) return;
+    const alpha = this.fading(mark.dying, reduce);
+    if (alpha <= 0) {
+      this.mark = null;
+      return;
+    }
+    pen.setDepth(mark.y - 8);
+    pen.lineStyle(1, 0xe7e1d6, alpha);
+    pen.beginPath();
+    pen.moveTo(mark.x, mark.y - 6);
+    pen.lineTo(mark.x + 5, mark.y);
+    pen.lineTo(mark.x, mark.y + 4);
+    pen.lineTo(mark.x - 5, mark.y);
+    pen.closePath();
+    pen.strokePath();
+    pen.fillStyle(0xc4963a, alpha);
+    pen.fillRect(mark.x - 1, mark.y - 1, 2, 2);
+  }
+
+  private drawSelection(reduce: boolean): void {
+    const pen = this.selectGfx;
+    if (!pen) return;
+    pen.clear();
+    const box = this.selection;
+    if (!box) return;
+    const alpha = this.fading(box.dying, reduce);
+    if (alpha <= 0) {
+      this.selection = null;
+      return;
+    }
+    const n = 6;
+    pen.lineStyle(1, 0xe7e1d6, alpha);
+    pen.beginPath();
+    pen.moveTo(box.left, box.top + n);
+    pen.lineTo(box.left, box.top);
+    pen.lineTo(box.left + n, box.top);
+    pen.moveTo(box.right - n, box.top);
+    pen.lineTo(box.right, box.top);
+    pen.lineTo(box.right, box.top + n);
+    pen.moveTo(box.right, box.bottom - n);
+    pen.lineTo(box.right, box.bottom);
+    pen.lineTo(box.right - n, box.bottom);
+    pen.moveTo(box.left + n, box.bottom);
+    pen.lineTo(box.left, box.bottom);
+    pen.lineTo(box.left, box.bottom - n);
+    pen.strokePath();
+  }
+
+  private fadeOcclusion(): void {
+    const body = this.body;
+    if (!body) return;
+    const reduce = document.documentElement.classList.contains('reduce');
+    const left = body.x - 12;
+    const top = body.y - 32;
+    const right = body.x + 12;
+    const bottom = body.y;
+    for (const image of this.occluders) {
+      const halfW = image.displayWidth / 2;
+      const leftB = image.x - halfW;
+      const rightB = image.x + halfW;
+      const bottomB = image.y;
+      const topB = image.y - image.displayHeight;
+      const cover = rightB > left && leftB < right && bottomB > top && topB < bottom && image.depth + 0.5 >= body.depth;
+      const target = cover ? 0.32 : 1;
+      image.setAlpha(reduce ? target : image.alpha + (target - image.alpha) * 0.25);
+    }
+  }
+
+  private publish(): void {
+    const root = document.documentElement;
+    const cam = this.cameras.main;
+    root.dataset.pose = `${session.world.x.toFixed(1)},${session.world.y.toFixed(1)},${session.world.facing},${session.world.locationId}`;
+    root.dataset.cam = `${cam.scrollX.toFixed(1)},${cam.scrollY.toFixed(1)},${cam.zoom}`;
+    root.dataset.nav = this.travelling ? 'travel' : session.panel ? 'panel' : this.course ? 'walk' : 'idle';
+  }
+
+  private keysHeld(): boolean {
+    return this.down('A') || this.down('D') || this.down('W') || this.down('S') || this.down('LEFT') || this.down('RIGHT') || this.down('UP') || this.down('DOWN');
   }
 
   private down(name: string): boolean {
