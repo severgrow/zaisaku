@@ -1,0 +1,2 @@
+# ZA-DETAILS-01
+13 technical candidates in masters.json. Extract each masters entry as source/<id>.svg, rasterize at native dimensions with nearest-neighbor rendering. These are procedural pixel-grid masters, not generated illustration or validated runtime assets. Check joins, scale, alpha, anchors, collision and screenshots. Preserve approved art. Use the Art Constitution on integration branch. No automatic promotion.
