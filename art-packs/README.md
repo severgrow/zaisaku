@@ -6,14 +6,16 @@ Dedicated asset staging branch. Do not merge this branch wholesale into the game
 
 Baseline: b2f6d68ee3f4e0c678e2e19aa72071f924c0361c (PR #1).
 
-The four ZIPs have been prepared locally, but binary upload from the current ChatGPT environment is unavailable. This index records the exact expected filenames, sizes and SHA-256 digests. Upload the actual ZIPs into this directory before treating them as available.
+The four archives are stored under `art-packs/pack-04/`. Nothing here replaces an earlier pack. Checksums in `art-packs/pack-04/SHA256SUMS` match the digests below. Each archive is under 10 MB.
 
-| File | Bytes | SHA-256 |
+| Stored file | Bytes | SHA-256 |
 |---|---:|---|
-| ZAISAKU_04_Runtime.zip | 1178795 | c67c948168a3d68c4f69f2b61ae6fef97df09d6b7cf2f0e0df89bc329992b759 |
-| ZAISAKU_04_Sources_pack02.zip | 5246756 | aaa9900bfe3f9dd2b70675f402e27129a23aad058d4bf3fe89df94f5a7fb3135 |
-| ZAISAKU_04_Sources_pack03.zip | 7124734 | a57ef7a4cef7e5fc599e40885780224be406ccb6b1f903b154a72b5b3752b2ff |
-| ZAISAKU_04_Sources_pack04.zip | 6537148 | 44c1f74df3ccf5b185a5941dde3120ac27e8620418291c61c1d4cc61f84e6bf1 |
+| pack-04/zaisaku-mineral-analog-04-runtime.zip | 1178795 | c67c948168a3d68c4f69f2b61ae6fef97df09d6b7cf2f0e0df89bc329992b759 |
+| pack-04/zaisaku-mineral-analog-04-sources-pack02.zip | 5246756 | aaa9900bfe3f9dd2b70675f402e27129a23aad058d4bf3fe89df94f5a7fb3135 |
+| pack-04/zaisaku-mineral-analog-04-sources-pack03.zip | 7124734 | a57ef7a4cef7e5fc599e40885780224be406ccb6b1f903b154a72b5b3752b2ff |
+| pack-04/zaisaku-mineral-analog-04-sources-pack04.zip | 6537148 | 44c1f74df3ccf5b185a5941dde3120ac27e8620418291c61c1d4cc61f84e6bf1 |
+
+The runtime zip is the only archive the game imports. The three source zips stay on this branch and out of `web/public`.
 
 ## Cursor integration
 
