@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ASSET_MANIFEST, chromaKey, readPngSize, sliceGrid, validateManifest } from '../src/world/assets.js';
 import { ARTWORK } from '../src/world/artwork.js';
+import { thresholdFor } from '../src/world/fixtures.js';
 import { buildDistrict, buildResidence, LOCATIONS, poseFor } from '../src/world/locations.js';
 import {
   ceramicTransitionKeys,
@@ -19,6 +20,7 @@ import {
 } from '../src/world/connectors.js';
 import { MATERIALS } from '../src/world/materials.js';
 import { feetOf, inRange, move, reachable, wish } from '../src/world/movement.js';
+import { TILE } from '../src/world/tiles.js';
 import { PALETTES } from '../src/world/palettes.js';
 import { ringRadius } from '../src/world/resonance.js';
 import { defaultWorld, GATE, reconcileDisplays } from '../src/world/state.js';
@@ -219,6 +221,78 @@ describe('pack 04 connectors', () => {
     expect(pathJoins).toEqual([]);
     const home = buildResidence();
     expect(floorMaterial(home.id, home.tiles[1]![1]!)).toBe('bone-ceramic');
+  });
+});
+
+describe('pack 09 placement', () => {
+  it('lays a threshold only where the entrance step is the resonance path', () => {
+    const ground = [
+      [TILE.ground, TILE.ground],
+      [TILE.ground, TILE.ground],
+    ];
+    expect(thresholdFor(ground, { facing: 'e', doorTx: 0, doorTy: 0, frontTx: 0, frontTy: 0 })).toBeNull();
+    const path = [
+      [TILE.ground, TILE.ground],
+      [TILE.path, TILE.ground],
+    ];
+    const laid = thresholdFor(path, { facing: 's', doorTx: 0, doorTy: 0, frontTx: 0, frontTy: 0 });
+    expect(laid?.file).toBe('threshold-s');
+    expect(laid?.tx).toBe(0);
+    expect(laid?.ty).toBe(1);
+    expect(laid?.footprint).toEqual([]);
+    expect(laid?.foreground).toBe(false);
+  });
+
+  it('keeps furniture off doors and leaves an approach', () => {
+    const district = buildDistrict();
+    const home = buildResidence();
+    const door = district.actors.find((actor) => actor.id === 'duel-door');
+    const terminals = district.fixtures.filter((fixture) => fixture.role === 'terminal');
+    expect(terminals).toHaveLength(1);
+    expect(terminals[0]?.file).toBe('duel-door-terminal');
+    expect(terminals[0]?.tx).toBe(door?.tx);
+    expect(terminals[0]?.ty).toBe(door?.ty);
+    expect(terminals[0]?.footprint).toEqual([]);
+    expect(district.solid[terminals[0]!.approach!.ty]?.[terminals[0]!.approach!.tx]).toBe(false);
+    expect(reachable(district.solid, GATE, terminals[0]!.approach!)).toBe(true);
+
+    const thresholds = district.fixtures.filter((fixture) => fixture.role === 'threshold');
+    expect(thresholds.map((fixture) => fixture.file).sort()).toEqual(['threshold-n', 'threshold-s', 'threshold-s']);
+    for (const fixture of thresholds) {
+      expect(district.tiles[fixture.ty]?.[fixture.tx]).toBe(TILE.path);
+      expect(district.solid[fixture.ty]?.[fixture.tx]).toBe(false);
+    }
+    expect(home.fixtures.some((fixture) => fixture.role === 'threshold' || fixture.role === 'foreground')).toBe(false);
+    expect(home.fixtures.map((fixture) => fixture.file).sort()).toEqual(['chair', 'low-table', 'sleeping-pallet', 'standing-lamp']);
+
+    for (const place of [district, home]) {
+      const spawn = place.id === 'residence' ? { tx: 7, ty: 6 } : GATE;
+      for (const fixture of place.fixtures) {
+        expect(fixture.foreground).toBe(fixture.role === 'foreground');
+        if (fixture.foreground) {
+          expect(fixture.footprint).toEqual([]);
+          expect(fixture.cover.length).toBeGreaterThan(0);
+          continue;
+        }
+        for (const foot of fixture.footprint) {
+          expect(place.tiles[foot.ty]?.[foot.tx]).not.toBe(TILE.door);
+          expect(place.tiles[foot.ty]?.[foot.tx]).not.toBe(TILE.window);
+          expect(place.exits.some((exit) => exit.tx === foot.tx && exit.ty === foot.ty)).toBe(false);
+        }
+        if (!fixture.approach) continue;
+        expect(place.solid[fixture.approach.ty]?.[fixture.approach.tx]).toBe(false);
+        expect(reachable(place.solid, spawn, fixture.approach)).toBe(true);
+      }
+    }
+
+    const shared = home.actors.filter((actor) =>
+      home.fixtures.some((fixture) => fixture.footprint.some((foot) => foot.tx === actor.tx && foot.ty === actor.ty)),
+    );
+    expect(shared.map((actor) => actor.id)).toEqual(['bed']);
+    expect(home.solid[6]?.[7]).toBe(false);
+    expect(ASSET_MANIFEST.some((item) => item.id === 'window-glass' || item.id === 'preview')).toBe(false);
+    expect(ASSET_MANIFEST.filter((item) => item.id.startsWith('threshold-')).every((item) => item.status === 'temporary')).toBe(true);
+    expect(ASSET_MANIFEST.find((item) => item.id === 'duel-door-terminal')?.status).toBe('temporary');
   });
 });
 

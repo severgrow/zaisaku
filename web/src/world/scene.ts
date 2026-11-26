@@ -17,6 +17,7 @@ import {
   type Dir,
   type FloorMaterial,
 } from '../../../src/world/connectors.js';
+import type { Fixture } from '../../../src/world/fixtures.js';
 import { locationById } from '../../../src/world/locations.js';
 import { feetOf, move, nearest, tileAt, wish } from '../../../src/world/movement.js';
 import { paletteById } from '../../../src/world/palettes.js';
@@ -31,6 +32,7 @@ import {
   ARCHITECTURE_FILES,
   FLOOR_FILES,
   FURNITURE_FILES,
+  EVERYDAY_FILES,
   MINERAL_TILES,
   NPCS,
   PLAYER_FACINGS,
@@ -61,6 +63,9 @@ export class DistrictScene extends Phaser.Scene {
   private place: LocationDef = locationById('district-01');
   private body: Phaser.GameObjects.Image | null = null;
   private props: Phaser.GameObjects.Image[] = [];
+  private foreground: Phaser.GameObjects.Image[] = [];
+  private glow: Phaser.GameObjects.Graphics | null = null;
+  private lamp: { x: number; y: number } | null = null;
   private rings: Phaser.GameObjects.Graphics | null = null;
   private keys: Record<string, Phaser.Input.Keyboard.Key> = {};
   private walked = 0;
@@ -88,6 +93,7 @@ export class DistrictScene extends Phaser.Scene {
     for (const id of NPCS) {
       for (const facing of PLAYER_FACINGS) this.load.image(`person-${id}-${facing}`, mineralUrl(npcFile(id, facing)));
     }
+    for (const [key, file] of Object.entries(EVERYDAY_FILES)) this.load.image(key, mineralUrl(file));
   }
 
   create(): void {
@@ -101,6 +107,7 @@ export class DistrictScene extends Phaser.Scene {
       for (let frame = 0; frame < 4; frame += 1) this.nearest(`you-${facing}-${frame}`);
       for (const id of NPCS) this.nearest(`person-${id}-${facing}`);
     }
+    for (const key of Object.keys(EVERYDAY_FILES)) this.nearest(key);
     this.input.keyboard?.addCapture('W,A,S,D,UP,DOWN,LEFT,RIGHT,E,SPACE');
     this.keys = (this.input.keyboard?.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT,E,SPACE') ?? {}) as Record<string, Phaser.Input.Keyboard.Key>;
     this.cameras.main.setBackgroundColor('#5c5348');
@@ -139,12 +146,16 @@ export class DistrictScene extends Phaser.Scene {
   private bootPlace(): void {
     for (const prop of this.props) prop.destroy();
     this.props = [];
+    this.foreground = [];
+    this.glow?.destroy();
+    this.glow = null;
+    this.lamp = null;
     this.body?.destroy();
     this.rings?.destroy();
     this.body = null;
     this.rings = null;
     this.place = locationById(session.world.locationId);
-    this.displayKey = JSON.stringify(session.world.displays);
+    this.displayKey = this.watchKey();
     const palette = paletteById(this.place.paletteId);
     this.cameras.main.setBackgroundColor(palette.groundDeep);
     this.ensureFallback(palette);
@@ -206,6 +217,11 @@ export class DistrictScene extends Phaser.Scene {
         if (picture) this.itemOnShelf(picture, actor.tx, actor.ty);
       }
     }
+    for (const fixture of this.place.fixtures) this.drawFixture(fixture);
+    document.documentElement.dataset.anchors = this.props
+      .map((image) => image.getData('anchor') as string | undefined)
+      .filter((line): line is string => Boolean(line))
+      .join(' ');
     this.body = this.add.image(session.world.x, session.world.y, `you-${session.world.facing}-0`).setOrigin(0.5, 1);
     this.body.setDisplaySize(24, 32);
     this.body.setDepth(session.world.y);
@@ -336,6 +352,65 @@ export class DistrictScene extends Phaser.Scene {
     this.texture('floor-soil', paintTile(TILE.ground, palette));
   }
 
+  private watchKey(): string {
+    const auction = session.profile.auction;
+    const lot = auction && auction.status === 'open' ? `${auction.id}:${auction.item.definitionId}` : '';
+    return `${JSON.stringify(session.world.displays)}|${lot}`;
+  }
+
+  private cellSprite(key: string, tx: number, ty: number, depth: number, width: number, height: number): Phaser.GameObjects.Image | null {
+    if (!this.textures.exists(key)) return null;
+    const image = this.add.image(tx * TILE_SIZE + TILE_SIZE / 2, (ty + 1) * TILE_SIZE, key).setOrigin(0.5, 1);
+    image.setDisplaySize(width, height);
+    image.setDepth(depth);
+    this.props.push(image);
+    return image;
+  }
+
+  private drawFixture(fixture: Fixture): void {
+    const floor = (fixture.ty + 1) * TILE_SIZE;
+    const depth = fixture.role === 'threshold' ? 1 : fixture.role === 'terminal' ? floor + 6 : floor;
+    const image = this.cellSprite(fixture.file, fixture.tx, fixture.ty, depth, fixture.w, fixture.h);
+    if (!image) return;
+    if (fixture.foreground) this.foreground.push(image);
+    if (fixture.role === 'auction') this.drawAuctionLot(fixture, depth + 1);
+    if (fixture.id === 'standing-lamp') {
+      this.lamp = { x: fixture.tx * TILE_SIZE + TILE_SIZE / 2, y: (fixture.ty + 1) * TILE_SIZE };
+      this.glow = this.add.graphics().setDepth(2);
+    }
+    image.setData('anchor', `${fixture.id}:${image.frame.width}x${image.frame.height}@${image.displayWidth}x${image.displayHeight}:${image.originX},${image.originY}`);
+  }
+
+  /** The stand stays empty until an open lot exists. The picture is the shared catalogue plate. */
+  private drawAuctionLot(fixture: Fixture, depth: number): void {
+    const auction = session.profile.auction;
+    if (!auction || auction.status !== 'open') return;
+    const key = `item-${auction.item.definitionId}`;
+    if (!this.textures.exists(key)) return;
+    const image = this.add.image(fixture.tx * TILE_SIZE + TILE_SIZE / 2, (fixture.ty + 1) * TILE_SIZE - 12, key).setOrigin(0.5, 1);
+    image.setDisplaySize(16, 16);
+    image.setDepth(depth);
+    this.props.push(image);
+  }
+
+  private fadeForeground(): void {
+    if (!this.body) return;
+    const person = this.body.getBounds();
+    for (const image of this.foreground) {
+      const covers = image.depth >= this.body.depth && Phaser.Geom.Intersects.RectangleToRectangle(image.getBounds(), person);
+      image.setAlpha(covers ? 0.42 : 1);
+    }
+  }
+
+  private paintLamp(now: number): void {
+    if (!this.glow || !this.lamp) return;
+    const reduce = document.documentElement.classList.contains('reduce');
+    const pulse = reduce ? 0.16 : 0.12 + 0.05 * (0.5 + 0.5 * Math.sin(now / 700));
+    this.glow.clear();
+    this.glow.fillStyle(0xd29a3a, pulse);
+    this.glow.fillCircle(this.lamp.x, this.lamp.y - 20, 34);
+  }
+
   private prop(key: string, tx: number, ty: number, width: number, height: number): void {
     const feet = feetOf(tx, ty);
     const image = this.add.image(feet.x, feet.y, key).setOrigin(0.5, 1).setDisplaySize(width, height).setDepth(feet.y);
@@ -377,12 +452,15 @@ export class DistrictScene extends Phaser.Scene {
       if (this.samples === 40) document.documentElement.dataset.frameMs = (this.sampleMs / 40).toFixed(2);
     }
     if (!this.body) return;
-    const shown = JSON.stringify(session.world.displays);
+    const shown = this.watchKey();
     if (this.place.id !== session.world.locationId || shown !== this.displayKey) {
       this.bootPlace();
       return;
     }
-    this.drawRings(document.documentElement.classList.contains('reduce') ? 0 : this.time.now);
+    const now = document.documentElement.classList.contains('reduce') ? 0 : this.time.now;
+    this.drawRings(now);
+    this.paintLamp(now);
+    this.fadeForeground();
     if (session.panel) {
       intent.interact = false;
       return;

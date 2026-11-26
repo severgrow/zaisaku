@@ -1,4 +1,5 @@
 import type { ActorDef, ExitDef, LocationDef } from './types.js';
+import { blockFixtures, districtFixtures, residenceFixtures, type Entrance } from './fixtures.js';
 import { feetOf } from './movement.js';
 import { GATE } from './state.js';
 import { stampShell } from './stamp.js';
@@ -55,7 +56,19 @@ export const buildDistrict = (): LocationDef => {
   set(tiles, 10, 9, TILE.lamp);
   set(tiles, 21, 9, TILE.lamp);
   set(tiles, 13, 13, TILE.counter);
+  const entrance = (facing: Entrance['facing'], shell: { doorTx: number; doorTy: number; frontTx: number; frontTy: number }): Entrance => ({
+    facing,
+    ...shell,
+  });
+  const fixtures = districtFixtures(tiles, {
+    exchange: entrance('s', exchange),
+    research: entrance('s', research),
+    duel: entrance('e', duel),
+    auction: entrance('w', auction),
+    home: entrance('n', residence),
+  });
   const solid = solidFrom(tiles);
+  blockFixtures(solid, fixtures);
   const actors: ActorDef[] = [
     {
       id: 'ivo',
@@ -129,6 +142,7 @@ export const buildDistrict = (): LocationDef => {
     },
     exits,
     actors,
+    fixtures,
     resonance: { tx: 16, ty: 12 },
     audioBed: null,
     blurb: 'A public square in the exchange. The notices are ordinary. The light is not.',
@@ -140,17 +154,17 @@ export const buildResidence = (): LocationDef => {
   const height = 10;
   const tiles = blank(width, height, TILE.ground);
   border(tiles);
-  set(tiles, 2, 3, TILE.counter);
-  set(tiles, 3, 3, TILE.counter);
   set(tiles, 10, 3, TILE.counter);
   set(tiles, 12, 3, TILE.counter);
   set(tiles, 3, 6, TILE.counter);
   set(tiles, 11, 6, TILE.counter);
   set(tiles, 5, 4, TILE.lantern);
   set(tiles, 7, 8, TILE.door);
+  const fixtures = residenceFixtures();
   const solid = solidFrom(tiles);
+  blockFixtures(solid, fixtures);
   const actors: ActorDef[] = [
-    { id: 'bed', name: 'Bed', tx: 2, ty: 3, facing: 's', kind: 'rest', symbol: 'residence', form: 'furnishing', coat: '#c9b59a', accessory: 'none', line: 'You sit for a moment. The room does not charge you.', slot: null },
+    { id: 'bed', name: 'Pallet', tx: 2, ty: 2, facing: 's', kind: 'rest', symbol: 'residence', form: 'furnishing', coat: '#c9b59a', accessory: 'none', line: 'You sit for a moment. The room does not charge you.', slot: null },
     { id: 'shelf-a', name: 'Shelf', tx: 10, ty: 3, facing: 's', kind: 'display', symbol: 'storage', form: 'furnishing', coat: '#e6d7c3', accessory: 'none', line: 'A place for one object you actually own.', slot: 'shelf-a' },
     { id: 'shelf-b', name: 'Shelf', tx: 12, ty: 3, facing: 's', kind: 'display', symbol: 'storage', form: 'furnishing', coat: '#e6d7c3', accessory: 'none', line: 'A second place, still one object.', slot: 'shelf-b' },
     { id: 'terminal', name: 'Terminal', tx: 3, ty: 6, facing: 'e', kind: 'terminal', symbol: 'exchange', form: 'terminal', coat: '#6d7550', accessory: 'none', line: 'The same terminal as the floor.', slot: null },
@@ -171,6 +185,7 @@ export const buildResidence = (): LocationDef => {
     },
     exits: [{ id: 'to-district', tx: 7, ty: 8, to: 'district-01', spawn: 'from-residence', label: 'District', symbol: 'transit' }],
     actors,
+    fixtures,
     resonance: null,
     audioBed: null,
     blurb: 'A small room. Bed, shelf, terminal, and one organism that is not from anywhere you know.',

@@ -1,4 +1,4 @@
-/** Runtime pictures. Logical cells stay 32px. Pack 04 floors and architecture are 64px sources. Pack 07 adds plates and joins. Characters stay Pack 02. */
+/** Runtime pictures. Logical cells stay 32px. Pack 04 floors and architecture are 64px sources. Pack 07 adds plates and joins. Pack 09 adds everyday props and the duel instrument. Characters stay Pack 02. East and west window glass is not in Pack 09. */
 
 import { ceramicTransitionKeys } from '../../../src/world/connectors.js';
 
@@ -100,6 +100,44 @@ export const FURNITURE_FILES: Readonly<Record<string, string>> = {
   'furniture-pedestal-native': 'furniture/furniture-display-pedestal.png',
   'glass-case-base': 'furniture/glass-case-base.png',
   'glass-case-front': 'furniture/glass-case-front.png',
+};
+
+/** Pack 09 world sprites. Keys match the manifest ids. */
+export const EVERYDAY_FILES: Readonly<Record<string, string>> = {
+  chair: 'everyday/chair.png',
+  'low-table': 'everyday/low-table.png',
+  'sleeping-pallet': 'everyday/sleeping-pallet.png',
+  'standing-lamp': 'everyday/standing-lamp.png',
+  'crate-large': 'everyday/crate-large.png',
+  'crate-small': 'everyday/crate-small.png',
+  'wrapped-parcel': 'everyday/wrapped-parcel.png',
+  scale: 'everyday/scale.png',
+  'customer-counter': 'everyday/customer-counter.png',
+  'auction-stand': 'everyday/auction-stand.png',
+  'research-flask': 'everyday/research-flask.png',
+  'research-crystal-flask': 'everyday/research-crystal-flask.png',
+  'research-jar': 'everyday/research-jar.png',
+  'research-vial': 'everyday/research-vial.png',
+  'research-rack': 'everyday/research-rack.png',
+  'research-tray': 'everyday/research-tray.png',
+  'duel-door-terminal': 'everyday/duel-door-terminal.png',
+  'roof-eave': 'everyday/roof-eave.png',
+  'tree-canopy': 'everyday/tree-canopy.png',
+  'threshold-n': 'everyday/threshold-n.png',
+  'threshold-s': 'everyday/threshold-s.png',
+  'threshold-e': 'everyday/threshold-e.png',
+  'threshold-w': 'everyday/threshold-w.png',
+};
+
+export const INSTRUMENT_FILES: Readonly<Record<string, string>> = {
+  'bid-minus': 'instrument/bid-minus.png',
+  'bid-plus': 'instrument/bid-plus.png',
+  'frame-nine-slice': 'instrument/frame-nine-slice.png',
+  'variable-object-tray': 'instrument/variable-object-tray.png',
+  'mobile-exchange-recess': 'instrument/mobile-exchange-recess.png',
+  'portrait-ivo': 'instrument/portrait-ivo.png',
+  'portrait-ness': 'instrument/portrait-ness.png',
+  'portrait-archivist': 'instrument/portrait-archivist.png',
 };
 
 export const PLAYER_FACINGS = ['n', 'e', 's', 'w'] as const;
