@@ -1,5 +1,5 @@
 import { mkdirSync } from 'node:fs';
-import { chromium } from 'playwright-core';
+import { launchBrowser } from './browser.js';
 import { decodeSave } from '../../src/persist/save.js';
 import { preview } from 'vite';
 import type { Page } from 'playwright-core';
@@ -14,7 +14,7 @@ const server = await preview({
 });
 console.log('preview', server.resolvedUrls);
 
-const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });
+const browser = await launchBrowser();
 const problems: string[] = [];
 
 const open = async (width: number, height: number) => {

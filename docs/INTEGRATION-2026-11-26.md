@@ -1,5 +1,7 @@
 # Integration handover — 26 November 2026
 
+The [playable handover](INTEGRATION-PLAYABLE-SLICE.md) records work and verification after this baseline.
+
 ## Purpose and protected baseline
 
 Review branch: `codex/za-integrated-2026-11-26`, targeted to `main` through **one review pull request**. The source branch began at Pack 09 `442c57901475abdc0498687e700cdb92eb3f4941`, a descendant of Pack 07 and Pack 04. Work from Cursor's existing PRs was merged only on new Codex-owned integration and probe branches. Cursor branches and `main` are untouched.

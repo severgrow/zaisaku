@@ -1,8 +1,9 @@
 import { mkdirSync } from 'node:fs';
-import { chromium, type Page } from 'playwright-core';
+import type { Page } from 'playwright-core';
+import { launchBrowser } from './browser.js';
 import { preview } from 'vite';
 
-const OUT = '/cursor/stores/bc-e7f2e0c6-f99a-409f-bbaa-d4b46ca4e062/media';
+const OUT = process.env.E2E_OUT ?? '/tmp/zaisaku-e2e';
 mkdirSync(OUT, { recursive: true });
 
 const server = await preview({
@@ -11,7 +12,7 @@ const server = await preview({
   logLevel: 'silent',
 });
 
-const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });
+const browser = await launchBrowser();
 const problems: string[] = [];
 const page: Page = await browser.newPage({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: 1 });
 const errors: string[] = [];
@@ -34,8 +35,8 @@ const place = async (world: { locationId: string; x: number; y: number; facing: 
     localStorage.setItem('zaisaku.save.v1', JSON.stringify(save));
   }, world);
   await page.reload({ waitUntil: 'networkidle' });
-  await page.waitForSelector('#world-host canvas');
-  await page.waitForTimeout(600);
+  await page.waitForFunction((location) => document.documentElement.dataset.pose?.endsWith(`,${location}`), world.locationId);
+  await page.waitForTimeout(280);
 };
 
 await page.goto('http://127.0.0.1:4182/', { waitUntil: 'networkidle' });
@@ -69,9 +70,22 @@ await page.screenshot({ path: `${OUT}/pack10-exchange.png` });
 await place({ locationId: 'district-01', ...feet(25, 8), facing: 'n' });
 await page.screenshot({ path: `${OUT}/pack10-research.png` });
 
+await place({ locationId: 'district-01', ...feet(9, 12), facing: 'w' });
+await page.screenshot({ path: `${OUT}/duel-hall-entrance.png` });
+await place({ locationId: 'district-01', ...feet(22, 12), facing: 'e' });
+await page.screenshot({ path: `${OUT}/auction-house-entrance.png` });
+await place({ locationId: 'district-01', ...feet(16, 8), facing: 'n' });
+await page.screenshot({ path: `${OUT}/north-courtyard.png` });
+
+
 await place({ locationId: 'district-01', ...feet(8, 8), facing: 'n' });
-await page.locator('#world-host canvas').click({ force: true, position: { x: 12, y: 80 } });
-await page.keyboard.press('KeyE');
+const merchant = await page.evaluate(() => {
+  const rect = document.querySelector('#world-host canvas')!.getBoundingClientRect();
+  const [x, y, zoom] = document.documentElement.dataset.cam!.split(',').map(Number);
+  return { x: rect.left + rect.width / 2 + (272 - x! - rect.width / 2) * zoom!,
+    y: rect.top + rect.height / 2 + (232 - y! - rect.height / 2) * zoom! };
+});
+await page.mouse.click(merchant.x, merchant.y);
 await page.waitForSelector('.talk img');
 const bust = await page.locator('.talk img').evaluate((node) => {
   const image = node as HTMLImageElement;

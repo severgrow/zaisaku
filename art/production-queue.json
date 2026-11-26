@@ -19,7 +19,7 @@
       "id": "A01",
       "priority": 1,
       "title": "Architecture scale calibration",
-      "status": "queued",
+      "status": "in-game validated candidate",
       "assets": [
         {
           "id": "exchange-south",
@@ -62,13 +62,14 @@
           "facing": "n"
         }
       ],
-      "acceptance": "Show 32px actor next to each building; doors visually fit human, roof mass and height believable; entrance coordinates remain unchanged; create separated roof/foreground where needed."
+      "acceptance": "Show 32px actor next to each building; doors visually fit human, roof mass and height believable; entrance coordinates remain unchanged; create separated roof/foreground where needed.",
+      "progress": "Two south-facing source shells and three direction-specific modular shells. Creator review of the scale and silhouette is pending. Separate Pack 11 archive has not been located."
     },
     {
       "id": "A02",
       "priority": 2,
       "title": "Inhabited plaza",
-      "status": "queued",
+      "status": "in-game validated candidate",
       "assets": [
         "market-stall",
         "notice-board",
@@ -81,13 +82,14 @@
         "crates",
         "contact-shadow"
       ],
-      "acceptance": "Reconcile existing approved Pack 08B first; cluster around edges, retain open central routes."
+      "acceptance": "Reconcile existing approved Pack 08B first; cluster around edges, retain open central routes.",
+      "progress": "Central Sera instrument, north courtyard, grouped cargo, accessible thresholds, native planting, bench and Pack 08B notice board. ZA-ENV-UTILITY-DETAILS-80 source archive pending transfer."
     },
     {
       "id": "A03",
       "priority": 3,
       "title": "Residence and interiors",
-      "status": "queued",
+      "status": "in-game validated candidate",
       "assets": [
         "bed",
         "workbench",
@@ -97,13 +99,14 @@
         "lamp",
         "wall-shelves"
       ],
-      "acceptance": "Reuse existing Pack 10 furniture where suitable; no obstruction of entrances or displays."
+      "acceptance": "Reuse existing Pack 10 furniture where suitable; no obstruction of entrances or displays.",
+      "progress": "Sleeping alcove, domestic terminal, Pack 10 bedside storage and paper press. Displays remain attached to inventory instance IDs."
     },
     {
       "id": "A04",
       "priority": 4,
       "title": "District atmosphere",
-      "status": "queued",
+      "status": "in-game validated candidate",
       "assets": [
         "warm-window",
         "lantern-glow",
@@ -112,7 +115,8 @@
         "signage-emblems",
         "edge-details"
       ],
-      "acceptance": "Subtle, readable, reduced-motion safe, no heavy overlays."
+      "acceptance": "Subtle, readable, reduced-motion safe, no heavy overlays.",
+      "progress": "Local lamp and plant light, shared contact shadows, roof course shading, depth ordering and reduced-motion atmosphere."
     }
   ],
   "governance": {

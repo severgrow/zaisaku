@@ -1,8 +1,10 @@
 # Mineral Analog
 
+The [Art & Design Constitution](ZAISAKU-ART-CONSTITUTION.md) and [canonical references](art-direction/canonical-references/README.md) govern this implementation.
+
 Mineral Analog is the art direction for Zuisaku. The planet is not a reskin of Earth and not a reskin of Japan. Uniqueness is meant to come from shapes, materials, and behaviour. Graphical density stays low so a solo creator can extend it with generated sprites.
 
-The Confidential Creator Bible and the five Mineral Analog mockups were not in this workspace. Nothing from them was invented into the repository. Player-facing lines stay ordinary. Unapproved lore is not shipped.
+The five creator-supplied visual targets are checked in with their original filenames and SHA-256 checksums. Player-facing lines stay ordinary and follow the established setting.
 
 ## Perspective
 
@@ -12,7 +14,7 @@ One camera, for every future sprite:
 - Square 32×32 terrain.
 - Front and roof both readable. No rotating camera, no isometric axes, no 3D.
 - Feet at the bottom centre of a sprite. Depth is the foot line.
-- Integer zoom. Nearest-neighbour. No mixed side-view and top-down sheets.
+- Nearest-neighbour sampling at stepped zoom levels, with a wider initial view on narrow screens. No mixed side-view and top-down sheets.
 
 ## Materials
 

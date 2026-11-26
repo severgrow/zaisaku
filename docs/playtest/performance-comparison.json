@@ -1,0 +1,92 @@
+{
+  "browser": "156.0.8078.79",
+  "viewport": "1440×900",
+  "report": [
+    {
+      "label": "baseline",
+      "runs": [
+        {
+          "homeMs": 558,
+          "worldMs": 1096,
+          "images": {
+            "count": 202,
+            "bytes": 1409922
+          },
+          "frameMedianMs": 16.699999999999818,
+          "frameP95Ms": 16.800000000000182,
+          "jsHeapBeforeBytes": 6601220,
+          "jsHeapAfterBytes": 6789516
+        },
+        {
+          "homeMs": 335,
+          "worldMs": 1206,
+          "images": {
+            "count": 202,
+            "bytes": 1409922
+          },
+          "frameMedianMs": 16.699999999999818,
+          "frameP95Ms": 16.700000000000273,
+          "jsHeapBeforeBytes": 6609488,
+          "jsHeapAfterBytes": 6788148
+        },
+        {
+          "homeMs": 371,
+          "worldMs": 1163,
+          "images": {
+            "count": 202,
+            "bytes": 1409922
+          },
+          "frameMedianMs": 16.699999999999818,
+          "frameP95Ms": 16.799999999999727,
+          "jsHeapBeforeBytes": 6599964,
+          "jsHeapAfterBytes": 6776772
+        }
+      ],
+      "medianHomeMs": 371,
+      "medianWorldMs": 1163
+    },
+    {
+      "label": "current",
+      "runs": [
+        {
+          "homeMs": 347,
+          "worldMs": 1144,
+          "images": {
+            "count": 192,
+            "bytes": 1018630
+          },
+          "frameMedianMs": 16.699999999999818,
+          "frameP95Ms": 16.799999999999727,
+          "jsHeapBeforeBytes": 6631396,
+          "jsHeapAfterBytes": 6795428
+        },
+        {
+          "homeMs": 405,
+          "worldMs": 1088,
+          "images": {
+            "count": 192,
+            "bytes": 1018630
+          },
+          "frameMedianMs": 16.699999999999818,
+          "frameP95Ms": 16.800000000000182,
+          "jsHeapBeforeBytes": 6594828,
+          "jsHeapAfterBytes": 6806072
+        },
+        {
+          "homeMs": 292,
+          "worldMs": 1193,
+          "images": {
+            "count": 192,
+            "bytes": 1018630
+          },
+          "frameMedianMs": 16.699999999999818,
+          "frameP95Ms": 16.700000000000273,
+          "jsHeapBeforeBytes": 6585032,
+          "jsHeapAfterBytes": 6795532
+        }
+      ],
+      "medianHomeMs": 347,
+      "medianWorldMs": 1144
+    }
+  ]
+}

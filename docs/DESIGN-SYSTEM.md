@@ -1,5 +1,7 @@
 # Design
 
+The [Art & Design Constitution](ZAISAKU-ART-CONSTITUTION.md) and [canonical references](art-direction/canonical-references/README.md) govern this implementation.
+
 Status: temporary candidate. Quiet Instrument 06B styles menus and the world HUD. It is not approved. District pixels stay Mineral Analog. The duel keeps its own composition; this skin only shares type, colour, and button conventions. Do not treat the skin as final.
 
 Menus should feel like a quiet instrument made on Zuisaku: charcoal surfaces, bone ceramic primary controls, muted olive secondary controls, amber only as an indicator, burgundy only for a destructive action. Hierarchy comes from the artwork, the type, and the space between them.

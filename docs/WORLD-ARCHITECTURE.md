@@ -1,5 +1,7 @@
 # World architecture
 
+See the [Art & Design Constitution](ZAISAKU-ART-CONSTITUTION.md) and [original visual references](art-direction/canonical-references/README.md).
+
 District 01 and the residence are another interface onto the existing ledger. Phaser draws the place and reads input. It does not own items, prices, or rewards.
 
 ## Split

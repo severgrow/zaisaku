@@ -41,6 +41,21 @@ jobs:
         env:
           E2E_OUT: /tmp/zaisaku-e2e
         run: npx tsx web/e2e/shots.ts
+      - name: Capture District 01 architecture, residence and courtyards
+        env:
+          E2E_OUT: /tmp/zaisaku-e2e
+        run: npx tsx web/e2e/pack10-shots.ts
+      - name: Collecting, persistence and six-round duel journeys
+        env:
+          E2E_OUT: /tmp/zaisaku-e2e
+          PLAYWRIGHT_BROWSERS_PATH: /tmp/zaisaku-browser-tools
+        run: |
+          if npx playwright-core install ffmpeg; then export E2E_RECORD=1; fi
+          npx tsx web/e2e/journeys.ts
+      - name: Measure browser startup, frames and world lifecycle
+        env:
+          E2E_OUT: /tmp/zaisaku-e2e
+        run: npx tsx web/e2e/performance.ts
       - name: Preserve actual gameplay captures
         if: always()
         uses: actions/upload-artifact@v4
@@ -48,4 +63,11 @@ jobs:
           name: zaisaku-browser-captures
           path: /tmp/zaisaku-e2e/
           if-no-files-found: ignore
-          retention-days: 7
+          retention-days: 30
+      - name: Preserve the playable production build
+        uses: actions/upload-artifact@v4
+        with:
+          name: zaisaku-playable
+          path: web/dist/
+          if-no-files-found: error
+          retention-days: 30

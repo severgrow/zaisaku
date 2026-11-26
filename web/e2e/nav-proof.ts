@@ -1,5 +1,6 @@
 import { mkdirSync } from 'node:fs';
-import { chromium, type Page } from 'playwright-core';
+import type { Page } from 'playwright-core';
+import { launchBrowser } from './browser.js';
 import { preview } from 'vite';
 
 const OUT = process.env.E2E_OUT ?? '/tmp/zaisaku-e2e';
@@ -11,7 +12,7 @@ const server = await preview({
   logLevel: 'silent',
 });
 
-const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });
+const browser = await launchBrowser();
 const problems: string[] = [];
 
 const poseOf = async (page: Page): Promise<{ x: number; y: number; facing: string; location: string; nav: string }> => {

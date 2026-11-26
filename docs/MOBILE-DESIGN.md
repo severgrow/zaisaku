@@ -1,5 +1,7 @@
 # Mobile design
 
+See the [Art & Design Constitution](ZAISAKU-ART-CONSTITUTION.md) and [original visual references](art-direction/canonical-references/README.md).
+
 World Mode and Terminal Mode share one profile. A purchase on a phone is the same command as a purchase on a desktop. Nothing is priced differently per viewport.
 
 ## World
