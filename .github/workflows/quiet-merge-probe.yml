@@ -1,0 +1,34 @@
+name: Quiet Instrument integration probe
+
+on:
+  push:
+    branches:
+      - codex/za-integrated-2026-11-26
+    paths:
+      - .github/workflows/quiet-merge-probe.yml
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Merge Quiet Instrument 06B into isolated probe
+        shell: bash
+        run: |
+          set -e
+          git config user.name "ZAISAKU Integration"
+          git config user.email "integration@users.noreply.github.com"
+          git checkout -b codex/za-quiet-merge-probe-2026-11-26
+          git fetch origin refs/heads/cursor/quiet-instrument-06b-3643
+          git merge --no-commit --no-ff FETCH_HEAD || true
+          echo "Merge conflict paths:"
+          git diff --name-only --diff-filter=U || true
+          git add -A
+          git commit -m "WIP: native three-way Quiet Instrument merge for isolated review"
+          git push origin HEAD:refs/heads/codex/za-quiet-merge-probe-2026-11-26
