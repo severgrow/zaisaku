@@ -9,8 +9,8 @@
     "sourceScale": 2
   },
   "rules": {
-    "camera": "orthographic top-down, south-visible vertical face; no isometric rotation",
-    "palette": "existing Mineral Analog palette; match current world reference",
+    "camera": "fixed angled top-down orthographic, visible upper surfaces and vertical faces; directional art drawn correctly",
+    "palette": "Vey living ceramic, Oru green-grey alloy, Sera controlled amber; regional variation allowed",
     "status": "candidate only until reviewed",
     "source": "GPT image generation; no baked ground or UI text; separate opaque collision footprint from overhang"
   },
@@ -114,5 +114,12 @@
       ],
       "acceptance": "Subtle, readable, reduced-motion safe, no heavy overlays."
     }
-  ]
+  ],
+  "governance": {
+    "constitution": "docs/ZAISAKU-ART-CONSTITUTION.md",
+    "references": "docs/art-direction/canonical-references/",
+    "referenceStatus": "original PNG transfer pending",
+    "previous30": "quarantined; no runtime promotion",
+    "qualityGate": "compare actual gameplay with canonical targets; preserve approved assets"
+  }
 }
