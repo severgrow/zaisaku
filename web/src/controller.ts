@@ -46,6 +46,8 @@ const fresh = (): Session => ({
   notice: null,
   selected: null,
   bid: 20,
+  armed: null,
+  scan: null,
   sort: 'value',
   clockMs: 20_000,
   world: defaultWorld(),
@@ -73,6 +75,8 @@ const boot = (): Session => {
     notice: null,
     selected: null,
     bid: loaded.duel?.rules.minBid ?? 20,
+    armed: null,
+    scan: null,
     sort: 'value',
     clockMs: loaded.duel?.rules.decisionMs ?? 20_000,
     world: loaded.world,
@@ -211,6 +215,7 @@ export const placeDisplay = (slot: string, instanceId: string | null): void => {
 const commitDuel = (next: DuelState): void => {
   session.duel = next;
   session.selected = null;
+  session.armed = null;
   if (next.result) {
     session.lastResult = next.result;
     const started = session.profile.analytics.counts.duel_started_at ?? Date.now();
@@ -248,6 +253,8 @@ export const beginDuel = (): void => {
   session.panel = null;
   session.notice = 'Clerk Vesper sits opposite. A simulated opponent, not a live player.';
   session.selected = null;
+  session.armed = null;
+  session.scan = null;
   roundWatch = session.duel.round;
   location.hash = '#/duel';
   persist();
@@ -298,8 +305,15 @@ const duelClock = (): void => {
     session.clockMs = duel.rules.decisionMs;
   }
   session.clockMs = Math.max(0, session.clockMs - 250);
-  const node = document.querySelector('[data-timer]');
-  if (node) node.textContent = formatClock(session.clockMs);
+  const total = duel.rules.decisionMs || 1;
+  const fraction = String(session.clockMs / total);
+  const label = formatClock(session.clockMs);
+  document.querySelectorAll<HTMLElement>('[data-timer]').forEach((node) => {
+    node.textContent = label;
+    node.style.setProperty('--remain', fraction);
+    node.classList.toggle('urgent', session.clockMs <= 5_000);
+  });
+  document.querySelectorAll<HTMLElement>('.remain').forEach((node) => node.style.setProperty('--remain', fraction));
   if (session.clockMs <= 0 && !duel.decisions.p0) {
     session.clockMs = duel.rules.decisionMs;
     const step = expire(duel, 'p0');

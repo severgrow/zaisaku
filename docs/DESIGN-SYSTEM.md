@@ -31,7 +31,7 @@ Kickers are small, tracked, uppercase mono. Titles are serif, medium weight, sli
 
 Mobile first. The shell is a top bar (wordmark, free Zai) and a five-item dock: Home, Duel, Market, Auction, Vault. Requests, Result, and Settings sit on the home floor and in the side column.
 
-At 900px and wider the dock hides. A side column lists every room and repeats the balance. The duel becomes two columns: the table on the left, the decision on the right.
+At 900px and wider the dock hides. A side column lists every room and repeats the balance. The duel is three areas: the other chair, the exchange table, and your chair. Portrait phones stack those areas and keep the clock and the confirmation above the dock.
 
 The duel decision bar is fixed above the dock on a phone, so bid, sell, inspect, and pass stay reachable at 360×800 and 390×844. The table scrolls behind it. On a wide screen the bar returns to the column.
 
@@ -41,7 +41,7 @@ Home rooms are a grid of tiles. The title and the note stack. They do not sit on
 
 ## Art
 
-`web/src/ui/art.ts` draws a 64px plate. Signature objects have their own mark. Everything else is a stable plate from the artwork key and the category accent. No WebGL, no spritesheet pipeline.
+`web/src/ui/art.ts` draws a 64px plate. Objects with a Mineral Analog catalogue PNG use that picture. Signature objects without one keep their mark. Everything else is a stable plate from the artwork key and the category accent. The duel frames are cropped components, not a full sheet.
 
 ## Motion and sound
 
