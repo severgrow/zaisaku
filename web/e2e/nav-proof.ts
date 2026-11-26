@@ -88,7 +88,6 @@ const attach = (page: Page): void => {
 
 const context = await browser.newContext({
   viewport: { width: 1280, height: 800 },
-  recordVideo: { dir: '/tmp/nav-video', size: { width: 1280, height: 800 } },
 });
 const page = await context.newPage();
 attach(page);
@@ -139,20 +138,8 @@ try {
   await page.screenshot({ path: `${OUT}/nav-desktop.png` }).catch(() => undefined);
 }
 
-const video = page.video();
 await page.close();
 await context.close();
-if (video) {
-  const webm = await video.path();
-  const { spawnSync } = await import('node:child_process');
-  const encoded = spawnSync('ffmpeg', ['-y', '-i', webm, '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-an', `${OUT}/nav-demo.mp4`], { encoding: 'utf8' });
-  if (encoded.error && 'code' in encoded.error && encoded.error.code === 'ENOENT') {
-    const { copyFileSync } = await import('node:fs');
-    copyFileSync(webm, `${OUT}/nav-demo.webm`);
-  } else if (encoded.status !== 0) {
-    problems.push(`ffmpeg failed: ${encoded.stderr.slice(-400)}`);
-  }
-}
 
 const shot = async (width: number, height: number, file: string): Promise<void> => {
   const extra = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 1 });
