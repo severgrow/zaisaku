@@ -8,7 +8,7 @@ import { ARCHITECTURE_FILES, FLOOR_FILES, FURNITURE_FILES, MINERAL_TILES, NPCS, 
 export const workshopScreen = (): string => `
   <p class="kicker">Development</p>
   <h1>Asset workshop</h1>
-  <p class="lede">Mineral Analog pack 04 floors, transitions, connected walls and empty displays. Still temporary until you approve the screenshots. Characters and loose props remain pack 02. Each sprite is shown at its source size and at half size.</p>
+  <p class="lede">Mineral Analog pack 04 floors and walls, plus pack 07 plates and joins. Still temporary until you approve the screenshots. Characters and loose props remain pack 02. Each sprite is shown at its source size and at half size.</p>
   <div data-workshop class="workshop"></div>
 `;
 

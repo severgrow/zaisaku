@@ -19,7 +19,7 @@ Chunky clusters. Three or four shades of a material. Strong silhouette. Limited 
 
 `src/world/assets.ts` lists every world record with `id`, `category`, `width`, `height`, `status`, and anchor. `status` is `temporary` or `approved`. `validateManifest` rejects a size that does not match the category.
 
-`src/world/artwork.ts` gives each catalogue object one `pixelKey` and keeps its existing `artworkRef` SVG. The world currently draws a shared category plate for a displayed object. The unique key is already reserved so one approved PNG can replace that object without a second identity.
+`src/world/artwork.ts` gives each catalogue object one `pixelKey` and keeps its existing `artworkRef`. All 36 objects have a temporary PNG. `plate()` and the residence shelves use that same file. Status stays `temporary` until the screenshots are approved.
 
 ## Filenames
 
