@@ -45,17 +45,18 @@ export const buildDistrict = (): LocationDef => {
     if (tiles[16]![x] === TILE.ground) set(tiles, x, 16, TILE.path);
   }
   for (let y = 8; y <= 18; y += 1) if (tiles[y]![16] === TILE.ground) set(tiles, 16, y, TILE.path);
-  set(tiles, 4, 17, TILE.tree);
-  set(tiles, 27, 17, TILE.tree);
-  set(tiles, 8, 15, TILE.reed);
-  set(tiles, 22, 15, TILE.reed);
-  set(tiles, 11, 9, TILE.vein);
-  set(tiles, 20, 9, TILE.vein);
-  set(tiles, 14, 11, TILE.lantern);
-  set(tiles, 18, 14, TILE.lantern);
-  set(tiles, 10, 9, TILE.lamp);
+  // The paved gathering space links the two traversing streets and leaves room to pass its instrument.
+  for (let y = 10; y <= 15; y += 1) {
+    const inset = y === 10 || y === 15 ? 1 : 0;
+    for (let x = 12 + inset; x <= 20 - inset; x += 1) set(tiles, x, y, TILE.path);
+  }
+  for (const [x, y] of [[1, 8], [1, 9], [30, 8], [30, 9], [2, 18], [3, 18], [29, 18], [28, 18], [12, 17], [20, 17]] as const) {
+    set(tiles, x, y, TILE.reed);
+  }
+  for (const [x, y] of [[9, 12], [10, 12], [11, 12], [21, 12], [22, 12]] as const) set(tiles, x, y, TILE.path);
+  set(tiles, 11, 9, TILE.lamp);
   set(tiles, 21, 9, TILE.lamp);
-  set(tiles, 13, 13, TILE.counter);
+
   const entrance = (facing: Entrance['facing'], shell: { doorTx: number; doorTy: number; frontTx: number; frontTy: number }): Entrance => ({
     facing,
     ...shell,
@@ -143,6 +144,13 @@ export const buildDistrict = (): LocationDef => {
     exits,
     actors,
     fixtures,
+    buildings: [
+      { id: 'exchange', ...exchange },
+      { id: 'research', ...research },
+      { id: 'duel', ...duel },
+      { id: 'auction', ...auction },
+      { id: 'residence', ...residence },
+    ],
     resonance: { tx: 16, ty: 12 },
     audioBed: null,
     blurb: 'A public square in the exchange. The notices are ordinary. The light is not.',
@@ -164,7 +172,7 @@ export const buildResidence = (): LocationDef => {
   const solid = solidFrom(tiles);
   blockFixtures(solid, fixtures);
   const actors: ActorDef[] = [
-    { id: 'bed', name: 'Pallet', tx: 2, ty: 2, facing: 's', kind: 'rest', symbol: 'residence', form: 'furnishing', coat: '#c9b59a', accessory: 'none', line: 'You sit for a moment. The room does not charge you.', slot: null },
+    { id: 'bed', name: 'Sleeping alcove', tx: 2, ty: 2, facing: 's', kind: 'rest', symbol: 'residence', form: 'furnishing', coat: '#c9b59a', accessory: 'none', line: 'You sit for a moment. The room does not charge you.', slot: null },
     { id: 'shelf-a', name: 'Shelf', tx: 10, ty: 3, facing: 's', kind: 'display', symbol: 'storage', form: 'furnishing', coat: '#e6d7c3', accessory: 'none', line: 'A place for one object you actually own.', slot: 'shelf-a' },
     { id: 'shelf-b', name: 'Shelf', tx: 12, ty: 3, facing: 's', kind: 'display', symbol: 'storage', form: 'furnishing', coat: '#e6d7c3', accessory: 'none', line: 'A second place, still one object.', slot: 'shelf-b' },
     { id: 'terminal', name: 'Terminal', tx: 3, ty: 6, facing: 'e', kind: 'terminal', symbol: 'exchange', form: 'terminal', coat: '#6d7550', accessory: 'none', line: 'The same terminal as the floor.', slot: null },

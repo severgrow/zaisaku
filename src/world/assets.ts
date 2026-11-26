@@ -1,3 +1,5 @@
+import { DISTRICT_ART } from './district-art.js';
+
 export type AssetCategory = 'terrain' | 'architecture' | 'flora' | 'character' | 'object' | 'collectible' | 'furniture' | 'interface';
 export type AssetStatus = 'temporary' | 'approved';
 
@@ -10,6 +12,7 @@ export interface AssetRecord {
   anchorX: number;
   anchorY: number;
   note: string;
+  sourceScale?: number;
 }
 
 const TEMP = 'Mineral Analog pack 04, temporary until the creator approves screenshots. A 64px drawing is shown on the 32px cell.';
@@ -67,6 +70,7 @@ export const ASSET_MANIFEST: readonly AssetRecord[] = [
   tile('display-glass', 'furniture', 32, 32, 'Pack 04 glass plate kept on disk, temporary. The residence case is the Pack 07 base, the owned plate, and the front rails.'),
   tile('glass-case-base', 'furniture', 128, 128, 'Pack 07 glass case back, temporary. The owned plate is drawn at [64, 92], then the front rails.'),
   tile('glass-case-front', 'furniture', 128, 128, 'Pack 07 glass rails, temporary. The center is clear so the owned plate stays visible.'),
+  ...DISTRICT_ART,
   tile('display-pedestal', 'furniture', 32, 32, 'Pack 04 empty pedestal, temporary. Drawn on the residence counter that has no actor.'),
   { id: 'collectible-plate', category: 'collectible', width: 64, height: 64, status: 'temporary', anchorX: 32, anchorY: 64, note: 'Shared fallback plate for catalogue objects Pack 04 does not draw. Temporary.' },
   ...[
@@ -163,7 +167,10 @@ export const validateManifest = (records: readonly AssetRecord[]): string[] => {
   for (const record of records) {
     if (!record.id || seen.has(record.id)) issues.push(`${record.id || '(blank)'}: duplicate or empty id`);
     seen.add(record.id);
-    if (!SIZE[record.category]?.(record.width, record.height)) issues.push(`${record.id}: ${record.width}×${record.height} is not valid for ${record.category}`);
+    const scale = record.sourceScale;
+    const sizeOk = scale === undefined ? SIZE[record.category]?.(record.width, record.height) :
+      (scale === 1 || scale === 2) && Number.isInteger(record.width) && Number.isInteger(record.height) && record.width > 0 && record.height > 0;
+    if (!sizeOk) issues.push(`${record.id}: ${record.width}×${record.height} is not valid for ${record.category}`);
     if (record.anchorX < 0 || record.anchorY < 0 || record.anchorX > record.width || record.anchorY > record.height) {
       issues.push(`${record.id}: anchor outside the frame`);
     }

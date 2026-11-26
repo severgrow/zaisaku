@@ -1,0 +1,357 @@
+{
+  "status": "runtime candidate pending creator review",
+  "assets": [
+    {
+      "id": "exchange-south",
+      "sheet": "zaisaku_building_sprite_sheet.png",
+      "crop": [
+        0,
+        0,
+        435,
+        380
+      ],
+      "size": [
+        286,
+        220
+      ],
+      "pivot": [
+        162,
+        220
+      ],
+      "facing": "s",
+      "bounds": [
+        0,
+        0,
+        285,
+        220
+      ],
+      "sha256": "ab4b77928c8e7974b136142ecd8f16f9383270d086532fdf89fdb6b66e59784e"
+    },
+    {
+      "id": "research-south",
+      "sheet": "zaisaku_building_sprite_sheet.png",
+      "crop": [
+        1165,
+        438,
+        1585,
+        793
+      ],
+      "size": [
+        284,
+        192
+      ],
+      "pivot": [
+        131,
+        192
+      ],
+      "facing": "s",
+      "bounds": [
+        11,
+        0,
+        272,
+        192
+      ],
+      "sha256": "e85de0e8f0f238200ff60687af288eeaf267e3594928a34d5e8e8c03497a5636"
+    },
+    {
+      "id": "sleeping-alcove",
+      "sheet": "mineral_analog_interior_sprite_sheet.png",
+      "crop": [
+        15,
+        18,
+        445,
+        390
+      ],
+      "size": [
+        61,
+        52
+      ],
+      "bounds": [
+        1,
+        0,
+        59,
+        52
+      ],
+      "pivot": [
+        30,
+        52
+      ],
+      "sha256": "2c7c82a7f3af949d2eff2664e83e2eeb4917d0a2c9238c0c701910742945fb83"
+    },
+    {
+      "id": "disc-tree",
+      "sheet": "a_clean_png_spritesheet_on_a_transparent_checkerbo.png",
+      "crop": [
+        25,
+        565,
+        274,
+        803
+      ],
+      "size": [
+        49,
+        56
+      ],
+      "bounds": [
+        0,
+        9,
+        49,
+        56
+      ],
+      "pivot": [
+        24,
+        56
+      ],
+      "sha256": "9b84d0afafa80418cc46fe2a7ac54327d0cb4c8038a9a07a207ad7d548f18c1f"
+    },
+    {
+      "id": "veinflora-planter",
+      "sheet": "a_clean_png_spritesheet_on_a_transparent_checkerbo.png",
+      "crop": [
+        1020,
+        562,
+        1250,
+        803
+      ],
+      "size": [
+        42,
+        38
+      ],
+      "bounds": [
+        2,
+        0,
+        40,
+        38
+      ],
+      "pivot": [
+        21,
+        38
+      ],
+      "sha256": "8717e108dee5cde4bf44ea608a667b38e78afb025dbf3a5140ecd9205b586d2d"
+    },
+    {
+      "id": "wall-lamp",
+      "sheet": "a_clean_png_spritesheet_on_a_transparent_checkerbo.png",
+      "crop": [
+        1020,
+        12,
+        1260,
+        285
+      ],
+      "size": [
+        20,
+        24
+      ],
+      "bounds": [
+        0,
+        4,
+        20,
+        24
+      ],
+      "pivot": [
+        10,
+        24
+      ],
+      "sha256": "efa2ef4a487a0d7f95a71746636079db2b10eb224e25b19d614e544d36368c7c"
+    },
+    {
+      "id": "roof-vent",
+      "sheet": "a_clean_png_spritesheet_on_a_transparent_checkerbo.png",
+      "crop": [
+        28,
+        290,
+        269,
+        550
+      ],
+      "size": [
+        37,
+        25
+      ],
+      "bounds": [
+        3,
+        0,
+        33,
+        25
+      ],
+      "pivot": [
+        18,
+        25
+      ],
+      "sha256": "ad2603af97b1f3839a96361b709a800a6953ff0faf6fa9f4b7d205b1585c0082"
+    },
+    {
+      "id": "sera-instrument",
+      "sheet": "mineral_tech_pixel_asset_collection.png",
+      "crop": [
+        1180,
+        400,
+        1565,
+        780
+      ],
+      "size": [
+        49,
+        49
+      ],
+      "bounds": [
+        0,
+        5,
+        49,
+        49
+      ],
+      "pivot": [
+        24,
+        49
+      ],
+      "sha256": "d9a6bebae94afa16501c46fad2fd94bf4b5d61ecdaf847c3e2c7c68e24b7d930"
+    },
+    {
+      "id": "domestic-terminal",
+      "sheet": "mineral_analog_interior_sprite_sheet.png",
+      "crop": [
+        1540,
+        405,
+        1960,
+        790
+      ],
+      "size": [
+        54,
+        43
+      ],
+      "bounds": [
+        0,
+        2,
+        54,
+        43
+      ],
+      "pivot": [
+        27,
+        43
+      ],
+      "sha256": "529180bc6bd748489debfcc38bc2d7a37a102e406f12cb481614ba1b328f39e6"
+    },
+    {
+      "id": "ceramic-panel",
+      "sheet": "a_clean_png_spritesheet_on_a_transparent_checkerbo.png",
+      "crop": [
+        294,
+        16,
+        581,
+        285
+      ],
+      "size": [
+        72,
+        33
+      ],
+      "bounds": [
+        13,
+        0,
+        58,
+        33
+      ],
+      "pivot": [
+        36,
+        33
+      ],
+      "sha256": "158bfcae4c0fb4d25d0759abc6231bb8c0b7862bd18a9b8e6c65d1b060794b0d"
+    },
+    {
+      "id": "service-hatch",
+      "sheet": "a_clean_png_spritesheet_on_a_transparent_checkerbo.png",
+      "crop": [
+        790,
+        16,
+        1015,
+        285
+      ],
+      "size": [
+        36,
+        31
+      ],
+      "bounds": [
+        2,
+        0,
+        34,
+        31
+      ],
+      "pivot": [
+        18,
+        31
+      ],
+      "sha256": "9bd055ccfe8ba968ec91742ce63e9b4a678629a85edbfb52c789664e35b370b2"
+    },
+    {
+      "id": "observation-window",
+      "sheet": "a_clean_png_spritesheet_on_a_transparent_checkerbo.png",
+      "crop": [
+        20,
+        13,
+        290,
+        285
+      ],
+      "size": [
+        49,
+        40
+      ],
+      "bounds": [
+        3,
+        0,
+        45,
+        40
+      ],
+      "pivot": [
+        24,
+        40
+      ],
+      "sha256": "c1ee008de8fd0599258684f284859ca813a8dcec2cf2b75f2e181dcbd4f8e670"
+    },
+    {
+      "id": "conduit-elbow",
+      "sheet": "a_clean_png_spritesheet_on_a_transparent_checkerbo.png",
+      "crop": [
+        1276,
+        12,
+        1520,
+        285
+      ],
+      "size": [
+        48,
+        35
+      ],
+      "bounds": [
+        7,
+        0,
+        41,
+        35
+      ],
+      "pivot": [
+        24,
+        35
+      ],
+      "sha256": "f5e9ea603591a7a4da37a1c964b4caf3f11c8374a1a236ac5fe4fceef787ed2c"
+    },
+    {
+      "id": "market-stall",
+      "sheet": "mineral_tech_pixel_asset_collection.png",
+      "crop": [
+        390,
+        400,
+        790,
+        782
+      ],
+      "size": [
+        48,
+        43
+      ],
+      "bounds": [
+        0,
+        3,
+        48,
+        43
+      ],
+      "pivot": [
+        24,
+        43
+      ],
+      "sha256": "457b7944891f9fc23defd62148513568115b0c47fb440eaf4bc1ba278f47d273"
+    }
+  ]
+}

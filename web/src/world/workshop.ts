@@ -1,7 +1,7 @@
 import { ASSET_MANIFEST } from '../../../src/world/assets.js';
 import { ARTWORK } from '../../../src/world/artwork.js';
 import { DISTRICT_RESONANCE, ringRadius } from '../../../src/world/resonance.js';
-import { ARCHITECTURE_FILES, EVERYDAY_FILES, FLOOR_FILES, FURNITURE_FILES, INSTRUMENT_FILES, MINERAL_TILES, NPCS, PLAYER_FACINGS, TRANSITION_FILES, mineralUrl, npcFile, playerFile } from './mineral.js';
+import { ARCHITECTURE_FILES, DISTRICT_FILES, EVERYDAY_FILES, FLOOR_FILES, FURNITURE_FILES, INSTRUMENT_FILES, MINERAL_TILES, NPCS, PLAYER_FACINGS, TRANSITION_FILES, mineralUrl, npcFile, playerFile } from './mineral.js';
 
 /** Developer preview. Canvas only, so it does not start a second Phaser game. */
 
@@ -36,6 +36,7 @@ export const mountWorkshop = (): void => {
     ...ARTWORK.flatMap((item) => (item.plateFile ? [item.plateFile] : [])),
     ...Object.values(MINERAL_TILES),
     ...Object.values(EVERYDAY_FILES),
+    ...Object.values(DISTRICT_FILES),
     ...Object.values(INSTRUMENT_FILES),
     ...PLAYER_FACINGS.flatMap((facing) => [0, 1, 2, 3].map((frame) => playerFile(facing, frame))),
     ...NPCS.flatMap((id) => PLAYER_FACINGS.map((facing) => npcFile(id, facing))),

@@ -1,5 +1,6 @@
 /** Runtime pictures. Logical cells stay 32px. Pack 04 floors and architecture are 64px sources. Pack 07 adds plates and joins. Pack 09 adds everyday props and the duel instrument. Characters stay Pack 02. East and west window glass is not in Pack 09. */
 
+import { DISTRICT_ART } from '../../../src/world/district-art.js';
 import { ceramicTransitionKeys, pavingToPathKeys } from '../../../src/world/connectors.js';
 
 export const mineralUrl = (file: string): string => new URL(`mineral/${file}`, document.baseURI).toString();
@@ -131,7 +132,10 @@ export const EVERYDAY_FILES: Readonly<Record<string, string>> = {
   'threshold-w': 'everyday/threshold-w.png',
 };
 
+export const DISTRICT_FILES: Readonly<Record<string, string>> = Object.fromEntries(DISTRICT_ART.filter((asset) => asset.category !== 'interface').map(({ id, file }) => [id, file]));
+
 export const INSTRUMENT_FILES: Readonly<Record<string, string>> = {
+  'private-envelope': 'instrument/private-envelope.png',
   'bid-minus': 'instrument/bid-minus.png',
   'bid-plus': 'instrument/bid-plus.png',
   'frame-nine-slice': 'instrument/frame-nine-slice.png',

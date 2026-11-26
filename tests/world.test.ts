@@ -240,7 +240,7 @@ describe('pack 09 placement', () => {
     expect(laid?.tx).toBe(0);
     expect(laid?.ty).toBe(1);
     expect(laid?.footprint).toEqual([]);
-    expect(laid?.foreground).toBe(false);
+    expect(laid?.occludes).toBeUndefined();
   });
 
   it('keeps furniture off doors and leaves an approach', () => {
@@ -257,23 +257,22 @@ describe('pack 09 placement', () => {
     expect(reachable(district.solid, GATE, terminals[0]!.approach!)).toBe(true);
 
     const thresholds = district.fixtures.filter((fixture) => fixture.role === 'threshold');
-    expect(thresholds.map((fixture) => fixture.file).sort()).toEqual(['threshold-n', 'threshold-s', 'threshold-s']);
+    expect(thresholds.map((fixture) => fixture.file).sort()).toEqual(['threshold-e', 'threshold-n', 'threshold-s', 'threshold-s', 'threshold-w']);
     for (const fixture of thresholds) {
       expect(district.tiles[fixture.ty]?.[fixture.tx]).toBe(TILE.path);
       expect(district.solid[fixture.ty]?.[fixture.tx]).toBe(false);
     }
-    expect(home.fixtures.some((fixture) => fixture.role === 'threshold' || fixture.role === 'foreground')).toBe(false);
-    expect(home.fixtures.map((fixture) => fixture.file).sort()).toEqual(['chair', 'low-table', 'sleeping-pallet', 'standing-lamp']);
+    expect(home.fixtures.some((fixture) => fixture.role === 'threshold')).toBe(false);
+    expect(home.fixtures.map((fixture) => fixture.file).sort()).toEqual([
+      'bedside-cabinet', 'chair', 'domestic-terminal', 'low-table', 'paper-rack', 'sleeping-alcove',
+      'standing-lamp', 'wall-lamp', 'wall-lamp', 'work-bench',
+    ]);
 
     for (const place of [district, home]) {
       const spawn = place.id === 'residence' ? { tx: 7, ty: 6 } : GATE;
       for (const fixture of place.fixtures) {
-        expect(fixture.foreground).toBe(fixture.role === 'foreground');
-        if (fixture.foreground) {
-          expect(fixture.footprint).toEqual([]);
-          expect(fixture.cover.length).toBeGreaterThan(0);
-          continue;
-        }
+        if (fixture.role === 'ground') expect(fixture.footprint).toEqual([]);
+        if (fixture.occludes) expect(fixture.h).toBeGreaterThan(32);
         for (const foot of fixture.footprint) {
           expect(place.tiles[foot.ty]?.[foot.tx]).not.toBe(TILE.door);
           expect(place.tiles[foot.ty]?.[foot.tx]).not.toBe(TILE.window);
