@@ -21,7 +21,6 @@ export const worldHud = (session: Session): string => {
   `;
 };
 
-<<<<<<< HEAD
 const portraitUrl = (id: string): string | null =>
   id === 'ivo' || id === 'ness' || id === 'archivist' ? mineralUrl(`instrument/portrait-${id}.png`) : null;
 
@@ -35,10 +34,13 @@ const talkHead = (focus: TalkFocus): string => {
         <p>${esc(focus.line)}</p>
       </div>
     </div>
-=======
+  `;
+};
+
 const talkCard = (session: Session): string => {
   const talk = session.talk;
   if (!talk) return '';
+  const portrait = portraitUrl(talk.actorId);
   const actions = talk.actions
     .map(
       (action) =>
@@ -47,11 +49,15 @@ const talkCard = (session: Session): string => {
     .join('');
   return `
     <section class="world-panel talk hud-hit" role="dialog" aria-label="${esc(talk.title)}">
-      <h2>${esc(talk.title)}</h2>
-      <p>${esc(talk.line)}</p>
+      <div class="talk">
+        ${portrait ? `<img class="bust" alt="" src="${esc(portrait)}" width="96" height="96" />` : ''}
+        <div>
+          <h2>${esc(talk.title)}</h2>
+          <p>${esc(talk.line)}</p>
+        </div>
+      </div>
       <div class="row">${actions}<button class="btn quiet" type="button" data-act="close-panel">Leave</button></div>
     </section>
->>>>>>> 4573b6953b957eecd99aba8461d38108e64e39c4
   `;
 };
 
