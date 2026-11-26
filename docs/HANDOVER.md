@@ -47,7 +47,7 @@ The rules, the single price function, the ledger, the duel resolver, the save mi
 - Hidden condition can leak through a public price. The papers do not.
 - Screens are plain HTML strings rebuilt on each action. Focus returns to the screen. That is simple and it is not a virtual DOM.
 - The terminal script is about 34kb gzipped. Phaser is a separate chunk, about 338kb gzipped, fetched when World Mode opens.
-- District pictures are Mineral Analog pack 02, drawn from the 64px files onto the 32px grid. The manifest still says `temporary`. Ground corners were filled so the paving meets. Roof caps sit on the north edge of a shell. The green course is only the south foundation of a building. The residence floor uses the stone course, so the room is not outdoor paving.
+- District pictures are Mineral Analog pack 04 on the 32px grid, with pack 07 catalogue plates and joins. Characters are still pack 02. All 36 catalogue plates are wired through `src/world/artwork.ts` and shown from the same PNG in the market, the vault, and the residence. The manifest still says `temporary`. Pack archives, checksums and the rule against overwriting an earlier pack are in [ASSET-PRODUCTION-PIPELINE.md](ASSET-PRODUCTION-PIPELINE.md). Source sheets stay on `art/mineral-analog-packs` and out of the production bundle.
 - The Confidential Creator Bible and the five visual mockups were not in the workspace, so they are not in the repo.
 - Other regions exist as palettes only. There is no northern basin map yet.
 - The world renderer is Canvas, one game instance, slept rather than destroyed when you leave. Headless Chrome on the development machine averaged about 16ms per Phaser update over the first 40 frames. That is not a phone measurement.
@@ -67,7 +67,7 @@ Read [ECONOMY.md](ECONOMY.md). Change a constant in `DEFAULT_RULES` or a param o
 1. Replace the stand-ins using the brief in [ASSET-PRODUCTION-PIPELINE.md](ASSET-PRODUCTION-PIPELINE.md). Approve nothing that breaks the perspective.
 2. An isolated server, then a real second chair in a duel. The world transport stub is not that server.
 3. A second location from [LOCATION-CREATION.md](LOCATION-CREATION.md), using the basin palette, still one scene class.
-4. Per-object 64×64 plates, one catalogue id at a time, wired through `src/world/artwork.ts`.
+4. Approve the temporary plates from real screenshots. Do not mark a pack approved from the archive alone.
 5. Server-checked movement only after the economy is authoritative. Do not add a multiplayer process before that.
 
 World notes live in [WORLD-ARCHITECTURE.md](WORLD-ARCHITECTURE.md), [MINERAL-ANALOG-ART-DIRECTION.md](MINERAL-ANALOG-ART-DIRECTION.md), [MOBILE-DESIGN.md](MOBILE-DESIGN.md), [RESONANCE-SYSTEM.md](RESONANCE-SYSTEM.md), and [MULTIPLAYER-ROADMAP.md](MULTIPLAYER-ROADMAP.md).

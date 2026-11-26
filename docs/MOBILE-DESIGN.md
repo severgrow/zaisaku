@@ -1,15 +1,16 @@
 # Mobile design
 
+See the [Art & Design Constitution](ZAISAKU-ART-CONSTITUTION.md) and [original visual references](art-direction/canonical-references/README.md).
+
 World Mode and Terminal Mode share one profile. A purchase on a phone is the same command as a purchase on a desktop. Nothing is priced differently per viewport.
 
 ## World
 
-- Landscape is the comfortable world view. Zoom is 2, so a tile is 64 CSS pixels.
-- Portrait world still runs: joystick, Use, and a taller view. It is usable and tighter. The terminal remains the portrait surface for market, auction, vault, requests, and duels.
-- The joystick and Use hide at 900px and above. Desktop uses WASD, arrows, E, and Space. Clicking the ground counts as Use. There is no click-to-move.
-- When the viewport is shorter than 520px the camera sits below the player so the controls do not cover the body.
-- Safe areas inset the bar, the joystick, and Use.
-- The HUD is a balance, Terminal, Vault, a prompt, and the controls. Panels scroll. They are the existing market, auction, vault, and request screens, not a second copy of the rules.
+- Landscape is the comfortable world view. Zoom starts at 2, so a tile is 64 CSS pixels. A wider window shows more of the district. A pinch can zoom; it never walks the player.
+- Portrait is the same game with one finger: tap ground to walk, tap a person or object to approach and interact. There is no joystick and no permanent Use button.
+- WASD, arrows, E, and Space remain. A movement key cancels a tap course. E still works when someone is already in range.
+- Safe areas inset the bar and any open card. The card is the existing market, auction, vault, or request screen, not a second copy of the rules.
+- The HUD is a balance, Terminal, Vault, and a prompt that appears for feedback or when someone is already in range. Panels scroll. Dragging a panel does not move the player.
 
 ## Terminal
 
@@ -17,7 +18,7 @@ World Mode and Terminal Mode share one profile. A purchase on a phone is the sam
 
 ## Tokens
 
-Colour, type, and spacing stay the variables in `web/src/style.css`. World chrome uses the same charcoal, bone type, and amber. Buttons in the bar are at least 44px. The Use target is 84px. Text is Fraunces and IBM Plex Mono, not a pixel font.
+Quiet Instrument 06B tokens in `web/src/ui/quiet/` govern HTML menus and the world HUD; the Phaser pixel-art canvas stays separate. Tap-to-walk has no virtual joystick or permanent Use control. World panels stay compact and portrait does not scroll sideways. Touch targets are at least 44px; Fraunces is the display face and IBM Plex Mono is the interface face.
 
 ## What not to do
 

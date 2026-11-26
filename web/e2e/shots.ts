@@ -1,10 +1,10 @@
 import { mkdirSync } from 'node:fs';
-import { chromium } from 'playwright-core';
+import { launchBrowser } from './browser.js';
 import { decodeSave } from '../../src/persist/save.js';
 import { preview } from 'vite';
 import type { Page } from 'playwright-core';
 
-const OUT = '/cursor/stores/bc-e7f2e0c6-f99a-409f-bbaa-d4b46ca4e062/media';
+const OUT = process.env.E2E_OUT ?? '/tmp/zaisaku-e2e';
 mkdirSync(OUT, { recursive: true });
 
 const server = await preview({
@@ -14,7 +14,7 @@ const server = await preview({
 });
 console.log('preview', server.resolvedUrls);
 
-const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });
+const browser = await launchBrowser();
 const problems: string[] = [];
 
 const open = async (width: number, height: number) => {
@@ -71,8 +71,20 @@ const market = async (width: number, height: number, file: string) => {
 const auction = async (width: number, height: number, file: string) => {
   const { page, errors } = await open(width, height);
   await page.click('#go-auction');
-  await page.click('[data-act="open-auction"]');
-  await page.waitForSelector('.art');
+  const plated = ['Bone Dice', 'Spare Key', 'Late Bell', 'Second Mouth', 'Station Pendulum', 'Green Filter', 'Eclipse Monocle', 'Prism Ticket', 'Paper Charm', 'Counterfeit Seal', "Traveller's Weight", 'Cracked Saucer', 'Blue Fault', 'Closed City', 'The Twin'];
+  for (let attempt = 0; attempt < 8; attempt += 1) {
+    await page.click('[data-act="open-auction"]');
+    await page.waitForSelector('.art');
+    const name = await page.locator('h1').innerText();
+    if (plated.some((title) => name.includes(title))) break;
+    await page.click('[data-act="cancel-auction"]');
+    await page.waitForSelector('[data-act="open-auction"]');
+  }
+  await page.waitForFunction(() => {
+    const img = document.querySelector('img.art');
+    if (!(img instanceof HTMLImageElement)) return document.querySelector('svg.art') !== null;
+    return img.complete && img.naturalWidth > 0;
+  });
   await shot(page, file, file);
   if (errors.length) problems.push(`${file}: ${errors.join(' | ')}`);
   await page.close();
@@ -91,8 +103,11 @@ const vault = async (width: number, height: number, file: string) => {
 };
 
 await home(390, 844, 'home-mobile.png');
+await home(360, 800, 'home-small-mobile.png');
 await home(1280, 800, 'home-desktop.png');
+await home(1440, 900, 'home-wide-desktop.png');
 await duel(390, 844, 'duel-mobile.png');
+await duel(360, 800, 'duel-small-mobile.png');
 await duel(1280, 800, 'duel-desktop.png');
 await market(390, 844, 'market-mobile.png');
 await market(1280, 800, 'market-desktop.png');
@@ -108,7 +123,7 @@ await page.locator('a[href="#/duel"]:visible').first().click();
 await page.click('#begin-duel');
 await page.click('.lot');
 await page.click('[data-act="lock-bid"]');
-await page.waitForSelector('.log');
+await page.locator('.log').first().waitFor({ state: 'attached' });
 await page.locator('a[href="#/market"]:visible').first().click();
 await page.click('[data-act="buy"]');
 await page.click('[data-act="advance"]');
@@ -122,7 +137,7 @@ const decoded = decodeSave(raw);
 if (!decoded || decoded.profile.inventory.length < 1) problems.push('the loop did not keep a purchase');
 await page.reload({ waitUntil: 'networkidle' });
 const still = await page.locator('[data-screen]').getAttribute('data-screen');
-const balance = await page.locator('.funds').innerText();
+const balance = await page.locator('.funds:visible').first().innerText();
 if (balance.includes('2,400')) problems.push(`reload did not keep the purchase: ${balance}`);
 if (loop.errors.length) problems.push(`loop: ${loop.errors.join(' | ')}`);
 console.log(JSON.stringify({ screen: still, balance, problems }, null, 2));

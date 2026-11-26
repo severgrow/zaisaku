@@ -1,0 +1,129 @@
+{
+  "version": 1,
+  "units": {
+    "tile": 32,
+    "actor": {
+      "width": 24,
+      "height": 32
+    },
+    "sourceScale": 2
+  },
+  "rules": {
+    "camera": "fixed angled top-down orthographic, visible upper surfaces and vertical faces; directional art drawn correctly",
+    "palette": "Vey living ceramic, Oru green-grey alloy, Sera controlled amber; regional variation allowed",
+    "status": "candidate only until reviewed",
+    "source": "GPT image generation; no baked ground or UI text; separate opaque collision footprint from overhang"
+  },
+  "packs": [
+    {
+      "id": "A01",
+      "priority": 1,
+      "title": "Architecture scale calibration",
+      "status": "in-game validated candidate",
+      "assets": [
+        {
+          "id": "exchange-south",
+          "footprint": [
+            9,
+            6
+          ],
+          "facing": "s"
+        },
+        {
+          "id": "research-south",
+          "footprint": [
+            9,
+            6
+          ],
+          "facing": "s"
+        },
+        {
+          "id": "duel-east",
+          "footprint": [
+            6,
+            5
+          ],
+          "facing": "e"
+        },
+        {
+          "id": "auction-west",
+          "footprint": [
+            6,
+            5
+          ],
+          "facing": "w"
+        },
+        {
+          "id": "residence-north",
+          "footprint": [
+            8,
+            4
+          ],
+          "facing": "n"
+        }
+      ],
+      "acceptance": "Show 32px actor next to each building; doors visually fit human, roof mass and height believable; entrance coordinates remain unchanged; create separated roof/foreground where needed.",
+      "progress": "Two south-facing source shells and three direction-specific modular shells. Creator review of the scale and silhouette is pending. Separate Pack 11 archive has not been located."
+    },
+    {
+      "id": "A02",
+      "priority": 2,
+      "title": "Inhabited plaza",
+      "status": "in-game validated candidate",
+      "assets": [
+        "market-stall",
+        "notice-board",
+        "bench",
+        "tree",
+        "planter",
+        "low-wall",
+        "paving-inlay",
+        "lamp",
+        "crates",
+        "contact-shadow"
+      ],
+      "acceptance": "Reconcile existing approved Pack 08B first; cluster around edges, retain open central routes.",
+      "progress": "Central Sera instrument, north courtyard, grouped cargo, accessible thresholds, native planting, bench and Pack 08B notice board. ZA-ENV-UTILITY-DETAILS-80 source archive pending transfer."
+    },
+    {
+      "id": "A03",
+      "priority": 3,
+      "title": "Residence and interiors",
+      "status": "in-game validated candidate",
+      "assets": [
+        "bed",
+        "workbench",
+        "storage",
+        "display-cabinet",
+        "rug",
+        "lamp",
+        "wall-shelves"
+      ],
+      "acceptance": "Reuse existing Pack 10 furniture where suitable; no obstruction of entrances or displays.",
+      "progress": "Sleeping alcove, domestic terminal, Pack 10 bedside storage and paper press. Displays remain attached to inventory instance IDs."
+    },
+    {
+      "id": "A04",
+      "priority": 4,
+      "title": "District atmosphere",
+      "status": "in-game validated candidate",
+      "assets": [
+        "warm-window",
+        "lantern-glow",
+        "canopy-shadow",
+        "ambient-dust",
+        "signage-emblems",
+        "edge-details"
+      ],
+      "acceptance": "Subtle, readable, reduced-motion safe, no heavy overlays.",
+      "progress": "Local lamp and plant light, shared contact shadows, roof course shading, depth ordering and reduced-motion atmosphere."
+    }
+  ],
+  "governance": {
+    "constitution": "docs/ZAISAKU-ART-CONSTITUTION.md",
+    "references": "docs/art-direction/canonical-references/",
+    "referenceStatus": "five unchanged original PNGs and SHA256SUMS committed",
+    "previous30": "quarantined; no runtime promotion",
+    "qualityGate": "compare actual gameplay with canonical targets; preserve approved assets"
+  }
+}

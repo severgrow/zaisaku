@@ -1,15 +1,17 @@
 # Asset specification
 
-These sizes are the logical cells. Pack 02’s pictures are the double-resolution files in `web/public/mineral/`, drawn into those cells with nearest-neighbour. They stay `temporary` until the screenshots are approved. The untouched pack is `assets/mineral-analog-02/`.
+The [Art & Design Constitution](ZAISAKU-ART-CONSTITUTION.md) and [canonical references](art-direction/canonical-references/README.md) govern this implementation.
+
+These sizes are the logical cells. Pack 04 floors and architecture are the 64px files in `web/public/mineral/`, drawn into those cells with nearest-neighbour. Pack 02 characters and loose props stay beside them. Everything stays `temporary` until the screenshots are approved. Source archives are on `art/mineral-analog-packs`, not in the production bundle.
 
 | Kind | Pixels | Notes |
 | --- | --- | --- |
 | Terrain tile | 32 × 32 | Origin top-left in the grid |
 | Character | 24 × 32 | Origin bottom-centre. Four directions, four walk frames |
 | Common object | 32 × 32 | Origin bottom-centre |
-| Collectible plate | 64 × 64 | Inventory and catalogue. Not drawn in the world yet |
+| Collectible plate | 64 × 64 | Asset used in physical displays |
 | Inspection | 128 × 128 | Only when a prop needs it |
-| Furniture and architecture | Multiples of 32 | Current kit is one tile per piece |
+| Furniture and architecture | Variable | Modular pieces use the terrain grid. Standalone props declare display bounds and footprints separately. |
 
 ## Drawing rules
 
@@ -17,9 +19,9 @@ Chunky clusters. Three or four shades of a material. Strong silhouette. Limited 
 
 ## Manifest
 
-`src/world/assets.ts` lists every world record with `id`, `category`, `width`, `height`, `status`, and anchor. `status` is `temporary` or `approved`. `validateManifest` rejects a size that does not match the category.
+`src/world/assets.ts` lists every world record with `id`, `category`, `width`, `height`, `status`, and anchor. `status` is `temporary` or `approved`. The manifest supports tile-based defaults and explicit dimensions for individually scaled candidate sprites.
 
-`src/world/artwork.ts` gives each catalogue object one `pixelKey` and keeps its existing `artworkRef` SVG. The world currently draws a shared category plate for a displayed object. The unique key is already reserved so one approved PNG can replace that object without a second identity.
+`src/world/artwork.ts` gives each catalogue object one `pixelKey` and keeps its existing `artworkRef`. All 36 objects have a temporary PNG. The interface uses the 128-pixel plates. Physical displays use the 64-pixel exports of the same illustrations. Status stays `temporary` until the screenshots are approved.
 
 ## Filenames
 

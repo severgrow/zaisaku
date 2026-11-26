@@ -1,9 +1,26 @@
 import { describe, expect, it } from 'vitest';
 import { ASSET_MANIFEST, chromaKey, readPngSize, sliceGrid, validateManifest } from '../src/world/assets.js';
 import { ARTWORK } from '../src/world/artwork.js';
+import { thresholdFor } from '../src/world/fixtures.js';
 import { buildDistrict, buildResidence, LOCATIONS, poseFor } from '../src/world/locations.js';
+import {
+  ceramicTransitionKeys,
+  cornerDiagonal,
+  eaveFiles,
+  floorKey,
+  floorMaterial,
+  glassItemOffset,
+  openingFile,
+  pieceFile,
+  stepOf,
+  DIRS,
+  DIAGONALS,
+  type Dir,
+  type FloorMaterial,
+} from '../src/world/connectors.js';
 import { MATERIALS } from '../src/world/materials.js';
 import { feetOf, inRange, move, reachable, wish } from '../src/world/movement.js';
+import { TILE } from '../src/world/tiles.js';
 import { PALETTES } from '../src/world/palettes.js';
 import { ringRadius } from '../src/world/resonance.js';
 import { defaultWorld, GATE, reconcileDisplays } from '../src/world/state.js';
@@ -24,6 +41,46 @@ describe('district foundations', () => {
     expect(validateManifest(ASSET_MANIFEST)).toEqual([]);
     expect(new Set(ARTWORK.map((item) => item.pixelKey)).size).toBe(ARTWORK.length);
     expect(ARTWORK.every((item) => item.status === 'temporary' && item.svgRef.length > 0)).toBe(true);
+    expect(ARTWORK.filter((item) => item.plateFile).map((item) => item.definitionId).sort()).toEqual([
+      'amber-hourglass',
+      'blue-fault',
+      'bone-dice',
+      'catalogue-eye',
+      'closed-city',
+      'counterfeit-seal',
+      'cracked-saucer',
+      'dream-receiver',
+      'dust-telescope',
+      'eclipse-monocle',
+      'glass-saint',
+      'green-filter',
+      'kiln-ghost',
+      'late-bell',
+      'memory-lens',
+      'moon-clock',
+      'mute-candle',
+      'null-magnet',
+      'orchid-vessel',
+      'paper-charm',
+      'pocket-static',
+      'prism-ticket',
+      'red-box',
+      'red-coil',
+      'saltwater-watch',
+      'second-mouth',
+      'silent-telephone',
+      'spare-key',
+      'station-pendulum',
+      'tea-for-nobody',
+      'tomorrow-receiver',
+      'travellers-weight',
+      'twin-left',
+      'twin-right',
+      'white-jar',
+      'wire-hymnal',
+    ]);
+    expect(ARTWORK.every((item) => item.plateFile === `catalogue/item-${item.definitionId}.png`)).toBe(true);
+    expect(ASSET_MANIFEST.every((item) => item.status === 'temporary')).toBe(true);
     const goals = ['ivo', 'ness', 'archivist', 'stall', 'research-door', 'duel-door', 'auction-door', 'to-residence'] as const;
     for (const id of goals) {
       const actor = district.actors.find((item) => item.id === id) ?? district.exits.find((item) => item.id === id);
@@ -83,6 +140,158 @@ describe('asset pipeline', () => {
     const spec = { id: 't', rings: 3, periodMs: 1000, color: '#d29a3a', maxRadius: 18, meaning: '' };
     expect(ringRadius(spec, 0, 0)).toBeGreaterThan(0);
     expect(ringRadius(spec, 0, 1000)).toBeCloseTo(ringRadius(spec, 0, 0), 5);
+  });
+});
+
+describe('pack 04 connectors', () => {
+  it('names corners, tees and openings the way the manifest does', () => {
+    expect(pieceFile('wall', ['n', 'w'], 'outer')).toBe('wall-outer-wn.png');
+    expect(pieceFile('wall', ['n', 'w'], 'inner')).toBe('wall-inner-wn.png');
+    expect(pieceFile('wall', ['n', 's', 'w'], 'outer')).toBe('wall-t-swn.png');
+    expect(pieceFile('wall', ['n', 'e', 'w'], 'outer')).toBe('wall-t-wne.png');
+    expect(pieceFile('wall', ['n', 'e', 's', 'w'], 'outer')).toBe('wall-cross.png');
+    expect(pieceFile('roof', ['e', 's'], 'outer')).toBe('roof-corner-es.png');
+    expect(pieceFile('roof', ['n', 'e', 's'], 'outer')).toBe('roof-straight-ns.png');
+    expect(pieceFile('roof', ['e', 's', 'w'], 'outer')).toBe('roof-straight-ew.png');
+    expect(pieceFile('rail', ['e', 'w'], 'inner')).toBe('rail-straight-ew.png');
+    expect(openingFile('door', ['e', 'w'])).toBe('door-frame-open.png');
+    expect(openingFile('window', ['n', 's'])).toBeNull();
+    expect(openingFile('door', ['n', 's'], 'e')).toBe('door-frame-open-e.png');
+    expect(openingFile('door', ['n', 's'], 'w')).toBe('door-frame-open-w.png');
+    expect(openingFile('window', ['n', 's'], 'e')).toBe('window-frame-open-e.png');
+    expect(openingFile('window', ['n', 's'], 'w')).toBe('window-frame-open-w.png');
+    expect(eaveFiles(['e', 'w'], false)).toEqual({ roof: 'roof-straight-ew-bottom.png', bridge: true });
+    expect(eaveFiles(['n', 'e', 'w'], false)).toEqual({ roof: 'roof-straight-ew-bottom.png', bridge: true });
+    expect(eaveFiles(['e', 'w'], true)).toEqual({ roof: 'roof-straight-ew.png', bridge: false });
+    expect(eaveFiles(['n', 'e'], false).bridge).toBe(false);
+    expect(glassItemOffset(64)).toEqual({ x: 0, y: -18, size: 20 });
+    expect(cornerDiagonal(['e', 's'])).toEqual({ x: 1, y: 1 });
+    expect(cornerDiagonal(['n', 's'])).toBeNull();
+  });
+
+  it('uses straight and corner transitions from the neighbor sides', () => {
+    expect(floorKey('bone-ceramic', { n: 'mineral-paving', e: 'bone-ceramic', s: 'bone-ceramic', w: 'bone-ceramic' })).toBe(
+      'bone-ceramic-to-mineral-paving-n',
+    );
+    expect(floorKey('bone-ceramic', { n: 'mineral-paving', e: 'mineral-paving' }, { ne: 'mineral-paving' })).toBe(
+      'bone-ceramic-to-mineral-paving-outer-ne',
+    );
+    expect(floorKey('bone-ceramic', { s: 'mineral-paving', w: 'mineral-paving' }, { sw: 'mineral-paving' })).toBe(
+      'bone-ceramic-to-mineral-paving-outer-sw',
+    );
+    expect(floorKey('bone-ceramic', { n: 'bone-ceramic', e: 'bone-ceramic', s: 'bone-ceramic', w: 'bone-ceramic' }, { ne: 'mineral-paving' })).toBe(
+      'bone-ceramic-to-mineral-paving-inner-ne',
+    );
+    expect(floorKey('bone-ceramic', { e: 'resonance-path' })).toBe('bone-ceramic-to-resonance-path-e');
+    expect(floorKey('bone-ceramic', { n: 'resonance-path', w: 'resonance-path' }, { nw: 'resonance-path' })).toBe(
+      'bone-ceramic-to-resonance-path-outer-wn',
+    );
+    expect(floorKey('bone-ceramic', { n: 'mineral-paving', e: 'resonance-path' })).toBe('floor-bone-ceramic');
+    expect(floorKey('bone-ceramic', { n: 'mineral-paving', s: 'mineral-paving' })).toBe('floor-bone-ceramic');
+    expect(floorKey('mineral-paving', { w: 'soil' })).toBe('mineral-paving-to-soil-w');
+    expect(floorKey('resonance-path', { n: 'mineral-paving' })).toBe('floor-resonance-path');
+    expect(floorKey('interior-floor', {})).toBe('floor-interior-floor');
+    const keys = new Set(ceramicTransitionKeys());
+    expect(keys.has('bone-ceramic-to-resonance-path-outer-es')).toBe(true);
+    expect(keys.has('bone-ceramic-to-mineral-paving-inner-wn')).toBe(true);
+  });
+
+  it('follows District 01 neighbors and preserves validated material joins', () => {
+    const district = buildDistrict();
+    const at = (x: number, y: number): string => {
+      const neighbors: Partial<Record<Dir, FloorMaterial | null>> = {};
+      const diagonals: Partial<Record<'ne' | 'es' | 'sw' | 'nw', FloorMaterial | null>> = {};
+      for (const dir of DIRS) {
+        const step = stepOf(dir);
+        neighbors[dir] = floorMaterial(district.id, district.tiles[y + step.y]?.[x + step.x] ?? null);
+      }
+      for (const diag of DIAGONALS) diagonals[diag.corner] = floorMaterial(district.id, district.tiles[y + diag.y]?.[x + diag.x] ?? null);
+      return floorKey(floorMaterial(district.id, district.tiles[y]![x]!) ?? 'mineral-paving', neighbors, diagonals);
+    };
+    expect(at(10, 1)).toBe('bone-ceramic-to-mineral-paving-outer-ne');
+    expect(at(2, 6)).toBe('bone-ceramic-to-mineral-paving-outer-sw');
+    expect(at(3, 1)).toBe('bone-ceramic-to-mineral-paving-n');
+    const pathJoins: string[] = [];
+    for (let y = 0; y < district.height; y += 1) {
+      for (let x = 0; x < district.width; x += 1) {
+        const key = at(x, y);
+        if (key.includes('resonance-path') && key.startsWith('bone-ceramic')) pathJoins.push(`${x},${y}`);
+      }
+    }
+    expect(pathJoins).toEqual([]);
+    const home = buildResidence();
+    expect(floorMaterial(home.id, home.tiles[1]![1]!)).toBe('residence-inlay');
+  });
+});
+
+describe('pack 09 placement', () => {
+  it('lays a threshold only where the entrance step is the resonance path', () => {
+    const ground = [
+      [TILE.ground, TILE.ground],
+      [TILE.ground, TILE.ground],
+    ];
+    expect(thresholdFor(ground, { facing: 'e', doorTx: 0, doorTy: 0, frontTx: 0, frontTy: 0 })).toBeNull();
+    const path = [
+      [TILE.ground, TILE.ground],
+      [TILE.path, TILE.ground],
+    ];
+    const laid = thresholdFor(path, { facing: 's', doorTx: 0, doorTy: 0, frontTx: 0, frontTy: 0 });
+    expect(laid?.file).toBe('threshold-s');
+    expect(laid?.tx).toBe(0);
+    expect(laid?.ty).toBe(1);
+    expect(laid?.footprint).toEqual([]);
+    expect(laid?.occludes).toBeUndefined();
+  });
+
+  it('keeps furniture off doors and leaves an approach', () => {
+    const district = buildDistrict();
+    const home = buildResidence();
+    const door = district.actors.find((actor) => actor.id === 'duel-door');
+    const terminals = district.fixtures.filter((fixture) => fixture.role === 'terminal');
+    expect(terminals).toHaveLength(1);
+    expect(terminals[0]?.file).toBe('duel-door-terminal');
+    expect(terminals[0]?.tx).toBe(door?.tx);
+    expect(terminals[0]?.ty).toBe(door?.ty);
+    expect(terminals[0]?.footprint).toEqual([]);
+    expect(district.solid[terminals[0]!.approach!.ty]?.[terminals[0]!.approach!.tx]).toBe(false);
+    expect(reachable(district.solid, GATE, terminals[0]!.approach!)).toBe(true);
+
+    const thresholds = district.fixtures.filter((fixture) => fixture.role === 'threshold');
+    expect(thresholds.map((fixture) => fixture.file).sort()).toEqual(['threshold-e', 'threshold-n', 'threshold-s', 'threshold-s', 'threshold-w']);
+    for (const fixture of thresholds) {
+      expect(district.tiles[fixture.ty]?.[fixture.tx]).toBe(TILE.path);
+      expect(district.solid[fixture.ty]?.[fixture.tx]).toBe(false);
+    }
+    expect(home.fixtures.some((fixture) => fixture.role === 'threshold')).toBe(false);
+    expect(home.fixtures.map((fixture) => fixture.file).sort()).toEqual([
+      'bedside-cabinet', 'chair', 'domestic-terminal', 'low-table', 'paper-rack', 'sleeping-alcove',
+      'standing-lamp', 'wall-lamp', 'wall-lamp', 'work-bench',
+    ]);
+
+    for (const place of [district, home]) {
+      const spawn = place.id === 'residence' ? { tx: 7, ty: 6 } : GATE;
+      for (const fixture of place.fixtures) {
+        if (fixture.role === 'ground') expect(fixture.footprint).toEqual([]);
+        if (fixture.occludes) expect(fixture.h).toBeGreaterThan(32);
+        for (const foot of fixture.footprint) {
+          expect(place.tiles[foot.ty]?.[foot.tx]).not.toBe(TILE.door);
+          expect(place.tiles[foot.ty]?.[foot.tx]).not.toBe(TILE.window);
+          expect(place.exits.some((exit) => exit.tx === foot.tx && exit.ty === foot.ty)).toBe(false);
+        }
+        if (!fixture.approach) continue;
+        expect(place.solid[fixture.approach.ty]?.[fixture.approach.tx]).toBe(false);
+        expect(reachable(place.solid, spawn, fixture.approach)).toBe(true);
+      }
+    }
+
+    const shared = home.actors.filter((actor) =>
+      home.fixtures.some((fixture) => fixture.footprint.some((foot) => foot.tx === actor.tx && foot.ty === actor.ty)),
+    );
+    expect(shared.map((actor) => actor.id)).toEqual(['bed']);
+    expect(home.solid[6]?.[7]).toBe(false);
+    expect(ASSET_MANIFEST.some((item) => item.id === 'window-glass' || item.id === 'preview')).toBe(false);
+    expect(ASSET_MANIFEST.filter((item) => item.id.startsWith('threshold-')).every((item) => item.status === 'temporary')).toBe(true);
+    expect(ASSET_MANIFEST.find((item) => item.id === 'duel-door-terminal')?.status).toBe('temporary');
   });
 });
 

@@ -1,3 +1,6 @@
+import type { Fixture } from './fixtures.js';
+import type { Shell } from './stamp.js';
+
 export type Facing = 'n' | 'e' | 's' | 'w';
 
 export type InteractionKind =
@@ -77,6 +80,9 @@ export interface LocationDef {
   spawns: Record<string, Spawn>;
   exits: ExitDef[];
   actors: ActorDef[];
+  /** Props, thresholds and foreground. Footprints are already copied into `solid`. */
+  fixtures: readonly Fixture[];
+  buildings?: readonly (Shell & { id: string })[];
   resonance: { tx: number; ty: number } | null;
   audioBed: string | null;
   blurb: string;

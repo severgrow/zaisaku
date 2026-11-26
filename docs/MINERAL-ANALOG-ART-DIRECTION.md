@@ -1,8 +1,10 @@
 # Mineral Analog
 
+The [Art & Design Constitution](ZAISAKU-ART-CONSTITUTION.md) and [canonical references](art-direction/canonical-references/README.md) govern this implementation.
+
 Mineral Analog is the art direction for Zuisaku. The planet is not a reskin of Earth and not a reskin of Japan. Uniqueness is meant to come from shapes, materials, and behaviour. Graphical density stays low so a solo creator can extend it with generated sprites.
 
-The Confidential Creator Bible and the five Mineral Analog mockups were not in this workspace. Nothing from them was invented into the repository. Player-facing lines stay ordinary. Unapproved lore is not shipped.
+The five creator-supplied visual targets are checked in with their original filenames and SHA-256 checksums. Player-facing lines stay ordinary and follow the established setting.
 
 ## Perspective
 
@@ -12,7 +14,7 @@ One camera, for every future sprite:
 - Square 32×32 terrain.
 - Front and roof both readable. No rotating camera, no isometric axes, no 3D.
 - Feet at the bottom centre of a sprite. Depth is the foot line.
-- Integer zoom. Nearest-neighbour. No mixed side-view and top-down sheets.
+- Nearest-neighbour sampling at stepped zoom levels, with a wider initial view on narrow screens. No mixed side-view and top-down sheets.
 
 ## Materials
 
@@ -42,7 +44,9 @@ About 70% of what a player sees is a settlement doing ordinary work: paths, door
 
 ## What the pictures are
 
-World Mode draws Mineral Analog pack 02. The 32px reductions lose the mineral detail, so the game uses the 64px alternatives and scales them onto the existing 32px grid. At the normal camera zoom that is one source pixel per screen pixel. Player frames are 48×64, shown at 24×32, four directions and four walk steps. Ivo, Ness and the Archivist have four idle facings and do not walk. The manifest status is still `temporary`. The procedural painters in `web/src/world/art.ts` remain only if a file fails to load.
+World Mode draws Mineral Analog pack 04 floors, straight transitions, and connected walls, roofs and door frames on the existing 32px grid. The textures are 64px and the camera zoom is 2, so one source pixel is one screen pixel. Pack 02 still supplies the player walk cycle and the three NPC facings: 48×64 frames shown at 24×32, origin at the bottom centre. Sixteen catalogue plates use the existing definition ids; every other object keeps its SVG plate. Empty shelves draw the owned picture on top. The manifest status is still `temporary`. The procedural painters in `web/src/world/art.ts` remain only if a file fails to load.
+
+Numbered packs live on `art/mineral-analog-packs` under `art-packs/`. Runtime and source stay in separate archives, each at most 10 MB, with a checksum, and a later pack does not replace an earlier file. Source sheets stay out of `web/public`.
 
 ## Avoid
 

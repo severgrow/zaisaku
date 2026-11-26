@@ -1,0 +1,3 @@
+/* Mineral Analog / quiet instrument. No fonts bundled. */
+.za-ui { --za-bg:#202420; --za-surface:#292e28; --za-raised:#383f35; --za-line:#50574b; --za-ink:#e4dcc8; --za-muted:#b4b8a9; --za-bone:#d5c8ae; --za-amber:#d6ae68; --za-danger:#84544e; --za-radius:10px; --za-gap:12px; --za-font:system-ui,sans-serif; --za-number-font:var(--za-font); color:var(--za-ink); font-family:var(--za-font); color-scheme:dark; }
+.za-ui[data-theme="mineral"] { background:var(--za-bg); }

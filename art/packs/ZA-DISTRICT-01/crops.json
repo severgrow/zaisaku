@@ -1,0 +1,211 @@
+{
+  "sourceSha256": "58554f2d0aff61eb43d52b16f4e8a72379819abf44d912b75fc424f67674a96b",
+  "assets": [
+    {
+      "id": "exchange-south",
+      "sheet": "zaisaku_building_sprite_sheet.png",
+      "crop": [
+        0,
+        0,
+        435,
+        380
+      ],
+      "size": [
+        286,
+        220
+      ],
+      "pivot": [
+        162,
+        220
+      ],
+      "facing": "s"
+    },
+    {
+      "id": "research-south",
+      "sheet": "zaisaku_building_sprite_sheet.png",
+      "crop": [
+        1165,
+        438,
+        1585,
+        793
+      ],
+      "size": [
+        284,
+        192
+      ],
+      "pivot": [
+        131,
+        192
+      ],
+      "facing": "s"
+    },
+    {
+      "id": "sleeping-alcove",
+      "sheet": "mineral_analog_interior_sprite_sheet.png",
+      "crop": [
+        15,
+        18,
+        445,
+        390
+      ],
+      "size": [
+        61,
+        52
+      ]
+    },
+    {
+      "id": "disc-tree",
+      "sheet": "a_clean_png_spritesheet_on_a_transparent_checkerbo.png",
+      "crop": [
+        25,
+        565,
+        274,
+        803
+      ],
+      "size": [
+        49,
+        56
+      ]
+    },
+    {
+      "id": "veinflora-planter",
+      "sheet": "a_clean_png_spritesheet_on_a_transparent_checkerbo.png",
+      "crop": [
+        1020,
+        562,
+        1250,
+        803
+      ],
+      "size": [
+        42,
+        38
+      ]
+    },
+    {
+      "id": "wall-lamp",
+      "sheet": "a_clean_png_spritesheet_on_a_transparent_checkerbo.png",
+      "crop": [
+        1020,
+        12,
+        1260,
+        285
+      ],
+      "size": [
+        20,
+        24
+      ]
+    },
+    {
+      "id": "roof-vent",
+      "sheet": "a_clean_png_spritesheet_on_a_transparent_checkerbo.png",
+      "crop": [
+        28,
+        290,
+        269,
+        550
+      ],
+      "size": [
+        37,
+        25
+      ]
+    },
+    {
+      "id": "sera-instrument",
+      "sheet": "mineral_tech_pixel_asset_collection.png",
+      "crop": [
+        1180,
+        400,
+        1565,
+        780
+      ],
+      "size": [
+        49,
+        49
+      ]
+    },
+    {
+      "id": "domestic-terminal",
+      "sheet": "mineral_analog_interior_sprite_sheet.png",
+      "crop": [
+        1540,
+        405,
+        1960,
+        790
+      ],
+      "size": [
+        54,
+        43
+      ]
+    },
+    {
+      "id": "ceramic-panel",
+      "sheet": "a_clean_png_spritesheet_on_a_transparent_checkerbo.png",
+      "crop": [
+        294,
+        16,
+        581,
+        285
+      ],
+      "size": [
+        72,
+        33
+      ]
+    },
+    {
+      "id": "service-hatch",
+      "sheet": "a_clean_png_spritesheet_on_a_transparent_checkerbo.png",
+      "crop": [
+        790,
+        16,
+        1015,
+        285
+      ],
+      "size": [
+        36,
+        31
+      ]
+    },
+    {
+      "id": "observation-window",
+      "sheet": "a_clean_png_spritesheet_on_a_transparent_checkerbo.png",
+      "crop": [
+        20,
+        13,
+        290,
+        285
+      ],
+      "size": [
+        49,
+        40
+      ]
+    },
+    {
+      "id": "conduit-elbow",
+      "sheet": "a_clean_png_spritesheet_on_a_transparent_checkerbo.png",
+      "crop": [
+        1276,
+        12,
+        1520,
+        285
+      ],
+      "size": [
+        48,
+        35
+      ]
+    },
+    {
+      "id": "market-stall",
+      "sheet": "mineral_tech_pixel_asset_collection.png",
+      "crop": [
+        390,
+        400,
+        790,
+        782
+      ],
+      "size": [
+        48,
+        43
+      ]
+    }
+  ]
+}

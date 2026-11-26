@@ -2,6 +2,11 @@ import type { Facing } from './types.js';
 import { TILE } from './tiles.js';
 
 export interface Shell {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  facing: Facing;
   doorTx: number;
   doorTy: number;
   frontTx: number;
@@ -38,5 +43,5 @@ export const stampShell = (tiles: number[][], x0: number, y0: number, w: number,
   const frontTy = front[1]!;
   const frontTx = front[0]!;
   if (tiles[frontTy]?.[frontTx] === TILE.ground) tiles[frontTy]![frontTx] = TILE.awning;
-  return { doorTx, doorTy, frontTx, frontTy };
+  return { x: x0, y: y0, w, h, facing: door, doorTx, doorTy, frontTx, frontTy };
 };

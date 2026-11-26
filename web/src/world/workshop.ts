@@ -1,13 +1,14 @@
 import { ASSET_MANIFEST } from '../../../src/world/assets.js';
+import { ARTWORK } from '../../../src/world/artwork.js';
 import { DISTRICT_RESONANCE, ringRadius } from '../../../src/world/resonance.js';
-import { MINERAL_TILES, NPCS, PLAYER_FACINGS, mineralUrl, npcFile, playerFile } from './mineral.js';
+import { ARCHITECTURE_FILES, DISTRICT_FILES, EVERYDAY_FILES, FLOOR_FILES, FURNITURE_FILES, INSTRUMENT_FILES, MINERAL_TILES, NPCS, PLAYER_FACINGS, TRANSITION_FILES, mineralUrl, npcFile, playerFile } from './mineral.js';
 
 /** Developer preview. Canvas only, so it does not start a second Phaser game. */
 
 export const workshopScreen = (): string => `
   <p class="kicker">Development</p>
   <h1>Asset workshop</h1>
-  <p class="lede">Mineral Analog pack 02. Still temporary until you approve the screenshots. Each sprite is shown at its 64px source and at the 32px cell it occupies.</p>
+  <p class="lede">Mineral Analog pack 04 floors and walls, pack 07 plates and joins, and pack 09 everyday props. Still temporary until you approve the screenshots. Characters and loose props remain pack 02. Each sprite is shown at its source size and at half size.</p>
   <div data-workshop class="workshop"></div>
 `;
 
@@ -28,25 +29,35 @@ export const mountWorkshop = (): void => {
   grid.className = 'sheet-grid';
   root.append(grid);
   const files = [
+    ...Object.values(FLOOR_FILES),
+    ...Object.values(TRANSITION_FILES),
+    ...ARCHITECTURE_FILES.map((file) => `architecture/${file}`),
+    ...Object.values(FURNITURE_FILES),
+    ...ARTWORK.flatMap((item) => (item.plateFile ? [item.plateFile] : [])),
     ...Object.values(MINERAL_TILES),
+    ...Object.values(EVERYDAY_FILES),
+    ...Object.values(DISTRICT_FILES),
+    ...Object.values(INSTRUMENT_FILES),
     ...PLAYER_FACINGS.flatMap((facing) => [0, 1, 2, 3].map((frame) => playerFile(facing, frame))),
     ...NPCS.flatMap((id) => PLAYER_FACINGS.map((facing) => npcFile(id, facing))),
   ];
-  let placed = 0;
   const pen = grid.getContext('2d');
   if (pen) pen.imageSmoothingEnabled = false;
+  const paving = new Image();
+  paving.onload = () => {
+    if (!pen) return;
+    for (let y = 0; y < 3; y += 1) {
+      for (let x = 0; x < 3; x += 1) pen.drawImage(paving, x * 64, y * 64, 64, 64);
+    }
+  };
+  paving.src = mineralUrl('floors/floor-mineral-paving.png');
   for (const file of files) {
     const image = new Image();
     image.onload = () => {
       sheet.append(scaled(image, image.width), scaled(image, Math.max(1, Math.round(image.width / 2))));
-      if (pen && placed < 16 && file.startsWith('terrain')) {
-        const col = placed % 8;
-        pen.drawImage(image, col * 64, file.includes('path') ? 64 : 0, 64, 64);
-        placed += 1;
-      }
       if (pen && file.startsWith('player-s')) {
         const frame = Number(file.at(-5));
-        if (!Number.isNaN(frame)) pen.drawImage(image, frame * 48, 160);
+        if (!Number.isNaN(frame)) pen.drawImage(image, frame * 48, 192);
       }
     };
     image.src = mineralUrl(file);

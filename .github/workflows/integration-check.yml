@@ -1,0 +1,73 @@
+name: ZAISAKU integration checks
+
+on:
+  push:
+    branches:
+      - codex/za-integrated-2026-11-26
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Typecheck and unit tests
+        run: npm run check
+      - name: Catalogue and artwork integrity
+        run: |
+          npm run catalogue
+          npm run assets
+      - name: Build web client
+        run: npm run web:build
+      - name: Browser gameplay and responsive captures
+        env:
+          E2E_OUT: /tmp/zaisaku-e2e
+        run: |
+          which google-chrome
+          npx tsx web/e2e/nav-proof.ts
+      - name: Economy and duel visual journeys
+        env:
+          E2E_OUT: /tmp/zaisaku-e2e
+        run: npx tsx web/e2e/shots.ts
+      - name: Capture District 01 architecture, residence and courtyards
+        env:
+          E2E_OUT: /tmp/zaisaku-e2e
+        run: npx tsx web/e2e/pack10-shots.ts
+      - name: Collecting, persistence and six-round duel journeys
+        env:
+          E2E_OUT: /tmp/zaisaku-e2e
+          PLAYWRIGHT_BROWSERS_PATH: /tmp/zaisaku-browser-tools
+        run: |
+          if npx playwright-core install ffmpeg; then export E2E_RECORD=1; fi
+          npx tsx web/e2e/journeys.ts
+      - name: Measure browser startup, frames and world lifecycle
+        env:
+          E2E_OUT: /tmp/zaisaku-e2e
+        run: npx tsx web/e2e/performance.ts
+      - name: Preserve actual gameplay captures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zaisaku-browser-captures
+          path: /tmp/zaisaku-e2e/
+          if-no-files-found: ignore
+          retention-days: 30
+      - name: Preserve the playable production build
+        uses: actions/upload-artifact@v4
+        with:
+          name: zaisaku-playable
+          path: web/dist/
+          if-no-files-found: error
+          retention-days: 30
