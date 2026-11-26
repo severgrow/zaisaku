@@ -1,11 +1,7 @@
 import { esc, zai } from '../ui/text.js';
-<<<<<<< HEAD
 import { mineralUrl } from './mineral.js';
-import type { Session, TalkFocus } from '../session.js';
-=======
 import { icon } from '../ui/icon.js';
-import type { Session } from '../session.js';
->>>>>>> 51fa89f56fd8c15a749a158166f0f2f4a730a2dc
+import type { Session, TalkFocus } from '../session.js';
 import { auctionScreen } from '../view/auction.js';
 import { contractsScreen, marketScreen, vaultScreen } from '../view/market.js';
 import { definition } from '../../../src/engine/definitions.js';
@@ -19,13 +15,7 @@ export const worldHud = (session: Session): string => {
         <a class="za-btn" data-kind="quiet" href="#/">${icon('home')}<span>Terminal</span></a>
         <button class="za-btn" data-kind="quiet" type="button" data-act="world-vault">${icon('vault')}<span>Vault</span></button>
       </div>
-<<<<<<< HEAD
       <p class="prompt" data-prompt aria-live="polite"></p>
-=======
-      <p class="prompt" data-prompt></p>
-      <div class="joy hud-hit" data-joy aria-label="Move"><span></span></div>
-      <button class="use za-hud-control hud-hit" type="button" data-act="world-interact">${icon('interact')}<span>Use</span></button>
->>>>>>> 51fa89f56fd8c15a749a158166f0f2f4a730a2dc
       ${panel(session)}
     </div>
   `;
@@ -74,15 +64,10 @@ const talkCard = (session: Session): string => {
 const panel = (session: Session): string => {
   if (session.panel === 'talk') return talkCard(session);
   if (!session.panel) return '';
-<<<<<<< HEAD
   const leave = session.focus ? 'Leave' : 'Close';
-  const close = `<button class="btn quiet" type="button" data-act="close-panel">${leave}</button>`;
-  const note = session.notice && !session.focus ? `<p class="notice" role="status">${esc(session.notice)}</p>` : '';
+  const close = `<header class="panel-bar"><button class="btn za-btn" data-kind="quiet" type="button" data-act="close-panel">${icon('close')}<span>${leave}</span></button></header>`;
+  const note = session.notice && !session.focus ? `<p class="notice za-notice" role="status">${esc(session.notice)}</p>` : '';
   const who = session.focus ? talkHead(session.focus) : '';
-=======
-  const close = `<header class="panel-bar"><button class="btn za-btn" data-kind="quiet" type="button" data-act="close-panel">${icon('close')}<span>Close</span></button></header>`;
-  const note = session.notice ? `<p class="notice za-notice" role="status">${esc(session.notice)}</p>` : '';
->>>>>>> 51fa89f56fd8c15a749a158166f0f2f4a730a2dc
   let body = '';
   if (session.panel === 'merchant') body = marketScreen(session);
   else if (session.panel === 'auction') body = auctionScreen(session);
