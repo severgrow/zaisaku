@@ -38,7 +38,7 @@ export const duelScreen = (session: Session): string => {
       <p class="kicker">Table</p>
       <h1>A sealed duel</h1>
       <p class="lede">Two collectors. ${1000} Zai each, kept apart from your vault. Six rounds, three objects, one hidden request. Highest net worth takes the table. Draws stand.</p>
-      <button class="btn primary" id="begin-duel" data-act="begin-duel">Sit down</button>
+      <button class="btn za-btn" data-kind="primary" id="begin-duel" data-act="begin-duel">Sit down</button>
       <p class="meta">Your opponent is Clerk Vesper, a house player. Simulated. Not a live person.</p>
     `;
   }
@@ -52,6 +52,7 @@ export const duelScreen = (session: Session): string => {
   const recess = asset('mobile-exchange-recess.png');
   const traySkin = asset('variable-object-tray.png');
   return `
+<<<<<<< HEAD
     <div class="instrument" style="--frame:url('${frame}');--recess:url('${recess}');--tray:url('${traySkin}')">
       <header class="instrument-clock">
         <span class="num">R${view.round}/${view.maxRounds}</span>
@@ -62,6 +63,29 @@ export const duelScreen = (session: Session): string => {
       <div class="exchange">
         <div class="exchange-body" aria-label="Objects on the table">
           ${view.offers.map((item) => offer(item, item.instanceId === session.selected)).join('') || '<p class="muted">The table is clear.</p>'}
+=======
+    <div class="status">
+      <span class="num">R${view.round}/${view.maxRounds}</span>
+      <span class="num amber" data-timer>${view.phase === 'decide' && !view.youLocked ? clock(session.clockMs) : '—'}</span>
+      <span>You <b class="num">${zai(view.cash)}</b></span>
+      <span class="muted">${esc(view.opponentName)} <b class="num">${zai(view.opponentCash)}</b></span>
+    </div>
+    <div class="board">
+      <div class="stack">
+        <section class="panel">
+          <p class="kicker">Your request · hidden from the other chair</p>
+          <h2>${esc(contract?.title ?? 'Sealed')}</h2>
+          <p class="meta">${esc(contract?.description ?? '')}</p>
+          <p class="num">${contract ? `${contract.progress} / ${contract.target}` : ''} · ${contract ? zai(contract.reward) : ''}</p>
+          <div class="meter" style="--p:${progress}"><span></span></div>
+        </section>
+        ${view.activeEvents.map((event) => `<p class="notice za-notice">${esc(event.name)}. ${esc(event.summary)}</p>`).join('')}
+        ${view.rumours.map((rumour) => `<p class="meta">${esc(rumour)}</p>`).join('')}
+        ${view.knowledge ? `<p class="teal">${esc(view.knowledge.name)}. ${esc(view.knowledge.summary)}</p>` : ''}
+        ${view.warnings.map((warning) => `<p class="burgundy">${esc(warning)}</p>`).join('')}
+        <div class="stack" aria-label="Objects on the table">
+          ${view.offers.map((item) => lot(item, item.instanceId === session.selected)).join('') || '<p class="muted">The table is clear.</p>'}
+>>>>>>> 51fa89f56fd8c15a749a158166f0f2f4a730a2dc
         </div>
       </div>
       <div class="instrument-hold">
@@ -73,6 +97,29 @@ export const duelScreen = (session: Session): string => {
           <p class="kicker">Across the table</p>
           ${tray(view.opponentInventory, session, false, 'Empty hands.')}
         </div>
+<<<<<<< HEAD
+=======
+        ${
+          view.phase === 'complete'
+            ? `<a class="btn za-btn" data-kind="primary" href="#/results">Read the result</a>`
+            : `<div class="actions">
+                <div class="bidbox">
+                  <button class="btn za-btn" data-act="bid-dec" aria-label="Lower bid">−</button>
+                  <span class="num" id="bid-amount">${zai(session.bid)}</span>
+                  <button class="btn za-btn" data-act="bid-inc" aria-label="Raise bid">+</button>
+                  <button class="btn za-btn grow" data-kind="primary" data-act="lock-bid" ${selected ? '' : 'disabled'}>Lock bid</button>
+                </div>
+                <div class="row">
+                  <button class="btn za-btn" data-act="sell" ${mine ? '' : 'disabled'}>Sell${mine ? ` · ${zai(mine.quote.liquidation)}` : ''}</button>
+                  <button class="btn za-btn" data-act="inspect" ${selected || mine ? '' : 'disabled'}>Inspect</button>
+                  <button class="btn za-btn" data-kind="quiet" data-act="pass">Pass</button>
+                </div>
+                <p class="meta">${view.youLocked ? 'Sealed. Waiting for the other chair.' : 'Lock one action. Both open together.'}</p>
+              </div>`
+        }
+        ${lines.length ? `<ol class="log">${lines.map((line) => `<li>${esc(line)}</li>`).join('')}</ol>` : ''}
+        <button class="btn za-btn" data-kind="danger" data-act="abandon">Leave this match</button>
+>>>>>>> 51fa89f56fd8c15a749a158166f0f2f4a730a2dc
       </div>
       <section class="instrument-detail">
         <p class="kicker">Your request · hidden from the other chair</p>
@@ -111,7 +158,7 @@ export const duelScreen = (session: Session): string => {
 export const resultsScreen = (session: Session): string => {
   const result = session.lastResult ?? session.duel?.result ?? null;
   if (!result) {
-    return `<p class="kicker">Result</p><h1>No match yet</h1><p class="lede">Finish a duel and the house will lay out the worth of both chairs.</p><a class="btn primary" href="#/duel">Sit a duel</a>`;
+    return `<p class="kicker">Result</p><h1>No match yet</h1><p class="lede">Finish a duel and the house will lay out the worth of both chairs.</p><a class="btn za-btn" data-kind="primary" href="#/duel">Sit a duel</a>`;
   }
   const [you, them] = result.scores;
   const title = result.winner === 'draw' ? 'The table is drawn' : result.winner === 'p0' ? 'You take the table' : `${them?.name ?? 'The other chair'} takes the table`;
@@ -137,8 +184,8 @@ export const resultsScreen = (session: Session): string => {
     </div>
     <ol class="log">${result.decisions.flatMap((round) => round.notes.map((note) => `<li>Round ${round.round}. ${esc(note)}</li>`)).join('')}</ol>
     <div class="row">
-      <button class="btn primary" data-act="begin-duel">Sit again</button>
-      <a class="btn" href="#/home">Home</a>
+      <button class="btn za-btn" data-kind="primary" data-act="begin-duel">Sit again</button>
+      <a class="btn za-btn" data-kind="quiet" href="#/home">Home</a>
     </div>
   `;
 };

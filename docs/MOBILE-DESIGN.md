@@ -16,7 +16,11 @@ World Mode and Terminal Mode share one profile. A purchase on a phone is the sam
 
 ## Tokens
 
+<<<<<<< HEAD
 Colour, type, and spacing stay the variables in `web/src/style.css`. World chrome uses the same charcoal, bone type, and amber. Buttons in the bar are at least 44px. Text is Fraunces and IBM Plex Mono, not a pixel font.
+=======
+Menu and HUD colour, type, and spacing come from Quiet Instrument 06B (`web/src/ui/quiet/`). The District canvas is not restyled. HUD pills are translucent so the pixel picture stays visible. Buttons in the bar are at least 44px. The Use target is 84px. Text is Fraunces for titles and IBM Plex Mono for the interface, not a pixel font. Portrait must not scroll sideways.
+>>>>>>> 51fa89f56fd8c15a749a158166f0f2f4a730a2dc
 
 ## What not to do
 

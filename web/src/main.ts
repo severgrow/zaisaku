@@ -81,7 +81,7 @@ const render = (): void => {
   app.classList.remove('world-mode');
   if (host instanceof HTMLElement) host.hidden = true;
   leaveWorld();
-  const noteHtml = session.notice ? `<p class="notice" role="status">${esc(session.notice)}</p>` : '';
+  const noteHtml = session.notice ? `<p class="notice za-notice" role="status">${esc(session.notice)}</p>` : '';
   app.innerHTML = shell(session, noteHtml + screen());
   if (session.route === 'workshop') mountWorkshop();
 };
