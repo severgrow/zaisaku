@@ -12,6 +12,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "check": "npm run typecheck && npm run test",
+    "dev": "vite --config web/vite.config.ts --host 127.0.0.1",
+    "build": "vite build --config web/vite.config.ts --outDir ../dist",
     "web:dev": "vite --config web/vite.config.ts",
     "web:build": "vite build --config web/vite.config.ts",
     "web:preview": "vite preview --config web/vite.config.ts",
