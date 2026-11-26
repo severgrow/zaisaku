@@ -1,0 +1,30 @@
+.za-ui .za-panel { background:var(--za-surface); border:1px solid var(--za-line); border-radius:var(--za-radius); padding:clamp(12px,2vw,24px); min-width:0; }
+.za-ui .za-btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:44px; min-width:44px; padding:10px 16px; border:1px solid transparent; border-radius:8px; background:var(--za-raised); color:var(--za-ink); font:inherit; font-weight:600; text-decoration:none; text-align:center; overflow-wrap:anywhere; cursor:pointer; transition:background .12s,transform .12s; }
+.za-ui .za-btn[data-kind="primary"] { background:var(--za-bone); color:var(--za-bg); }
+.za-ui .za-btn[data-kind="quiet"] { background:transparent; border-color:var(--za-line); }
+.za-ui .za-btn[data-kind="danger"] { background:var(--za-danger); color:#fff5e9; }
+.za-ui .za-btn[aria-pressed="true"], .za-ui .za-btn[aria-current="page"] { border-color:var(--za-amber); }
+.za-ui .za-btn:active:not(:disabled) { transform:translateY(1px); }
+.za-ui .za-btn:disabled { opacity:.45; cursor:not-allowed; }
+.za-ui :focus-visible { outline:2px solid var(--za-amber); outline-offset:3px; }
+.za-ui .za-nav { display:flex; gap:4px; flex-wrap:wrap; padding:4px; border-bottom:1px solid var(--za-line); }
+.za-ui .za-nav .za-btn { flex:1; min-width:44px; background:transparent; font-size:.875em; flex-direction:column; padding:8px; }
+.za-ui .za-nav .za-btn[aria-current="page"] { background:var(--za-bone); color:var(--za-bg); border-color:transparent; }
+.za-ui .za-icon { width:24px; height:24px; flex:none; display:inline-block; background:currentColor; mask:var(--za-icon) center/contain no-repeat; -webkit-mask:var(--za-icon) center/contain no-repeat; }
+.za-ui .za-slot { min-width:0; aspect-ratio:1; border:1px solid var(--za-line); border-radius:8px; background:#202420; display:grid; place-items:center; padding:6px; }
+.za-ui .za-slot[aria-selected="true"] { border-color:var(--za-amber); box-shadow:inset 0 0 0 1px var(--za-amber); }
+.za-ui .za-slot img { max-width:100%; max-height:100%; image-rendering:pixelated; }
+.za-ui .za-dialog { background:var(--za-surface); color:var(--za-ink); border:1px solid var(--za-line); border-radius:14px; padding:24px; width:min(540px,calc(100% - 32px)); max-height:85dvh; overflow:auto; box-sizing:border-box; }
+.za-ui .za-dialog::backdrop { background:#111710b8; }
+.za-ui .za-balance { font-family:var(--za-number-font); font-variant-numeric:tabular-nums; letter-spacing:.02em; }
+.za-ui .za-label { color:var(--za-muted); font-size:.8em; }
+.za-ui .za-notice { border-inline-start:3px solid var(--za-amber); padding:12px; background:var(--za-surface); border-radius:4px; }
+.za-ui .za-progress { appearance:none; width:100%; height:6px; border:0; border-radius:6px; overflow:hidden; background:var(--za-raised); accent-color:var(--za-amber); }
+.za-ui .za-progress::-webkit-progress-bar { background:var(--za-raised); }
+.za-ui .za-progress::-webkit-progress-value { background:var(--za-amber); }
+.za-ui .za-progress::-moz-progress-bar { background:var(--za-amber); }
+.za-ui input[type=checkbox],.za-ui input[type=range] { accent-color:var(--za-amber); }
+.za-ui .za-field { background:var(--za-bg); border:1px solid var(--za-line); border-radius:8px; color:var(--za-ink); font:inherit; padding:12px; min-width:0; box-sizing:border-box; max-width:100%; }
+.za-ui .za-hud-control { border-radius:50%; width:56px; height:56px; background:#292e28e8; border:1px solid var(--za-bone); color:var(--za-bone); touch-action:none; }
+@media(prefers-reduced-motion:reduce){ .za-ui .za-btn{transition:none;transform:none;} }
+html.reduce .za-ui .za-btn {transition:none;transform:none;}

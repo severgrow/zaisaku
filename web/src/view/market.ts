@@ -3,6 +3,7 @@ import { activeAtTick } from '../../../src/engine/events.js';
 import { appraise } from '../../../src/engine/valuation.js';
 import { marketContext } from '../../../src/economy/profile.js';
 import { plate } from '../ui/art.js';
+import { icon } from '../ui/icon.js';
 import { esc, signed, zai } from '../ui/text.js';
 import type { Session } from '../session.js';
 
@@ -20,8 +21,8 @@ export const marketScreen = (session: Session): string => {
           <h3>${esc(def.name)}</h3>
           <p class="meta">${esc(def.manufacturer)} · ${esc(def.category)} · ${esc(item.condition >= 70 ? 'sound enough' : 'marked')}</p>
           <p class="meta">${esc(def.description)}</p>
-          <p class="price">Buy <b class="num amber">${zai(quote.ask)}</b> <span class="muted">· would sell ${zai(quote.liquidation)}</span></p>
-          <button class="btn primary" data-act="buy" data-id="${esc(item.id)}">Buy for ${zai(quote.ask)}</button>
+          <p class="price">Buy <b class="num">${zai(quote.ask)}</b> <span class="muted">· would sell ${zai(quote.liquidation)}</span></p>
+          <button class="btn za-btn" data-kind="primary" data-act="buy" data-id="${esc(item.id)}">Buy for ${zai(quote.ask)}</button>
         </div>
       </article>`;
     })
@@ -30,9 +31,9 @@ export const marketScreen = (session: Session): string => {
     <p class="kicker">Market · tick ${profile.tick}</p>
     <h1>The board</h1>
     <p class="lede">The house sells at the ask and buys at the lower liquidation. Flipping a lot before the wire moves loses money.</p>
-    ${event ? `<p class="notice">${esc(event.name)}. ${esc(event.summary)}</p>` : '<p class="meta">No event on the wire.</p>'}
+    ${event ? `<p class="notice za-notice">${esc(event.name)}. ${esc(event.summary)}</p>` : '<p class="meta">No event on the wire.</p>'}
     <div class="row" style="margin-bottom:12px">
-      <button class="btn" data-act="advance">Next transmission</button>
+      <button class="btn za-btn" data-act="advance">Next transmission</button>
       <span class="num muted">${zai(profile.wallets.permanent - profile.wallets.reserved)} free</span>
     </div>
     <div class="stack">${cards || '<p>The board is empty until the next transmission.</p>'}</div>
@@ -74,8 +75,8 @@ export const vaultScreen = (session: Session): string => {
         <p class="meta">${esc(def.lore)}</p>
         <ul class="log">${notes}</ul>
         <div class="row">
-          <button class="btn" data-act="inspect-vault" data-id="${esc(item.id)}">Inspect</button>
-          <button class="btn primary" data-act="sell-vault" data-id="${esc(item.id)}">Sell for ${zai(quote.liquidation)}</button>
+          <button class="btn za-btn" data-act="inspect-vault" data-id="${esc(item.id)}">${icon('inspect')}<span>Inspect</span></button>
+          <button class="btn za-btn" data-kind="primary" data-act="sell-vault" data-id="${esc(item.id)}">Sell for ${zai(quote.liquidation)}</button>
         </div>
       </article>`;
     })
@@ -85,10 +86,10 @@ export const vaultScreen = (session: Session): string => {
     <h1>${items.length ? 'What you keep' : 'The shelf is empty'}</h1>
     <div class="row" style="margin-bottom:12px">
       ${(['value', 'name', 'category', 'acquired'] as const)
-        .map((sort) => `<button class="btn ${session.sort === sort ? 'primary' : ''}" data-act="sort" data-sort="${sort}">${sort}</button>`)
+        .map((sort) => `<button class="btn za-btn" data-act="sort" data-sort="${sort}" aria-pressed="${session.sort === sort ? 'true' : 'false'}">${sort}</button>`)
         .join('')}
     </div>
-    <div class="stack">${cards || '<p class="lede">Buy from the market, win an auction, or finish a duel. The duel’s objects do not enter this shelf.</p><a class="btn" href="#/market">Open the market</a>'}</div>
+    <div class="stack">${cards || '<p class="lede">Buy from the market, win an auction, or finish a duel. The duel’s objects do not enter this shelf.</p><a class="btn za-btn" data-kind="primary" href="#/market">Open the market</a>'}</div>
   `;
 };
 
