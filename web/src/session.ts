@@ -6,6 +6,12 @@ export type Route = 'home' | 'duel' | 'market' | 'auction' | 'vault' | 'contract
 
 export type Panel = 'merchant' | 'auction' | 'research' | 'contract' | 'storage' | 'display' | 'talk' | 'duel';
 
+export interface TalkFocus {
+  id: string;
+  name: string;
+  line: string;
+}
+
 export const ROUTES: readonly Route[] = ['home', 'duel', 'market', 'auction', 'vault', 'contracts', 'results', 'settings', 'world', 'workshop'];
 
 export interface Session {
@@ -23,6 +29,7 @@ export interface Session {
   revision: number;
   panel: Panel | null;
   displaySlot: string | null;
+  focus: TalkFocus | null;
 }
 
 export const routeOf = (hash: string): Route => {

@@ -1,14 +1,14 @@
 import { ASSET_MANIFEST } from '../../../src/world/assets.js';
 import { ARTWORK } from '../../../src/world/artwork.js';
 import { DISTRICT_RESONANCE, ringRadius } from '../../../src/world/resonance.js';
-import { ARCHITECTURE_FILES, FLOOR_FILES, FURNITURE_FILES, MINERAL_TILES, NPCS, PLAYER_FACINGS, TRANSITION_FILES, mineralUrl, npcFile, playerFile } from './mineral.js';
+import { ARCHITECTURE_FILES, EVERYDAY_FILES, FLOOR_FILES, FURNITURE_FILES, INSTRUMENT_FILES, MINERAL_TILES, NPCS, PLAYER_FACINGS, TRANSITION_FILES, mineralUrl, npcFile, playerFile } from './mineral.js';
 
 /** Developer preview. Canvas only, so it does not start a second Phaser game. */
 
 export const workshopScreen = (): string => `
   <p class="kicker">Development</p>
   <h1>Asset workshop</h1>
-  <p class="lede">Mineral Analog pack 04 floors and walls, plus pack 07 plates and joins. Still temporary until you approve the screenshots. Characters and loose props remain pack 02. Each sprite is shown at its source size and at half size.</p>
+  <p class="lede">Mineral Analog pack 04 floors and walls, pack 07 plates and joins, and pack 09 everyday props. Still temporary until you approve the screenshots. Characters and loose props remain pack 02. Each sprite is shown at its source size and at half size.</p>
   <div data-workshop class="workshop"></div>
 `;
 
@@ -35,6 +35,8 @@ export const mountWorkshop = (): void => {
     ...Object.values(FURNITURE_FILES),
     ...ARTWORK.flatMap((item) => (item.plateFile ? [item.plateFile] : [])),
     ...Object.values(MINERAL_TILES),
+    ...Object.values(EVERYDAY_FILES),
+    ...Object.values(INSTRUMENT_FILES),
     ...PLAYER_FACINGS.flatMap((facing) => [0, 1, 2, 3].map((frame) => playerFile(facing, frame))),
     ...NPCS.flatMap((id) => PLAYER_FACINGS.map((facing) => npcFile(id, facing))),
   ];

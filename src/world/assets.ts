@@ -1,4 +1,4 @@
-export type AssetCategory = 'terrain' | 'architecture' | 'flora' | 'character' | 'object' | 'collectible' | 'furniture';
+export type AssetCategory = 'terrain' | 'architecture' | 'flora' | 'character' | 'object' | 'collectible' | 'furniture' | 'interface';
 export type AssetStatus = 'temporary' | 'approved';
 
 export interface AssetRecord {
@@ -125,6 +125,23 @@ export const ASSET_MANIFEST: readonly AssetRecord[] = [
     anchorY: 64,
     note: 'Pack 07 catalogue plate, temporary. The same 128px file is used in the market, the vault, the auction, the duel, inspection, and the residence. The definition is unchanged.',
   })),
+  ...['chair', 'low-table', 'sleeping-pallet', 'standing-lamp', 'crate-large', 'crate-small', 'wrapped-parcel', 'scale', 'customer-counter', 'auction-stand', 'research-flask', 'research-crystal-flask', 'research-jar', 'research-vial', 'research-rack', 'research-tray'].map(
+    (id) => tile(id, 'furniture', 32, 32, 'Pack 09 everyday prop, temporary. 64px source drawn at 32px. Not approved from the archive.'),
+  ),
+  tile('duel-door-terminal', 'object', 32, 32, 'Pack 09 door terminal, temporary. One cell on the District 01 duel entrance. The earlier scaled table is not on this branch.'),
+  tile('roof-eave', 'architecture', 96, 32, 'Pack 09 foreground eave, temporary. 192×64 drawn at 96×32. No collision. Fades only while the player is under it.'),
+  tile('tree-canopy', 'architecture', 96, 32, 'Pack 09 foreground canopy, temporary. 192×64 drawn at 96×32. No collision. The trunk stays Pack 02.'),
+  ...['threshold-n', 'threshold-s', 'threshold-e', 'threshold-w'].map((id) =>
+    tile(id, 'terrain', 32, 32, 'Pack 09 threshold, temporary. Outer pixels match floor-resonance-path. Used only on a path cell that meets an entrance.'),
+  ),
+  { id: 'bid-minus', category: 'interface', width: 64, height: 64, status: 'temporary', anchorX: 32, anchorY: 64, note: 'Pack 09 bid control, temporary. Independent of the plus control and of the timer.' },
+  { id: 'bid-plus', category: 'interface', width: 64, height: 64, status: 'temporary', anchorX: 32, anchorY: 64, note: 'Pack 09 bid control, temporary.' },
+  { id: 'frame-nine-slice', category: 'interface', width: 64, height: 64, status: 'temporary', anchorX: 32, anchorY: 64, note: 'Pack 09 nine-slice frame, temporary. Slice 12 on each side.' },
+  { id: 'variable-object-tray', category: 'interface', width: 64, height: 64, status: 'temporary', anchorX: 32, anchorY: 64, note: 'Pack 09 tray, temporary. Slice 12. Length follows the objects actually held.' },
+  { id: 'mobile-exchange-recess', category: 'interface', width: 360, height: 156, status: 'temporary', anchorX: 180, anchorY: 156, note: 'Pack 09 compact exchange recess, temporary. Content inset 38, 24, 38, 28. Not a full-screen illustration.' },
+  { id: 'portrait-ivo', category: 'interface', width: 128, height: 128, status: 'temporary', anchorX: 64, anchorY: 128, note: 'Pack 09 bust cropped from the Pack 02 Ivo sprite. Same clothes. Temporary.' },
+  { id: 'portrait-ness', category: 'interface', width: 128, height: 128, status: 'temporary', anchorX: 64, anchorY: 128, note: 'Pack 09 bust cropped from the Pack 02 Ness sprite. Same clothes. Temporary.' },
+  { id: 'portrait-archivist', category: 'interface', width: 128, height: 128, status: 'temporary', anchorX: 64, anchorY: 128, note: 'Pack 09 bust cropped from the Pack 02 Archivist sprite. Same clothes. Temporary.' },
 ];
 
 const SIZE: Record<AssetCategory, (width: number, height: number) => boolean> = {
@@ -135,6 +152,7 @@ const SIZE: Record<AssetCategory, (width: number, height: number) => boolean> = 
   object: (w, h) => w === 32 && h === 32,
   collectible: (w, h) => w === 64 && h === 64,
   furniture: (w, h) => w > 0 && h > 0 && w % 32 === 0 && h % 32 === 0,
+  interface: (w, h) => w > 0 && h > 0,
 };
 
 export const validateManifest = (records: readonly AssetRecord[]): string[] => {

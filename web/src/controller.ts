@@ -52,6 +52,7 @@ const fresh = (): Session => ({
   revision: 0,
   panel: null,
   displaySlot: null,
+  focus: null,
 });
 
 const boot = (): Session => {
@@ -79,6 +80,7 @@ const boot = (): Session => {
     revision: loaded.revision,
     panel: null,
     displaySlot: null,
+    focus: null,
   };
 };
 
@@ -150,14 +152,19 @@ export const travelTo = (locationId: string, spawn: string): void => {
     discovered: session.world.discovered.includes(pose.locationId) ? session.world.discovered : [...session.world.discovered, pose.locationId],
   };
   session.panel = null;
+  session.focus = null;
   clearIntent();
   persist();
   notify();
 };
 
+const PORTRAITS = new Set(['ivo', 'ness', 'archivist']);
+
 export const openWorldThing = (actor: ActorDef): void => {
   session.world = markFlag(session.world, `met:${actor.id}`);
   clearIntent();
+  session.focus =
+    actor.form === 'person' && PORTRAITS.has(actor.id) ? { id: actor.id, name: actor.name, line: actor.line } : null;
   if (actor.kind === 'terminal') {
     location.hash = '#/';
     return;
@@ -188,6 +195,7 @@ export const openWorldThing = (actor: ActorDef): void => {
 
 export const closePanel = (): void => {
   session.panel = null;
+  session.focus = null;
   clearIntent();
   notify();
 };
@@ -246,6 +254,7 @@ export const beginDuel = (): void => {
   session.clockMs = session.duel.rules.decisionMs;
   session.route = 'duel';
   session.panel = null;
+  session.focus = null;
   session.notice = 'Clerk Vesper sits opposite. A simulated opponent, not a live player.';
   session.selected = null;
   roundWatch = session.duel.round;

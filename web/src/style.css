@@ -354,7 +354,7 @@ html.large-text { font-size: 118%; }
   bottom: calc(120px + env(safe-area-inset-bottom));
   max-height: 52vh;
   overflow: auto;
-  background: var(--surface);
+  background: var(--bg);
   border: 1px solid var(--line);
   padding: 12px;
 }
@@ -365,4 +365,159 @@ html.large-text { font-size: 118%; }
 @media (min-width: 900px) {
   .joy, .use { display: none; }
   .world-panel { left: auto; width: min(440px, 38vw); top: 72px; bottom: 16px; max-height: none; }
+}
+
+.talk {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  margin: 0 0 10px;
+}
+.talk h2 { margin: 0 0 4px; font-size: 20px; font-weight: 500; }
+.talk p { margin: 0; }
+.bust {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+@media (max-width: 420px) {
+  .talk { grid-template-columns: 72px minmax(0, 1fr); }
+  .bust { width: 72px; height: 72px; }
+}
+
+.instrument { display: grid; gap: 10px; min-width: 0; }
+.instrument-clock {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 8px 10px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+}
+.clock-face {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 28px;
+  line-height: 1;
+  color: var(--amber);
+}
+.exchange {
+  border: 12px solid transparent;
+  border-image: var(--frame) 12 / 12px stretch;
+  background: var(--bg-2);
+  image-rendering: pixelated;
+}
+.exchange-body { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px; }
+.instrument-detail {
+  border: 12px solid transparent;
+  border-image: var(--frame) 12 / 12px stretch;
+  background: var(--bg-2);
+  padding: 4px 8px 8px;
+}
+.instrument-detail h2 { margin: 0; font-size: 18px; font-weight: 500; }
+.instrument-detail .picked { margin: 8px 0 0; }
+.instrument-hold { display: grid; gap: 10px; }
+.object-tray {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  width: fit-content;
+  max-width: 100%;
+  border: 12px solid transparent;
+  border-image: var(--tray) 12 fill / 12px stretch;
+  image-rendering: pixelated;
+}
+.instrument .chip {
+  flex: 0 1 auto;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 6px;
+  align-items: center;
+  min-width: 0;
+}
+.instrument .chip .art { width: 40px; height: 40px; }
+.bid-key {
+  width: 48px;
+  height: 48px;
+  min-height: 48px;
+  padding: 0;
+  flex: none;
+}
+.bid-key img { width: 40px; height: 40px; image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
+
+@media (max-width: 899px) {
+  .exchange {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 360 / 156;
+    border: 0;
+    border-image: none;
+    background: var(--recess) center / 100% 100% no-repeat;
+    padding: 0;
+  }
+  .exchange-body {
+    position: absolute;
+    left: 7.778%;
+    right: 6.667%;
+    top: 24.359%;
+    bottom: 24.359%;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 4px;
+    align-items: center;
+    padding: 0;
+    overflow: hidden;
+  }
+  .exchange .lot {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 2px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+  .exchange .lot .art { width: 44px; height: 44px; }
+  .exchange .lot h3 {
+    font-size: 11px;
+    line-height: 1.1;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .exchange .lot .meta,
+  .exchange .lot .price { display: none; }
+  .instrument-hold { grid-template-columns: 1fr 1fr; align-items: start; }
+  .instrument-hold .kicker { margin-bottom: 2px; }
+  .instrument-detail .meta { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .instrument .log { display: none; }
+}
+
+@media (min-width: 900px) {
+  .instrument {
+    grid-template-columns: minmax(0, 1.4fr) minmax(240px, 0.8fr);
+    grid-template-areas:
+      "clock clock"
+      "table hold"
+      "detail hold"
+      "actions hold";
+    align-items: start;
+  }
+  .instrument-clock { grid-area: clock; }
+  .exchange { grid-area: table; min-height: 220px; }
+  .exchange-body { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+  .instrument-detail { grid-area: detail; }
+  .instrument-hold { grid-area: hold; }
+  .instrument .actions { grid-area: actions; }
+  .instrument > .btn,
+  .instrument > .log,
+  .instrument > a { grid-column: 1 / -1; }
 }

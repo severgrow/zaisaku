@@ -1,5 +1,6 @@
 import { esc, zai } from '../ui/text.js';
-import type { Session } from '../session.js';
+import { mineralUrl } from './mineral.js';
+import type { Session, TalkFocus } from '../session.js';
 import { auctionScreen } from '../view/auction.js';
 import { contractsScreen, marketScreen, vaultScreen } from '../view/market.js';
 import { symbol } from '../ui/symbols.js';
@@ -22,10 +23,28 @@ export const worldHud = (session: Session): string => {
   `;
 };
 
+const portraitUrl = (id: string): string | null =>
+  id === 'ivo' || id === 'ness' || id === 'archivist' ? mineralUrl(`instrument/portrait-${id}.png`) : null;
+
+const talkHead = (focus: TalkFocus): string => {
+  const src = portraitUrl(focus.id);
+  return `
+    <div class="talk">
+      ${src ? `<img class="bust" alt="" src="${esc(src)}" width="96" height="96" />` : ''}
+      <div>
+        <h2>${esc(focus.name)}</h2>
+        <p>${esc(focus.line)}</p>
+      </div>
+    </div>
+  `;
+};
+
 const panel = (session: Session): string => {
   if (!session.panel) return '';
-  const close = `<button class="btn quiet" type="button" data-act="close-panel">Close</button>`;
-  const note = session.notice ? `<p class="notice" role="status">${esc(session.notice)}</p>` : '';
+  const leave = session.focus ? 'Leave' : 'Close';
+  const close = `<button class="btn quiet" type="button" data-act="close-panel">${leave}</button>`;
+  const note = session.notice && !session.focus ? `<p class="notice" role="status">${esc(session.notice)}</p>` : '';
+  const who = session.focus ? talkHead(session.focus) : '';
   let body = '';
   if (session.panel === 'merchant') body = marketScreen(session);
   else if (session.panel === 'auction') body = auctionScreen(session);
@@ -35,7 +54,8 @@ const panel = (session: Session): string => {
   else if (session.panel === 'display') body = display(session);
   else if (session.panel === 'duel') body = `<p>A sealed match against Clerk Vesper. The clerk is simulated.</p><button class="btn primary" type="button" data-act="begin-duel">Sit the duel</button>`;
   else body = `<p>${esc(session.notice ?? '')}</p>`;
-  return `<section class="world-panel hud-hit" role="dialog" aria-label="Interaction">${close}${note}${body}</section>`;
+  const inner = session.focus ? `${who}${close}${body}` : `${close}${note}${body}`;
+  return `<section class="world-panel hud-hit" role="dialog" aria-label="Interaction">${inner}</section>`;
 };
 
 const research = (session: Session): string => {
