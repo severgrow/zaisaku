@@ -51,6 +51,16 @@ The upload is stored unchanged under `art-packs/pack-06b/`. It is 16,334 bytes, 
 
 The zip is the byte-for-byte upload `ZAISAKU_06B_Quiet_Instrument_f315.zip`. It is CSS, SVG, and a preview. It does not replace world art or duel sheets.
 
+## Pack 07 — catalogue completion and district joins
+
+Nothing here replaces Pack 02, Pack 04, Pack 05, or Pack 06B. The upload is stored unchanged under `art-packs/pack-07/`. The original sheet stays inside the zip, on this branch only, and is not part of the game bundle. The checksum in `art-packs/pack-07/SHA256SUMS` matches the digest below. The zip is under 10 MB, so it is one blob.
+
+| Stored file | Bytes | SHA-256 |
+|---|---:|---|
+| pack-07/ZAISAKU_07_Catalogue_and_Joins_b6fd.zip | 3031395 | df3ea4109f888958f3ade9a63c8ca95846c4d5c5df5aaab6f9adcc0e4dca33bb |
+
+The zip is the byte-for-byte upload `ZAISAKU_07_Catalogue_and_Joins_b6fd.zip`. It carries twenty catalogue plates at 128 and 64, ceramic corner joins, east and west openings, the extended roof with its wall bridge, the layered glass case, and the north-door canopy. Status in the game stays `temporary`. Do not mark the pack approved from this archive.
+
 ## Ongoing workflow
 
 Stage numbered immutable ZIP files and checksums here. Keep each ZIP below 10,000,000 bytes. Use a separate runtime archive and source archive(s). Cursor fetches the staging branch, checks hashes, imports the runtime pack into the active development branch, and records asset approval after screenshots. No gameplay changes or confidential lore in asset staging.
