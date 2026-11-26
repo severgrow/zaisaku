@@ -44,7 +44,7 @@ const talkCard = (session: Session): string => {
   const actions = talk.actions
     .map(
       (action) =>
-        `<button class="btn${action.opens ? ' primary' : ''}" type="button" data-act="talk-go" data-actor="${esc(talk.actorId)}" data-opens="${esc(action.opens ?? '')}">${esc(action.label)}</button>`,
+        `<button class="btn za-btn" data-kind="${action.opens ? 'primary' : 'quiet'}" type="button" data-act="talk-go" data-actor="${esc(talk.actorId)}" data-opens="${esc(action.opens ?? '')}">${esc(action.label)}</button>`,
     )
     .join('');
   return `
@@ -56,7 +56,7 @@ const talkCard = (session: Session): string => {
           <p>${esc(talk.line)}</p>
         </div>
       </div>
-      <div class="row">${actions}<button class="btn quiet" type="button" data-act="close-panel">Leave</button></div>
+      <div class="row">${actions}<button class="btn za-btn" data-kind="quiet" type="button" data-act="close-panel">Leave</button></div>
     </section>
   `;
 };
