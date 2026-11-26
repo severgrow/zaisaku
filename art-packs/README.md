@@ -37,6 +37,20 @@ Nothing here replaces Pack 04 or Pack 02. The upload is stored unchanged under `
 
 The zip is the byte-for-byte upload `zaisaku_duel_asset_packs_01_bc4e.zip`. The two PNGs inside it are the Mineral Analog duel sheets (bone ceramic, green-grey alloy, amber, muted burgundy). The game crops individual components from them. Do not copy either full sheet into `web/public` or into a script bundle.
 
+## Pack 06B — Quiet Instrument (current interface pack)
+
+SUPERSEDED: the earlier Pack 06 interface direction. No Pack 06 archive was on this branch, so nothing was deleted. Pack 04 and Pack 05 are untouched.
+
+Status: candidate, not approved. This is the current menu and HUD pack. World sprites and the Pack 05 duel sheets stay in force.
+
+The upload is stored unchanged under `art-packs/pack-06b/`. It is 16,334 bytes, under 10 MB, so it is one file. The checksum in `art-packs/pack-06b/SHA256SUMS` matches the digest below.
+
+| Stored file | Bytes | SHA-256 |
+|---|---:|---|
+| pack-06b/ZAISAKU_06B_Quiet_Instrument_f315.zip | 16334 | 0b9ef6f5f1c478da5253ac3e69f23805e98dca032b8493d7a8637ea84413dd93 |
+
+The zip is the byte-for-byte upload `ZAISAKU_06B_Quiet_Instrument_f315.zip`. It is CSS, SVG, and a preview. It does not replace world art or duel sheets.
+
 ## Ongoing workflow
 
 Stage numbered immutable ZIP files and checksums here. Keep each ZIP below 10,000,000 bytes. Use a separate runtime archive and source archive(s). Cursor fetches the staging branch, checks hashes, imports the runtime pack into the active development branch, and records asset approval after screenshots. No gameplay changes or confidential lore in asset staging.
