@@ -1,7 +1,6 @@
 import Phaser from 'phaser';
 import { definition } from '../../../src/engine/definitions.js';
 import { ARTWORK } from '../../../src/world/artwork.js';
-<<<<<<< HEAD
 import {
   DIAGONALS,
   DIRS,
@@ -19,11 +18,7 @@ import {
   type FloorMaterial,
 } from '../../../src/world/connectors.js';
 import type { Fixture } from '../../../src/world/fixtures.js';
-import { locationById } from '../../../src/world/locations.js';
-=======
-import { DIRS, cornerDiagonal, floorKey, openingFile, pieceFile, stepOf, type Dir, type FloorMaterial } from '../../../src/world/connectors.js';
 import { LOCATIONS, locationById } from '../../../src/world/locations.js';
->>>>>>> 4573b6953b957eecd99aba8461d38108e64e39c4
 import { feetOf, move, nearest, tileAt, wish } from '../../../src/world/movement.js';
 import { advanceNavigation, interpretTap, targetBoxes, pickTarget } from '../../../src/world/navigation.js';
 import type { ApproachDecision, MoveDecision, NavActor, NavExit } from '../../../src/world/navigation.js';
@@ -220,17 +215,13 @@ export class DistrictScene extends Phaser.Scene {
     this.rings = null;
     this.occluders = [];
     this.place = locationById(session.world.locationId);
-<<<<<<< HEAD
-    this.displayKey = this.watchKey();
-=======
     const fixed = recoverFeet(this.place.solid, session.world.x, session.world.y, RADIUS);
     if (Math.abs(fixed.x - session.world.x) > 0.5 || Math.abs(fixed.y - session.world.y) > 0.5) {
       session.world.x = fixed.x;
       session.world.y = fixed.y;
       persist();
     }
-    this.displayKey = JSON.stringify(session.world.displays);
->>>>>>> 4573b6953b957eecd99aba8461d38108e64e39c4
+    this.displayKey = this.watchKey();
     const palette = paletteById(this.place.paletteId);
     this.cameras.main.setBackgroundColor(palette.groundDeep);
     this.ensureFallback(palette);
@@ -529,48 +520,6 @@ export class DistrictScene extends Phaser.Scene {
       if (this.samples === 40) document.documentElement.dataset.frameMs = (this.sampleMs / 40).toFixed(2);
     }
     if (!this.body) return;
-<<<<<<< HEAD
-    const shown = this.watchKey();
-    if (this.place.id !== session.world.locationId || shown !== this.displayKey) {
-      this.bootPlace();
-      return;
-    }
-    const now = document.documentElement.classList.contains('reduce') ? 0 : this.time.now;
-    this.drawRings(now);
-    this.paintLamp(now);
-    this.fadeForeground();
-    if (session.panel) {
-      intent.interact = false;
-      return;
-    }
-    const ix = (this.down('A') || this.down('LEFT') ? -1 : 0) + (this.down('D') || this.down('RIGHT') ? 1 : 0) + intent.x;
-    const iy = (this.down('W') || this.down('UP') ? -1 : 0) + (this.down('S') || this.down('DOWN') ? 1 : 0) + intent.y;
-    const step = wish(ix, iy, SPEED, delta / 1000);
-    const next = move(this.place.solid, session.world.x, session.world.y, step.dx, step.dy, RADIUS);
-    const facing = facingOf(step.dx, step.dy, session.world.facing);
-    if (next.x !== session.world.x || next.y !== session.world.y) this.walked += Math.hypot(next.x - session.world.x, next.y - session.world.y);
-    const frame = step.dx === 0 && step.dy === 0 ? 0 : Math.floor(this.walked / 8) % 4;
-    session.world.x = next.x;
-    session.world.y = next.y;
-    session.world.facing = facing;
-    this.body.setPosition(Math.round(next.x), Math.round(next.y));
-    this.body.setTexture(`you-${facing}-${frame}`);
-    this.body.setDisplaySize(24, 32);
-    this.body.setDepth(next.y);
-    this.lookAt(next.x, next.y);
-    this.seq += 1;
-    if (this.seq % 30 === 0) transport.send({ locationId: this.place.id, x: next.x, y: next.y, facing, seq: this.seq });
-    const here = tileAt(next.x, next.y - 10);
-    const actor = nearest(this.place.actors, here.tx, here.ty);
-    const exit = nearest(this.place.exits, here.tx, here.ty);
-    const prompt = actor?.name ?? exit?.label ?? null;
-    this.setPrompt(prompt ? `${prompt} · Use` : null);
-    const pressed = intent.interact || this.just('E') || this.just('SPACE');
-    if (!pressed) return;
-    intent.interact = false;
-    if (actor) openWorldThing(actor);
-    else if (exit) travelTo(exit.to, exit.spawn);
-=======
     this.syncPlace();
     if (!this.body) return;
     this.longPress();
@@ -595,9 +544,11 @@ export class DistrictScene extends Phaser.Scene {
     this.look(delta, false);
     this.drawCue();
     this.fadeOcclusion();
-    this.drawRings(document.documentElement.classList.contains('reduce') ? 0 : this.time.now);
+    const now = document.documentElement.classList.contains('reduce') ? 0 : this.time.now;
+    this.drawRings(now);
+    this.paintLamp(now);
+    this.fadeForeground();
     this.publish();
->>>>>>> 4573b6953b957eecd99aba8461d38108e64e39c4
   }
 
   private syncPlace(): void {
@@ -607,7 +558,7 @@ export class DistrictScene extends Phaser.Scene {
       this.fadeMark();
       this.fadeSelection();
     }
-    const shown = JSON.stringify(session.world.displays);
+    const shown = this.watchKey();
     if (this.place.id !== session.world.locationId || shown !== this.displayKey) {
       this.course = null;
       this.bootPlace();
