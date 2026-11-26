@@ -1,0 +1,28 @@
+{
+  "status": "source concepts; binary upload pending",
+  "archive": "ZAISAKU_80_Environment_Utility_Details.zip",
+  "bytes": 9130841,
+  "sha256": "225a736def055d7674fa7e57cbefa6f2335584ed3d99665d555074ca8c0c61c4",
+  "sheets": [
+    {
+      "file": "01-environment.png",
+      "concepts": 20,
+      "sha256": "8bc9edac3c963e7631562c31b22537e3cde562dd06a05c6adb76f81ee781ce26"
+    },
+    {
+      "file": "02-utility.png",
+      "concepts": 20,
+      "sha256": "435b643a0557a805402269461403b29411bdfce9f8ac8997b8b02620612fb9ce"
+    },
+    {
+      "file": "03-ground-details.png",
+      "concepts": 20,
+      "sha256": "b154be8cab8319c97186e65cb12941e8daa2a160415fd6291e00b327e08c7815"
+    },
+    {
+      "file": "04-overlay-details.png",
+      "concepts": 20,
+      "sha256": "95cf9f4adbe6abc8212a6693df713905e4747b5f4228203b2462e37967d6876b"
+    }
+  ]
+}
