@@ -83,6 +83,19 @@ The file is the byte-for-byte upload named `ZAISAKU_08B_Validated_Runtime_e4c7.z
 
 From this point, reject a pack that does not include individual runtime PNGs, a manifest, technical validation, and explicit integration metadata. Do not import concept artwork, mismatched character poses, or unverified architectural components.
 
+## Pack 09 — instruments and everyday life
+
+Nothing here replaces Pack 02, Pack 04, Pack 05, Pack 06B, Pack 07, Pack 08, or Pack 08B. The two uploads are stored unchanged under `art-packs/pack-09/`. Checksums in `art-packs/pack-09/SHA256SUMS` match the digests below. Each archive is under 10 MB.
+
+| Stored file | Bytes | SHA-256 |
+|---|---:|---|
+| pack-09/ZAISAKU_09_Runtime_c50c.zip | 395338 | 544a8c82446fb4861acf55861e98fd0112d26db9a8ac36ffbaa0645944dd8884 |
+| pack-09/ZAISAKU_09_Sources_1542.zip | 4932197 | 1c114849fa59d3fd101f5056bdf157eb223df6ac4dd1d29ff9d29efdc6a4e9b1 |
+
+The user called these `ZAISAKU_09_Runtime.zip` and `ZAISAKU_09_Sources.zip`. The stored names are the upload filenames. The bytes are unchanged.
+
+The runtime zip is the only archive the game imports. It carries `manifest.json`, `README.md`, a contact sheet, and 31 runtime PNGs whose hashes match the manifest. The contact sheet is not a sprite. The source zip holds the original sheets and stays on this branch, out of `web/public`. East and west window glass is not in this delivery. Status in the game stays `temporary`.
+
 ## Ongoing workflow
 
 Stage numbered immutable ZIP files and checksums here. Keep each ZIP below 10,000,000 bytes. Use a separate runtime archive and source archive(s). Cursor fetches the staging branch, checks hashes, imports the runtime pack into the active development branch, and records asset approval after screenshots. No gameplay changes or confidential lore in asset staging.
