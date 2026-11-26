@@ -15,14 +15,13 @@ export const worldHud = (session: Session): string => {
         <a href="#/">${symbol('exchange')} Terminal</a>
         <button type="button" data-act="world-vault">${symbol('storage')} Vault</button>
       </div>
-      <p class="prompt" data-prompt></p>
-      <div class="joy hud-hit" data-joy aria-label="Move"><span></span></div>
-      <button class="use hud-hit" type="button" data-act="world-interact">Use</button>
+      <p class="prompt" data-prompt aria-live="polite"></p>
       ${panel(session)}
     </div>
   `;
 };
 
+<<<<<<< HEAD
 const portraitUrl = (id: string): string | null =>
   id === 'ivo' || id === 'ness' || id === 'archivist' ? mineralUrl(`instrument/portrait-${id}.png`) : null;
 
@@ -36,10 +35,28 @@ const talkHead = (focus: TalkFocus): string => {
         <p>${esc(focus.line)}</p>
       </div>
     </div>
+=======
+const talkCard = (session: Session): string => {
+  const talk = session.talk;
+  if (!talk) return '';
+  const actions = talk.actions
+    .map(
+      (action) =>
+        `<button class="btn${action.opens ? ' primary' : ''}" type="button" data-act="talk-go" data-actor="${esc(talk.actorId)}" data-opens="${esc(action.opens ?? '')}">${esc(action.label)}</button>`,
+    )
+    .join('');
+  return `
+    <section class="world-panel talk hud-hit" role="dialog" aria-label="${esc(talk.title)}">
+      <h2>${esc(talk.title)}</h2>
+      <p>${esc(talk.line)}</p>
+      <div class="row">${actions}<button class="btn quiet" type="button" data-act="close-panel">Leave</button></div>
+    </section>
+>>>>>>> 4573b6953b957eecd99aba8461d38108e64e39c4
   `;
 };
 
 const panel = (session: Session): string => {
+  if (session.panel === 'talk') return talkCard(session);
   if (!session.panel) return '';
   const leave = session.focus ? 'Leave' : 'Close';
   const close = `<button class="btn quiet" type="button" data-act="close-panel">${leave}</button>`;

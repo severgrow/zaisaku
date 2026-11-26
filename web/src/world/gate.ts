@@ -1,5 +1,7 @@
 /** One Phaser game, loaded only when World Mode opens. Terminal Mode never imports this module's Phaser chunk. */
 
+import { bumpNavigation, navigation } from './intent.js';
+
 let game: import('phaser').Game | null = null;
 let loading: Promise<void> | null = null;
 let wanted = false;
@@ -55,6 +57,7 @@ const ensure = async (): Promise<void> => {
 
 export const enterWorld = async (): Promise<void> => {
   wanted = true;
+  navigation.suspended = false;
   if (game) {
     if (asleep) {
       game.loop.wake();
@@ -68,6 +71,8 @@ export const enterWorld = async (): Promise<void> => {
 
 export const leaveWorld = (): void => {
   wanted = false;
+  navigation.suspended = true;
+  bumpNavigation();
   if (game && !asleep) {
     game.loop.sleep();
     asleep = true;

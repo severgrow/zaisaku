@@ -24,11 +24,14 @@ export const isSolidPixel = (solid: readonly (readonly boolean[])[], x: number, 
   return row[tx] === true;
 };
 
-const hits = (solid: readonly (readonly boolean[])[], x: number, y: number, radius: number): boolean =>
+/** True when a body of `radius` overlaps a solid tile. Same probe the stepper uses. */
+export const bodyBlocked = (solid: readonly (readonly boolean[])[], x: number, y: number, radius: number): boolean =>
   isSolidPixel(solid, x - radius, y) ||
   isSolidPixel(solid, x + radius, y) ||
   isSolidPixel(solid, x, y - radius) ||
   isSolidPixel(solid, x, y + radius);
+
+const hits = bodyBlocked;
 
 /** Slide along a blocked axis instead of stopping dead. */
 export const move = (

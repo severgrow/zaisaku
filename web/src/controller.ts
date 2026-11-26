@@ -18,13 +18,14 @@ import {
   withdrawAuctionBid,
 } from '../../src/economy/profile.js';
 import { chooseSave, decodeSave, defaultSettings, encodeSave } from '../../src/persist/save.js';
-import { poseFor } from '../../src/world/locations.js';
+import { locationById, poseFor } from '../../src/world/locations.js';
 import { defaultWorld, markFlag, reconcileDisplays } from '../../src/world/state.js';
 import type { ActorDef } from '../../src/world/types.js';
+import type { TalkAction } from './session.js';
 import type { DuelState } from '../../src/engine/types.js';
 import { routeOf } from './session.js';
 import type { Session } from './session.js';
-import { clearIntent } from './world/intent.js';
+import { bumpNavigation } from './world/intent.js';
 import { tick } from './sound.js';
 
 const KEY = 'zaisaku.save.v1';
@@ -52,7 +53,11 @@ const fresh = (): Session => ({
   revision: 0,
   panel: null,
   displaySlot: null,
+<<<<<<< HEAD
   focus: null,
+=======
+  talk: null,
+>>>>>>> 4573b6953b957eecd99aba8461d38108e64e39c4
 });
 
 const boot = (): Session => {
@@ -80,7 +85,11 @@ const boot = (): Session => {
     revision: loaded.revision,
     panel: null,
     displaySlot: null,
+<<<<<<< HEAD
     focus: null,
+=======
+    talk: null,
+>>>>>>> 4573b6953b957eecd99aba8461d38108e64e39c4
   };
 };
 
@@ -152,12 +161,18 @@ export const travelTo = (locationId: string, spawn: string): void => {
     discovered: session.world.discovered.includes(pose.locationId) ? session.world.discovered : [...session.world.discovered, pose.locationId],
   };
   session.panel = null;
+<<<<<<< HEAD
   session.focus = null;
   clearIntent();
+=======
+  session.talk = null;
+  bumpNavigation();
+>>>>>>> 4573b6953b957eecd99aba8461d38108e64e39c4
   persist();
   notify();
 };
 
+<<<<<<< HEAD
 const PORTRAITS = new Set(['ivo', 'ness', 'archivist']);
 
 export const openWorldThing = (actor: ActorDef): void => {
@@ -165,7 +180,34 @@ export const openWorldThing = (actor: ActorDef): void => {
   clearIntent();
   session.focus =
     actor.form === 'person' && PORTRAITS.has(actor.id) ? { id: actor.id, name: actor.name, line: actor.line } : null;
+=======
+export const showTalk = (actor: ActorDef, actions: readonly TalkAction[]): void => {
+  session.world = markFlag(session.world, `met:${actor.id}`);
+  bumpNavigation();
+  session.panel = 'talk';
+  session.talk = { title: actor.name, line: actor.line, actorId: actor.id, actions: actions.map((item) => ({ ...item })) };
+  session.notice = null;
+  persist();
+  notify();
+};
+
+export const performTalk = (actorId: string, opens: string): void => {
+  if (!opens) return;
+  const actor = locationById(session.world.locationId).actors.find((item) => item.id === actorId);
+  if (!actor) {
+    closePanel();
+    return;
+  }
+  openWorldThing(actor);
+};
+
+export const openWorldThing = (actor: ActorDef): void => {
+  session.world = markFlag(session.world, `met:${actor.id}`);
+  session.talk = null;
+  bumpNavigation();
+>>>>>>> 4573b6953b957eecd99aba8461d38108e64e39c4
   if (actor.kind === 'terminal') {
+    persist();
     location.hash = '#/';
     return;
   }
@@ -173,30 +215,40 @@ export const openWorldThing = (actor: ActorDef): void => {
     session.displaySlot = actor.slot;
     session.panel = 'display';
     session.notice = actor.line;
+    persist();
     notify();
     return;
   }
   if (actor.kind === 'flora' || actor.kind === 'resonance' || actor.kind === 'rest') {
     session.panel = 'talk';
-    session.notice = actor.line;
+    session.talk = { title: actor.name, line: actor.line, actorId: actor.id, actions: [] };
+    session.notice = null;
+    persist();
     notify();
     return;
   }
   if (actor.kind === 'duel') {
     session.panel = 'duel';
     session.notice = actor.line;
+    persist();
     notify();
     return;
   }
   session.panel = actor.kind;
   session.notice = actor.line;
+  persist();
   notify();
 };
 
 export const closePanel = (): void => {
   session.panel = null;
+<<<<<<< HEAD
   session.focus = null;
   clearIntent();
+=======
+  session.talk = null;
+  bumpNavigation();
+>>>>>>> 4573b6953b957eecd99aba8461d38108e64e39c4
   notify();
 };
 
@@ -348,6 +400,8 @@ export const start = (): void => {
   window.addEventListener('hashchange', () => {
     session.route = routeOf(location.hash);
     session.panel = null;
+    session.talk = null;
+    bumpNavigation();
     if (session.route === 'market') session.profile = markNoticesSeen(session.profile);
     persist();
     notify();
