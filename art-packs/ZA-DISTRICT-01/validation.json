@@ -1,0 +1,11 @@
+{
+  "stage": "file-validated runtime candidates",
+  "creatorApproval": "pending",
+  "registeredPngs": 25,
+  "fileChecks": [
+    "dimensions",
+    "PNG signatures",
+    "SHA-256"
+  ],
+  "sourceArchive": "../chatgpt-handover/ZAISAKU_New_Source_Art.zip"
+}
