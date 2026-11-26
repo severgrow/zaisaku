@@ -36,6 +36,7 @@ export const homeScreen = (session: Session): string => {
       <div class="meter" style="--p:${progress}"><span></span></div>
     </section>
     <nav class="links" aria-label="Rooms">
+      <a id="go-world" href="#/world"><strong>District</strong><span>Walk the exchange</span></a>
       <a id="start-duel" href="#/duel"><strong>${session.duel && session.duel.phase !== 'complete' ? 'Return' : 'Duel'}</strong><span>${session.duel && session.duel.phase !== 'complete' ? 'The match is still open' : 'Six rounds, sealed bids'}</span></a>
       <a id="go-market" href="#/market"><strong>Market</strong><span>Buy with your balance</span></a>
       <a id="go-auction" href="#/auction"><strong>Auction</strong><span>One timed lot</span></a>
@@ -79,6 +80,8 @@ export const settingsScreen = (session: Session): string => {
         <p>Duels ${counts.first_duel ?? 0} · rematches ${counts.rematch ?? 0} · last duel ${counts.duel_duration ?? 0}s</p>
         <p>Auction visits ${counts.auction_join ?? 0} · market actions ${counts.market_action ?? 0} · requests finished ${counts.contract_complete ?? 0}</p>
         <p class="meta">These counters never leave the browser. There is no shop and no third-party tracker.</p>
+        <p><a href="#/workshop">Asset workshop</a></p>
+        <p class="meta">Development preview of temporary stand-in sprites. It is not part of the floor.</p>
       </section>
     </div>
   `;

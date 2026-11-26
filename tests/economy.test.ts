@@ -15,7 +15,7 @@ import {
   sellOwned,
   tickAuctionProfile,
 } from '../src/economy/profile.js';
-import { decodeSave, defaultSettings, encodeSave } from '../src/persist/save.js';
+import { decodeSave, defaultSettings } from '../src/persist/save.js';
 import { createDuel, submit } from '../src/engine/duel.js';
 import type { ItemInstance } from '../src/engine/types.js';
 
@@ -197,8 +197,10 @@ describe('persistence', () => {
     if (!both.ok) throw new Error(both.reason);
     duel = both.value;
     const profile = createProfile('Ada', 6);
-    const raw = encodeSave({ version: 1, profile, duel, settings: defaultSettings(), lastResult: null });
+    const raw = JSON.stringify({ version: 1, profile, duel, settings: defaultSettings(), lastResult: null });
     const loaded = decodeSave(raw);
+    expect(loaded?.version).toBe(2);
+    expect(loaded?.world.locationId).toBe('district-01');
     expect(loaded?.profile.wallets.permanent).toBe(profile.wallets.permanent);
     expect(loaded?.duel?.round).toBe(duel.round);
     expect(loaded?.duel?.players.p0.cash).toBe(duel.players.p0.cash);

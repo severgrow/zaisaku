@@ -19,7 +19,7 @@ The idea that the rules are a pure module and the client is a shell around them.
 | Server-core as pure functions, storage in an adapter | `src/economy/profile.ts` is the local authority. `src/persist/save.ts` is the adapter. SQL is a draft, not a client |
 | Vite `base: './'`, Vitest, strict TypeScript | Same shape. Tool versions are the Node 20 set this repo pins, not Futasaku's newer toolchain |
 | Reduced motion and theme tokens | New palette and type. The preference is the same idea: system, reduce, or allow |
-| Relative production build, no heavy runtime deps | No runtime dependencies at all |
+| Relative production build, no heavy runtime deps | The terminal stays a thin client. World Mode adds Phaser 3.87.0 as a lazy chunk. |
 
 ## Rewritten
 
@@ -31,7 +31,7 @@ Auth and guest linking were read as a pattern (a guest profile that a later acco
 
 ## Excluded
 
-- Hex board, sprouts, fruit, blooms, veins, the coach, levels, and every Futasaku-specific rule.
+- Hex board, sprouts, fruit, blooms, veins, the coach, levels, and every Futasaku-specific rule. The district does not import that board.
 - Futasaku production data, player balances, secrets, and auth credentials.
 - Any Supabase URL, anon key, or service role from that project.
 - Real-money flows, withdrawals, wagering, a premium shop, ads, and third-party analytics.

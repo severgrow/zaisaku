@@ -18,6 +18,7 @@
     "web:build": "vite build --config web/vite.config.ts",
     "web:preview": "vite preview --config web/vite.config.ts",
     "catalogue": "tsx src/tools/validate-catalogue.ts",
+    "assets": "tsx src/tools/validate-assets.ts",
     "sim": "tsx src/sim/report.ts"
   },
   "devDependencies": {
@@ -27,5 +28,8 @@
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
     "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "phaser": "3.87.0"
   }
 }

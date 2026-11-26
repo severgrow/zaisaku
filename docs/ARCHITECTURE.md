@@ -8,19 +8,20 @@ src/economy/    permanent profile: wallet, vault, market lots, auction escrow
 src/persist/    versioned save, migration, replay
 src/bots/       personalities and the heuristic
 src/sim/        bot-versus-bot matches
-src/tools/      catalogue validator
-web/            Vite client: shell, screens, art, sound
+src/world/      maps, movement, materials, palettes, asset checks. No Phaser.
+src/tools/      catalogue and asset validators
+web/            Vite client: terminal, controller, Phaser world
 supabase/       SQL draft only. Not connected.
-tests/          Vitest against the engine and the profile
+tests/          Vitest against the engine, the profile, and the world data
 ```
 
-There are no runtime dependencies. Vite, TypeScript, Vitest, tsx, and Playwright Core are dev dependencies.
+Phaser 3.87.0 is the only runtime dependency, and only the world view imports it. Vite, TypeScript, Vitest, tsx, and Playwright Core are dev dependencies.
 
 ## Purity
 
 `src/engine/` has no `Math.random`, no `Date`, no network, and no timers. Seeds go through `mulberry32` in `src/engine/prng.ts`. Auctions advance by integer ticks. The match clock in the browser is a `setInterval` outside the engine. When it hits zero, the client calls `expire`, which is a pure pass.
 
-`Date.now` and `crypto.getRandomValues` live in `web/src/main.ts`, and only for save seeds, local analytics timestamps, and idempotency keys.
+`Date.now` and `crypto.getRandomValues` live in `web/src/controller.ts`, and only for save seeds, local analytics timestamps, and idempotency keys. The world scene does not price anything.
 
 ## One price function
 

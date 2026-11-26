@@ -24,6 +24,10 @@ Daily and weekly requests are templates with a lifetime and a scope. NPC collect
 
 A cosmetic is a token set or a plate frame, paid from `wallets.cosmetic` if it is ever paid at all, stored in `cosmetics`. `appraise` does not read it. No payments and no ads in that step either. Selling a theme for real money is a different product decision and is out of scope until the server exists.
 
+## District, after the stand-ins
+
+The first outdoor map and the residence are in. The pictures are temporary. The next art pass follows [ASSET-PRODUCTION-PIPELINE.md](ASSET-PRODUCTION-PIPELINE.md). A second place follows [LOCATION-CREATION.md](LOCATION-CREATION.md). Multiplayer waits on the server in step 1. See [MULTIPLAYER-ROADMAP.md](MULTIPLAYER-ROADMAP.md).
+
 ## Deliberately later
 
 Live player auctions against humans, a shared rotating market, matchmaking, and account linking. The auction and market types already have the fields. They do not need a second design, they need the server from step 1.

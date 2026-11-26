@@ -7,6 +7,7 @@ const LINKS: readonly { route: Route; label: string; dock: boolean }[] = [
   { route: 'market', label: 'Market', dock: true },
   { route: 'auction', label: 'Auction', dock: true },
   { route: 'vault', label: 'Vault', dock: true },
+  { route: 'world', label: 'District', dock: false },
   { route: 'contracts', label: 'Requests', dock: false },
   { route: 'results', label: 'Result', dock: false },
   { route: 'settings', label: 'Settings', dock: false },

@@ -1,6 +1,6 @@
 # Zaisaku
 
-A quiet trading terminal. Two collectors sit a sealed duel. The same house also runs a market, one timed auction, and a vault. Everything has a price. Nothing has a fixed value.
+A quiet trading terminal, and a small walkable district on the same ledger. Two collectors sit a sealed duel. The same house also runs a market, one timed auction, and a vault. Everything has a price. Nothing has a fixed value.
 
 Zaisaku v0.1 is playable offline. Currency is an integer called Zai. There is no real-money trading, no payments, and no third-party analytics. It does not share a database, wallet, or login with Futasaku.
 
@@ -23,6 +23,7 @@ Other commands:
 | `npm run web:build` | Production build into `web/dist` |
 | `npm run web:preview` | Serve that build |
 | `npm run catalogue` | Validate the object catalogue |
+| `npm run assets` | Validate sprite records and object art links |
 | `npm run sim` | Twenty-four bot-versus-bot matches, printed as JSON |
 
 ## What you can do
@@ -33,6 +34,7 @@ Other commands:
 - Open one timed auction. Moth and Hinge are simulated house bidders. A late bid can extend the clock.
 - Advance the wire. A market event changes prices. Owned objects are not destroyed.
 - Reload the page. A valid save comes back. A corrupt save is set aside and a new ledger opens.
+- Walk District 01. Speak to Ivo and buy from the same market. Enter the residence, put an owned object on a shelf, and return to the terminal without a second wallet.
 
 ## What is real, and what is simulated
 
@@ -51,3 +53,4 @@ Simulated, and labelled in the interface: Clerk Vesper, Moth, Hinge, the market 
 - [docs/BACKEND.md](docs/BACKEND.md) — what a server would own
 - [docs/ROADMAP.md](docs/ROADMAP.md) — what comes after v0.1
 - [docs/HANDOVER.md](docs/HANDOVER.md) — how to keep going
+- [docs/WORLD-ARCHITECTURE.md](docs/WORLD-ARCHITECTURE.md) — the district and the residence
