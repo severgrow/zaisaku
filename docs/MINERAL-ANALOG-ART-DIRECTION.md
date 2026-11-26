@@ -1,0 +1,49 @@
+# Mineral Analog
+
+Mineral Analog is the art direction for Zuisaku. The planet is not a reskin of Earth and not a reskin of Japan. Uniqueness is meant to come from shapes, materials, and behaviour. Graphical density stays low so a solo creator can extend it with generated sprites.
+
+The Confidential Creator Bible and the five Mineral Analog mockups were not in this workspace. Nothing from them was invented into the repository. Player-facing lines stay ordinary. Unapproved lore is not shipped.
+
+## Perspective
+
+One camera, for every future sprite:
+
+- Fixed angled top-down.
+- Square 32×32 terrain.
+- Front and roof both readable. No rotating camera, no isometric axes, no 3D.
+- Feet at the bottom centre of a sprite. Depth is the foot line.
+- Integer zoom. Nearest-neighbour. No mixed side-view and top-down sheets.
+
+## Materials
+
+Defined in `src/world/materials.ts`, not inside a scene.
+
+| Id | Name | Look | Use |
+| --- | --- | --- | --- |
+| vey | Living ivory ceramic | Warm bone, rounded | Shells, furniture, domestic objects |
+| oru | Green mineral alloy | Muted green-grey, geometric | Structure, machines, containers |
+| sera | Amber resonant matter | Ochre, sometimes a small light | Instruments, energy, unusual objects |
+
+## Biology
+
+Four families, a few sprites each, in the tile painters: disc trees (layered horizontal canopies), veinflora (branching), mineral reeds (vertical bars), lantern growth (a small amber pod). Size, growth, and regional colour are palette and data hooks. Cultivation is not simulated yet.
+
+## People
+
+One body, about 24×32, adult proportions, four directions, four walk frames. Coats and one accessory (none, visor, hood) make the variants. The player wears a dark coat and a visor. Ivo, Ness, and the Archivist are inhabitants of the district. They are not online players.
+
+## Regions
+
+`src/world/palettes.ts` holds exchange, basin, industrial, cultivation, and unmapped. District 01 and the residence use exchange. The other four are data only. Recolour by swapping the palette. Do not duplicate a sprite per region until a pixel file actually needs it.
+
+## Balance of the strange
+
+About 70% of what a player sees is a settlement doing ordinary work: paths, doors, a stall, a desk. About 25% is the biology and the materials. About 5% is unexplained. In District 01 that 5% is the ring pattern in the square. The line on it says it is not on any notice.
+
+## What the pictures are
+
+World Mode draws Mineral Analog pack 02. The 32px reductions lose the mineral detail, so the game uses the 64px alternatives and scales them onto the existing 32px grid. At the normal camera zoom that is one source pixel per screen pixel. Player frames are 48×64, shown at 24×32, four directions and four walk steps. Ivo, Ness and the Archivist have four idle facings and do not walk. The manifest status is still `temporary`. The procedural painters in `web/src/world/art.ts` remain only if a file fails to load.
+
+## Avoid
+
+Pitched roofs, brick, wood, kanji, cherry trees, medieval props, neon, anime portraits, crystal clusters, photoreal textures, and antialiased pixels.
