@@ -31,3 +31,18 @@ jobs:
           npm run assets
       - name: Build web client
         run: npm run web:build
+      - name: Browser gameplay and responsive captures
+        env:
+          E2E_OUT: /tmp/zaisaku-e2e
+        run: |
+          which google-chrome
+          which ffmpeg
+          npx tsx web/e2e/nav-proof.ts
+      - name: Preserve actual gameplay captures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zaisaku-browser-captures
+          path: /tmp/zaisaku-e2e/
+          if-no-files-found: ignore
+          retention-days: 7
