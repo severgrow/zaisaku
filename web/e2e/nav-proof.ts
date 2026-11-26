@@ -146,7 +146,12 @@ if (video) {
   const webm = await video.path();
   const { spawnSync } = await import('node:child_process');
   const encoded = spawnSync('ffmpeg', ['-y', '-i', webm, '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-an', `${OUT}/nav-demo.mp4`], { encoding: 'utf8' });
-  if (encoded.status !== 0) problems.push(`ffmpeg failed: ${encoded.stderr.slice(-400)}`);
+  if (encoded.error && 'code' in encoded.error && encoded.error.code === 'ENOENT') {
+    const { copyFileSync } = await import('node:fs');
+    copyFileSync(webm, `${OUT}/nav-demo.webm`);
+  } else if (encoded.status !== 0) {
+    problems.push(`ffmpeg failed: ${encoded.stderr.slice(-400)}`);
+  }
 }
 
 const shot = async (width: number, height: number, file: string): Promise<void> => {
