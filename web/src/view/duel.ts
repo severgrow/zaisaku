@@ -46,6 +46,7 @@ export const duelScreen = (session: Session): string => {
   const contract = view.contract;
   const progress = contract ? Math.min(1, contract.target ? contract.progress / contract.target : 0) : 0;
   const selected = view.offers.find((item) => item.instanceId === session.selected) ?? view.inventory.find((item) => item.instanceId === session.selected) ?? null;
+  const appraisal = selected ? `<b>${esc(selected.name)}</b> · appraisal <b class="num">${zai(selected.quote.low)}–${zai(selected.quote.high)}</b>` : null;
   const mine = view.inventory.find((item) => item.instanceId === session.selected) ?? null;
   const lines = view.log.slice(-2);
   const frame = asset('frame-nine-slice.png');
@@ -63,6 +64,7 @@ export const duelScreen = (session: Session): string => {
         <div class="exchange-body" aria-label="Objects on the table">
           ${view.offers.map((item) => offer(item, item.instanceId === session.selected)).join('') || '<p class="muted">The table is clear.</p>'}
         </div>
+        ${appraisal ? `<p class="landscape-appraisal">${appraisal}</p>` : ''}
       </div>
       <section class="instrument-detail">
         <div class="private-request">
@@ -72,7 +74,7 @@ export const duelScreen = (session: Session): string => {
         <p class="meta">${esc(contract?.description ?? '')}</p>
         <p class="num">${contract ? `${contract.progress} / ${contract.target}` : ''} · ${contract ? zai(contract.reward) : ''}</p>
         <div class="meter" style="--p:${progress}"><span></span></div>
-        ${selected ? `<p class="picked"><b>${esc(selected.name)}</b> · appraisal <b class="num">${zai(selected.quote.low)}–${zai(selected.quote.high)}</b></p>` : '<p class="muted">Choose an object on the table.</p>'}
+        ${appraisal ? `<p class="picked">${appraisal}</p>` : '<p class="muted">Choose an object on the table.</p>'}
         <p class="meta">Worth <b class="num">${zai(view.worth.netWorth)}</b> · cash ${zai(view.worth.cash)} · shelf ${zai(view.worth.inventoryValue)}</p>
         ${view.warnings.map((warning) => `<p class="burgundy">${esc(warning)}</p>`).join('')}
       </section>

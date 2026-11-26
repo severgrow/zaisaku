@@ -229,6 +229,14 @@ async function duel(width: number, height: number) {
   assert.notEqual(await page.locator('#bid-amount').innerText(), bid);
   await act(page, 'bid-dec').click();
   assert.equal(await page.locator('#bid-amount').innerText(), bid);
+  if (width < 900 && width > height) {
+    const firstDecisionVisible = await page.evaluate(() => {
+      const bottom = document.querySelector('.instrument .actions')!.getBoundingClientRect().top;
+      const firstView = document.querySelectorAll('.exchange h3, .landscape-appraisal, .instrument-detail > p.meta');
+      return [...firstView].slice(0, 5).every((element) => element.getBoundingClientRect().bottom <= bottom);
+    });
+    assert.ok(firstDecisionVisible, 'Landscape keeps the offers and private description above the decision dock');
+  }
   await shot(page, `duel-six-round-${width}`);
   await act(page, 'lock-bid').click();
   await round(2);

@@ -637,6 +637,7 @@ html.large-text { font-size: 118%; }
 .private-request img { flex: none; object-fit: contain; image-rendering: pixelated; }
 .private-request .kicker { margin: 0 0 2px; }
 .duel-feedback { margin: 0; }
+.landscape-appraisal { display: none; }
 @media (max-width: 899px) and (orientation: portrait) {
   .instrument-clock { padding-block: 6px; gap: 4px 10px; }
   .instrument-clock .opponent-cash { min-width: 0; }
@@ -645,15 +646,39 @@ html.large-text { font-size: 118%; }
   .instrument-detail .kicker { margin-bottom: 3px; }
   .duel-feedback { max-height: 2.9em; overflow-y: auto; }
 }
-@media (max-width: 899px) and (orientation: landscape) {
+@media (min-width: 620px) and (max-width: 899px) and (orientation: landscape) {
+  .shell:has(.instrument) { --nav: calc(53px + env(safe-area-inset-bottom)); }
+  .shell:has(.instrument) .top { padding-block: env(safe-area-inset-top) 0; }
+  .shell:has(.instrument) .top .brand small { display: none; }
+  .za-ui .shell:has(.instrument) .dock.za-nav .za-btn {
+    flex-direction: row;
+    min-height: 44px;
+    gap: 5px;
+    padding: 4px;
+  }
+  .shell:has(.instrument) .dock .za-glyph { width: 18px; height: 18px; }
   .instrument {
-    grid-template-columns: minmax(230px, 1fr) minmax(220px, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: start;
   }
   .instrument-clock, .instrument-hold, .instrument > .btn, .instrument > a { grid-column: 1 / -1; }
-  .instrument .exchange { max-width: 390px; }
-  .instrument .actions { grid-template-columns: minmax(230px, 1fr) minmax(190px, auto); padding-top: 5px; }
+  .instrument-clock { padding-block: 5px; }
+  .instrument .exchange { height: 124px; aspect-ratio: auto; }
+  .instrument .exchange-body { top: 19%; bottom: 20%; }
+  .instrument .landscape-appraisal {
+    position: absolute;
+    top: 100%;
+    left: 7%;
+    right: 7%;
+    display: block;
+    margin: 3px 0 0;
+    color: var(--muted);
+    font-size: 0.78rem;
+    text-align: center;
+  }
+  .instrument-detail .picked { display: none; }
+  .instrument .actions { grid-template-columns: minmax(230px, 1fr) minmax(190px, auto); gap: 4px 8px; padding-top: 5px; }
   .instrument .actions .row { flex-wrap: nowrap; justify-content: flex-end; }
-  .instrument .duel-feedback { grid-column: 1 / -1; }
-  .screen:has(.actions) { padding-bottom: calc(var(--nav) + 104px); }
+  .instrument .duel-feedback { grid-column: 1 / -1; max-height: 1.5em; overflow-y: auto; }
+  .screen:has(.actions) { padding-bottom: calc(var(--nav) + 104px); scroll-padding-bottom: calc(var(--nav) + 74px); }
 }
