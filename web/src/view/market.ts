@@ -2,9 +2,11 @@ import { definition } from '../../../src/engine/definitions.js';
 import { activeAtTick } from '../../../src/engine/events.js';
 import { appraise } from '../../../src/engine/valuation.js';
 import { marketContext } from '../../../src/economy/profile.js';
+import { contractPicture } from '../../../src/world/identity.js';
 import { plate } from '../ui/art.js';
 import { esc, signed, zai } from '../ui/text.js';
 import type { Session } from '../session.js';
+import { mineralUrl } from '../world/mineral.js';
 
 export const marketScreen = (session: Session): string => {
   const profile = session.profile;
@@ -97,6 +99,7 @@ export const contractsScreen = (session: Session): string => {
     .map((request) => {
       const progress = Math.min(1, request.target ? request.progress / request.target : 0);
       return `<article class="panel">
+        <img class="art" alt="" src="${mineralUrl(contractPicture(request.scope, request.status))}" />
         <p class="kicker">${esc(request.scope)} · ${esc(request.status)}</p>
         <h2>${esc(request.title)}</h2>
         <p>${esc(request.description)}</p>

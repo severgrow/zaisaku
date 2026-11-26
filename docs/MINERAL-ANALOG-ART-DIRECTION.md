@@ -44,6 +44,8 @@ About 70% of what a player sees is a settlement doing ordinary work: paths, door
 
 World Mode draws Mineral Analog pack 04 floors, straight transitions, and connected walls, roofs and door frames on the existing 32px grid. The textures are 64px and the camera zoom is 2, so one source pixel is one screen pixel. Pack 02 still supplies the player walk cycle and the three NPC facings: 48×64 frames shown at 24×32, origin at the bottom centre. Sixteen catalogue plates use the existing definition ids; every other object keeps its SVG plate. Empty shelves draw the owned picture on top. The manifest status is still `temporary`. The procedural painters in `web/src/world/art.ts` remain only if a file fails to load.
 
+Pack 08B adds only its validated runtime pictures: the plaza tree, notice board, bench, lantern plant, a closed vault door on south openings, the contact shadow, the resonance mark, and four contract envelopes. Source sheets stay out of the bundle. The tree and plant overhang their single ground tile. The vault door does not change collision and is not used on any other facing. Pack 08 is superseded and was not imported. A later pack is rejected unless it brings individual runtime PNGs, a manifest, technical validation, and explicit integration metadata.
+
 Numbered packs live on `art/mineral-analog-packs` under `art-packs/`. Runtime and source stay in separate archives, each at most 10 MB, with a checksum, and a later pack does not replace an earlier file. Source sheets stay out of `web/public`.
 
 ## Avoid

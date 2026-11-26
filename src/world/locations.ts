@@ -1,4 +1,5 @@
 import type { ActorDef, ExitDef, LocationDef } from './types.js';
+import { DISTRICT_PLACEMENTS, occupiedTiles } from './identity.js';
 import { feetOf } from './movement.js';
 import { GATE } from './state.js';
 import { stampShell } from './stamp.js';
@@ -111,6 +112,9 @@ export const buildDistrict = (): LocationDef => {
   for (const actor of actors) {
     if (actor.kind === 'resonance') continue;
     occupy(solid, actor.tx, actor.ty);
+  }
+  for (const placement of DISTRICT_PLACEMENTS) {
+    for (const cell of occupiedTiles(placement)) occupy(solid, cell.tx, cell.ty);
   }
   const exits: ExitDef[] = [
     { id: 'to-residence', tx: residence.doorTx, ty: residence.doorTy, to: 'residence', spawn: 'door', label: 'Residence', symbol: 'residence' },
