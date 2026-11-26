@@ -4,7 +4,7 @@ import { decodeSave } from '../../src/persist/save.js';
 import { preview } from 'vite';
 import type { Page } from 'playwright-core';
 
-const OUT = '/cursor/stores/bc-e7f2e0c6-f99a-409f-bbaa-d4b46ca4e062/media';
+const OUT = process.env.E2E_OUT ?? '/tmp/zaisaku-e2e';
 mkdirSync(OUT, { recursive: true });
 
 const server = await preview({
