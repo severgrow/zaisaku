@@ -1,4 +1,8 @@
 import { hashString } from '../../../src/engine/prng.js';
+import { ARTWORK } from '../../../src/world/artwork.js';
+import { mineralUrl } from '../world/mineral.js';
+
+const PLATE_FILES = new Map(ARTWORK.filter((item) => item.plateFile).map((item) => [item.definitionId, item.plateFile!]));
 
 const ACCENT: Record<string, string> = {
   electronics: '#5f8f8a',
@@ -37,4 +41,8 @@ const generated = (ref: string, category: string): string => {
   return `<path d="M32 14v36M18 24c8 8 20 8 28 0M18 42c8-8 20-8 28 0" fill="none" stroke="${accent}"/>`;
 };
 
-export const plate = (ref: string, category: string): string => wrap(CUSTOM[ref] ?? generated(ref, category));
+export const plate = (ref: string, category: string): string => {
+  const file = PLATE_FILES.get(ref);
+  if (file) return `<img class="art" alt="" src="${mineralUrl(file)}" width="64" height="64" />`;
+  return wrap(CUSTOM[ref] ?? generated(ref, category));
+};

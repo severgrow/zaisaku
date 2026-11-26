@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ASSET_MANIFEST, chromaKey, readPngSize, sliceGrid, validateManifest } from '../src/world/assets.js';
 import { ARTWORK } from '../src/world/artwork.js';
+import { cornerDiagonal, floorKey, openingFile, pieceFile } from '../src/world/connectors.js';
 import { buildDistrict, buildResidence, LOCATIONS, poseFor } from '../src/world/locations.js';
 import { MATERIALS } from '../src/world/materials.js';
 import { feetOf, inRange, move, reachable, wish } from '../src/world/movement.js';
@@ -24,6 +25,24 @@ describe('district foundations', () => {
     expect(validateManifest(ASSET_MANIFEST)).toEqual([]);
     expect(new Set(ARTWORK.map((item) => item.pixelKey)).size).toBe(ARTWORK.length);
     expect(ARTWORK.every((item) => item.status === 'temporary' && item.svgRef.length > 0)).toBe(true);
+    expect(ARTWORK.filter((item) => item.plateFile).map((item) => item.definitionId).sort()).toEqual([
+      'blue-fault',
+      'bone-dice',
+      'closed-city',
+      'counterfeit-seal',
+      'cracked-saucer',
+      'eclipse-monocle',
+      'green-filter',
+      'late-bell',
+      'paper-charm',
+      'prism-ticket',
+      'second-mouth',
+      'spare-key',
+      'station-pendulum',
+      'travellers-weight',
+      'twin-left',
+      'twin-right',
+    ]);
     const goals = ['ivo', 'ness', 'archivist', 'stall', 'research-door', 'duel-door', 'auction-door', 'to-residence'] as const;
     for (const id of goals) {
       const actor = district.actors.find((item) => item.id === id) ?? district.exits.find((item) => item.id === id);
@@ -83,6 +102,34 @@ describe('asset pipeline', () => {
     const spec = { id: 't', rings: 3, periodMs: 1000, color: '#d29a3a', maxRadius: 18, meaning: '' };
     expect(ringRadius(spec, 0, 0)).toBeGreaterThan(0);
     expect(ringRadius(spec, 0, 1000)).toBeCloseTo(ringRadius(spec, 0, 0), 5);
+  });
+});
+
+describe('pack 04 connectors', () => {
+  it('names corners, tees and openings the way the manifest does', () => {
+    expect(pieceFile('wall', ['n', 'w'], 'outer')).toBe('wall-outer-wn.png');
+    expect(pieceFile('wall', ['n', 'w'], 'inner')).toBe('wall-inner-wn.png');
+    expect(pieceFile('wall', ['n', 's', 'w'], 'outer')).toBe('wall-t-swn.png');
+    expect(pieceFile('wall', ['n', 'e', 'w'], 'outer')).toBe('wall-t-wne.png');
+    expect(pieceFile('wall', ['n', 'e', 's', 'w'], 'outer')).toBe('wall-cross.png');
+    expect(pieceFile('roof', ['e', 's'], 'outer')).toBe('roof-corner-es.png');
+    expect(pieceFile('roof', ['n', 'e', 's'], 'outer')).toBe('roof-straight-ns.png');
+    expect(pieceFile('roof', ['e', 's', 'w'], 'outer')).toBe('roof-straight-ew.png');
+    expect(pieceFile('rail', ['e', 'w'], 'inner')).toBe('rail-straight-ew.png');
+    expect(openingFile('door', ['e', 'w'])).toBe('door-frame-open.png');
+    expect(openingFile('window', ['n', 's'])).toBeNull();
+    expect(cornerDiagonal(['e', 's'])).toEqual({ x: 1, y: 1 });
+    expect(cornerDiagonal(['n', 's'])).toBeNull();
+  });
+
+  it('uses a straight transition only when one side changes material', () => {
+    expect(floorKey('bone-ceramic', { n: 'mineral-paving', e: 'bone-ceramic', s: 'bone-ceramic', w: 'bone-ceramic' })).toBe(
+      'bone-ceramic-to-mineral-paving-n',
+    );
+    expect(floorKey('bone-ceramic', { n: 'mineral-paving', e: 'mineral-paving' })).toBe('floor-bone-ceramic');
+    expect(floorKey('mineral-paving', { w: 'soil' })).toBe('mineral-paving-to-soil-w');
+    expect(floorKey('resonance-path', { n: 'mineral-paving' })).toBe('floor-resonance-path');
+    expect(floorKey('interior-floor', {})).toBe('floor-interior-floor');
   });
 });
 

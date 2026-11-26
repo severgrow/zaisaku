@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import { definition } from '../../../src/engine/definitions.js';
+import { ARTWORK } from '../../../src/world/artwork.js';
+import { DIRS, cornerDiagonal, floorKey, openingFile, pieceFile, stepOf, type Dir, type FloorMaterial } from '../../../src/world/connectors.js';
 import { locationById } from '../../../src/world/locations.js';
 import { feetOf, move, nearest, tileAt, wish } from '../../../src/world/movement.js';
 import { paletteById } from '../../../src/world/palettes.js';
@@ -10,16 +12,24 @@ import type { Facing, LocationDef } from '../../../src/world/types.js';
 import { session, travelTo, openWorldThing } from '../controller.js';
 import { paintActor, paintPlate, paintTile } from './art.js';
 import { intent } from './intent.js';
-import { MINERAL_TILES, NPCS, PLAYER_FACINGS, mineralUrl, npcFile, playerFile } from './mineral.js';
+import {
+  ARCHITECTURE_FILES,
+  FLOOR_FILES,
+  FURNITURE_FILES,
+  MINERAL_TILES,
+  NPCS,
+  PLAYER_FACINGS,
+  TRANSITION_FILES,
+  catalogue64,
+  mineralUrl,
+  npcFile,
+  playerFile,
+} from './mineral.js';
 
 const transport = localTransport();
 const SPEED = 88;
 const RADIUS = 6;
-const MASS = new Set<number>([TILE.roof, TILE.wall, TILE.interior, TILE.door, TILE.window]);
-const WALK = new Set<number>([TILE.ground, TILE.path, TILE.awning, TILE.lamp]);
 const OVERLAY: Readonly<Record<number, string>> = {
-  [TILE.door]: 'door',
-  [TILE.window]: 'window',
   [TILE.counter]: 'counter',
   [TILE.pipe]: 'pipe',
   [TILE.vent]: 'vent',
@@ -30,6 +40,8 @@ const OVERLAY: Readonly<Record<number, string>> = {
   [TILE.lantern]: 'lantern',
   [TILE.awning]: 'awning',
 };
+
+const STRUCTURE = new Set<number>([TILE.roof, TILE.wall, TILE.interior, TILE.door, TILE.window, TILE.pipe, TILE.vent]);
 
 export class DistrictScene extends Phaser.Scene {
   private place: LocationDef = locationById('district-01');
@@ -49,6 +61,13 @@ export class DistrictScene extends Phaser.Scene {
 
   preload(): void {
     for (const [key, file] of Object.entries(MINERAL_TILES)) this.load.image(key, mineralUrl(file));
+    for (const [key, file] of Object.entries(FLOOR_FILES)) this.load.image(key, mineralUrl(file));
+    for (const [key, file] of Object.entries(TRANSITION_FILES)) this.load.image(key, mineralUrl(file));
+    for (const [key, file] of Object.entries(FURNITURE_FILES)) this.load.image(key, mineralUrl(file));
+    for (const file of ARCHITECTURE_FILES) this.load.image(file, mineralUrl(`architecture/${file}`));
+    for (const link of ARTWORK) {
+      if (link.plateFile) this.load.image(`item-${link.definitionId}`, mineralUrl(catalogue64(link.plateFile)));
+    }
     for (const facing of PLAYER_FACINGS) {
       for (let frame = 0; frame < 4; frame += 1) this.load.image(`you-${facing}-${frame}`, mineralUrl(playerFile(facing, frame)));
     }
@@ -59,6 +78,11 @@ export class DistrictScene extends Phaser.Scene {
 
   create(): void {
     for (const key of Object.keys(MINERAL_TILES)) this.nearest(key);
+    for (const key of Object.keys(FLOOR_FILES)) this.nearest(key);
+    for (const key of Object.keys(TRANSITION_FILES)) this.nearest(key);
+    for (const key of Object.keys(FURNITURE_FILES)) this.nearest(key);
+    for (const file of ARCHITECTURE_FILES) this.nearest(file);
+    for (const link of ARTWORK) if (link.plateFile) this.nearest(`item-${link.definitionId}`);
     for (const facing of PLAYER_FACINGS) {
       for (let frame = 0; frame < 4; frame += 1) this.nearest(`you-${facing}-${frame}`);
       for (const id of NPCS) this.nearest(`person-${id}-${facing}`);
@@ -119,8 +143,7 @@ export class DistrictScene extends Phaser.Scene {
     pen.imageSmoothingEnabled = false;
     for (let y = 0; y < this.place.height; y += 1) {
       for (let x = 0; x < this.place.width; x += 1) {
-        const tile = this.place.tiles[y]?.[x] ?? 0;
-        const source = this.sheet(this.baseKey(tile, x, y));
+        const source = this.sheet(this.floorAt(x, y));
         if (source) pen.drawImage(source, x * TILE_SIZE * draw, y * TILE_SIZE * draw, TILE_SIZE * draw, TILE_SIZE * draw);
       }
     }
@@ -128,11 +151,17 @@ export class DistrictScene extends Phaser.Scene {
     const base = this.add.image(0, 0, `ground-${this.place.id}`).setOrigin(0, 0).setDepth(0);
     base.setDisplaySize(this.place.width * TILE_SIZE, this.place.height * TILE_SIZE);
     this.props.push(base);
+    const occupied = new Set(this.place.actors.map((actor) => `${actor.tx},${actor.ty}`));
+    const displays = new Set(this.place.actors.filter((actor) => actor.slot).map((actor) => `${actor.tx},${actor.ty}`));
     for (let y = 0; y < this.place.height; y += 1) {
       for (let x = 0; x < this.place.width; x += 1) {
         const tile = this.place.tiles[y]?.[x] ?? 0;
-        const above = this.place.tiles[y - 1]?.[x];
-        if (tile === TILE.roof && above !== TILE.roof) this.overlay('roof', x, y);
+        this.architecture(x, y, tile);
+        if (tile === TILE.counter && displays.has(`${x},${y}`)) continue;
+        if (tile === TILE.counter && !occupied.has(`${x},${y}`)) {
+          this.overlay('furniture-pedestal', x, y);
+          continue;
+        }
         const key = OVERLAY[tile];
         if (key) this.overlay(key, x, y);
       }
@@ -148,12 +177,17 @@ export class DistrictScene extends Phaser.Scene {
         }
       } else if (actor.form === 'furnishing' && actor.slot) {
         const slot = actor.slot;
+        const furniture = slot === 'shelf-b' ? 'furniture-glass' : 'furniture-shelf';
+        this.prop(furniture, actor.tx, actor.ty, TILE_SIZE, TILE_SIZE);
         const owned = session.profile.inventory.find((item) => item.id === session.world.displays[slot]);
-        if (owned) {
-          const def = definition(owned.definitionId);
-          const key = `plate-${def.category}`;
-          if (!this.textures.exists('plate')) this.texture(key, paintPlate(palette.sera, palette));
-          this.prop(this.textures.exists('plate') ? 'plate' : key, actor.tx, actor.ty, 28, 28);
+        if (!owned) continue;
+        const def = definition(owned.definitionId);
+        const itemKey = `item-${def.id}`;
+        if (this.textures.exists(itemKey)) this.itemOnShelf(itemKey, actor.tx, actor.ty);
+        else {
+          const painted = `plate-${def.category}`;
+          if (!this.textures.exists(painted)) this.texture(painted, paintPlate(palette.sera, palette));
+          this.itemOnShelf(painted, actor.tx, actor.ty);
         }
       }
     }
@@ -170,18 +204,97 @@ export class DistrictScene extends Phaser.Scene {
     return this.textures.get(key).getSourceImage() as CanvasImageSource;
   }
 
-  private baseKey(tile: number, x: number, y: number): string {
-    if (tile === TILE.path) return 'path';
-    if (tile === TILE.awning || tile === TILE.lamp) return 'ground';
-    if (tile === TILE.pipe || tile === TILE.vent) return 'stone';
-    if (this.place.id === 'residence' && (tile === TILE.ground || tile === TILE.counter || tile === TILE.lantern)) return 'stone';
-    if (MASS.has(tile)) {
-      const edge = x === 0 || y === 0 || x === this.place.width - 1 || y === this.place.height - 1;
-      const south = this.place.tiles[y + 1]?.[x];
-      if (!edge && tile !== TILE.roof && south !== undefined && WALK.has(south)) return 'interior';
-      return 'stone';
+  private tile(x: number, y: number): number | null {
+    const row = this.place.tiles[y];
+    if (!row || x < 0 || x >= row.length) return null;
+    return row[x] ?? null;
+  }
+
+  private materialAt(x: number, y: number): FloorMaterial | null {
+    const tile = this.tile(x, y);
+    if (tile === null) return null;
+    if (this.place.id === 'residence') return 'bone-ceramic';
+    if (tile === TILE.path) return 'resonance-path';
+    if (tile === TILE.roof || tile === TILE.interior || tile === TILE.door || tile === TILE.window || tile === TILE.pipe || tile === TILE.vent) {
+      return 'bone-ceramic';
     }
-    return 'ground';
+    return 'mineral-paving';
+  }
+
+  private floorAt(x: number, y: number): string {
+    const here = this.materialAt(x, y) ?? 'mineral-paving';
+    const neighbors: Partial<Record<Dir, FloorMaterial | null>> = {};
+    for (const dir of DIRS) {
+      const step = stepOf(dir);
+      neighbors[dir] = this.materialAt(x + step.x, y + step.y);
+    }
+    return floorKey(here, neighbors);
+  }
+
+  /** A door or window cut into a roof run still counts so the roof meets the frame instead of notching. */
+  private countsAsRoof(x: number, y: number): boolean {
+    const tile = this.tile(x, y);
+    if (tile === TILE.roof) return true;
+    if (tile !== TILE.door && tile !== TILE.window) return false;
+    return this.tile(x - 1, y) === TILE.roof || this.tile(x + 1, y) === TILE.roof || this.tile(x, y - 1) === TILE.roof || this.tile(x, y + 1) === TILE.roof;
+  }
+
+  private isStructure(x: number, y: number): boolean {
+    const tile = this.tile(x, y);
+    return tile !== null && STRUCTURE.has(tile);
+  }
+
+  /** Perimeter walls, plus a door or window that continues an east-west run. North-south doors stay open gaps. */
+  private inWallMask(x: number, y: number): boolean {
+    const tile = this.tile(x, y);
+    if (tile === null) return false;
+    if (tile === TILE.wall) return true;
+    if (tile === TILE.interior || tile === TILE.pipe || tile === TILE.vent) return DIRS.some((dir) => !this.isStructure(x + stepOf(dir).x, y + stepOf(dir).y));
+    if (tile === TILE.door) return this.horizontalRun(x, y);
+    if (tile === TILE.window) return this.horizontalRun(x, y) || this.verticalRun(x, y);
+    return false;
+  }
+
+  private horizontalRun(x: number, y: number): boolean {
+    return this.isStructure(x - 1, y) && this.isStructure(x + 1, y) && !(this.isStructure(x, y - 1) && this.isStructure(x, y + 1));
+  }
+
+  private verticalRun(x: number, y: number): boolean {
+    return this.isStructure(x, y - 1) && this.isStructure(x, y + 1) && !(this.isStructure(x - 1, y) && this.isStructure(x + 1, y));
+  }
+
+  private maskDirs(x: number, y: number): Dir[] {
+    return DIRS.filter((dir) => this.inWallMask(x + stepOf(dir).x, y + stepOf(dir).y));
+  }
+
+  private architecture(x: number, y: number, tile: number): void {
+    if (tile === TILE.roof) {
+      const dirs = DIRS.filter((dir) => this.countsAsRoof(x + stepOf(dir).x, y + stepOf(dir).y));
+      this.overlay(pieceFile('roof', dirs, 'outer') ?? 'roof-straight-ew.png', x, y);
+    }
+    const opening = tile === TILE.door || tile === TILE.window ? openingFile(tile === TILE.door ? 'door' : 'window', this.horizontalRun(x, y) ? ['e', 'w'] : []) : null;
+    if (opening) {
+      this.overlay(opening, x, y);
+      return;
+    }
+    if (tile === TILE.window && this.verticalRun(x, y)) {
+      this.overlay('wall-straight-ns.png', x, y);
+      return;
+    }
+    if (!this.inWallMask(x, y) || tile === TILE.door) return;
+    const dirs = this.maskDirs(x, y);
+    if (tile === TILE.wall && openingFile('door', dirs) && (this.tile(x, y - 1) === TILE.door || this.tile(x, y + 1) === TILE.door)) {
+      this.overlay('door-frame-open.png', x, y);
+      return;
+    }
+    if (tile === TILE.wall && openingFile('window', dirs) && (this.tile(x, y - 1) === TILE.window || this.tile(x, y + 1) === TILE.window)) {
+      this.overlay('window-open.png', x, y);
+      return;
+    }
+    const diagonal = cornerDiagonal(dirs);
+    const inner = diagonal ? this.inWallMask(x + diagonal.x, y + diagonal.y) : false;
+    const file = pieceFile('wall', dirs, inner ? 'inner' : 'outer');
+    if (file) this.overlay(file, x, y);
   }
 
   private overlay(key: string, x: number, y: number): void {
@@ -193,16 +306,24 @@ export class DistrictScene extends Phaser.Scene {
   }
 
   private ensureFallback(palette: ReturnType<typeof paletteById>): void {
-    if (this.textures.exists('ground')) return;
-    this.texture('ground', paintTile(TILE.ground, palette));
-    this.texture('path', paintTile(TILE.path, palette));
-    this.texture('stone', paintTile(TILE.interior, palette));
-    this.texture('interior', paintTile(TILE.interior, palette));
+    if (this.textures.exists('floor-mineral-paving')) return;
+    this.texture('floor-mineral-paving', paintTile(TILE.ground, palette));
+    this.texture('floor-bone-ceramic', paintTile(TILE.interior, palette));
+    this.texture('floor-resonance-path', paintTile(TILE.path, palette));
+    this.texture('floor-interior-floor', paintTile(TILE.interior, palette));
+    this.texture('floor-industrial-metal', paintTile(TILE.interior, palette));
+    this.texture('floor-soil', paintTile(TILE.ground, palette));
   }
 
   private prop(key: string, tx: number, ty: number, width: number, height: number): void {
     const feet = feetOf(tx, ty);
     const image = this.add.image(feet.x, feet.y, key).setOrigin(0.5, 1).setDisplaySize(width, height).setDepth(feet.y);
+    this.props.push(image);
+  }
+
+  private itemOnShelf(key: string, tx: number, ty: number): void {
+    const feet = feetOf(tx, ty);
+    const image = this.add.image(feet.x, feet.y - 14, key).setOrigin(0.5, 1).setDisplaySize(16, 16).setDepth(feet.y + 1);
     this.props.push(image);
   }
 
