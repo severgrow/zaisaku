@@ -1,6 +1,6 @@
 # Asset production pipeline
 
-There is no image-generation API in this project. New art is made outside the repo, then checked in as PNG. Pack 02 is the current World Mode picture, drawn from `web/public/mineral/`. The manifest still says `temporary`. The procedural painters stay as a fallback if a file is missing.
+There is no image-generation API in this project. New art is made outside the repo, then checked in as PNG. Pack 04 is the current World Mode ground and architecture, drawn from `web/public/mineral/`. Pack 02 characters and loose props stay in that folder. The manifest still says `temporary`. The procedural painters stay as a fallback if a file is missing.
 
 ## Steps
 
@@ -29,6 +29,17 @@ Generate, in this order, at the sizes in the specification:
 5. One 64×64 plate for a generic catalogue object, amber chamber on bone. Per-object plates come after this one looks right.
 
 Reject any result that changes the perspective or adds a fifth material colour.
+
+## Pack archives
+
+Future packs are numbered ZIP files on the branch `art/mineral-analog-packs`, under `art-packs/`. Pack 04 is `art-packs/pack-04/`.
+
+- Keep each archive at or below 10 MB. Split a larger delivery instead of committing one blob.
+- Ship a runtime archive separately from the source archive. The game imports the runtime PNGs only.
+- Put a SHA-256 file next to every archive. The runtime pack also carries `manifest.json` and `validation.json`.
+- Never overwrite a previous pack. Add the next number beside it.
+- Leave original sheets on the art branch, or under `assets/` if a copy must live in the game repo. Do not put those sheets in `web/public`, or they ship in the production bundle.
+- `status` stays `temporary` until the creator approves real desktop and mobile screenshots. The manifest type is `'temporary' | 'approved'`. Do not mark a pack approved from the archive alone.
 
 ## Versioning
 

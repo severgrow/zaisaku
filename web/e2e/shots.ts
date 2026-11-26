@@ -71,8 +71,20 @@ const market = async (width: number, height: number, file: string) => {
 const auction = async (width: number, height: number, file: string) => {
   const { page, errors } = await open(width, height);
   await page.click('#go-auction');
-  await page.click('[data-act="open-auction"]');
-  await page.waitForSelector('.art');
+  const plated = ['Bone Dice', 'Spare Key', 'Late Bell', 'Second Mouth', 'Station Pendulum', 'Green Filter', 'Eclipse Monocle', 'Prism Ticket', 'Paper Charm', 'Counterfeit Seal', "Traveller's Weight", 'Cracked Saucer', 'Blue Fault', 'Closed City', 'The Twin'];
+  for (let attempt = 0; attempt < 8; attempt += 1) {
+    await page.click('[data-act="open-auction"]');
+    await page.waitForSelector('.art');
+    const name = await page.locator('h1').innerText();
+    if (plated.some((title) => name.includes(title))) break;
+    await page.click('[data-act="cancel-auction"]');
+    await page.waitForSelector('[data-act="open-auction"]');
+  }
+  await page.waitForFunction(() => {
+    const img = document.querySelector('img.art');
+    if (!(img instanceof HTMLImageElement)) return document.querySelector('svg.art') !== null;
+    return img.complete && img.naturalWidth > 0;
+  });
   await shot(page, file, file);
   if (errors.length) problems.push(`${file}: ${errors.join(' | ')}`);
   await page.close();

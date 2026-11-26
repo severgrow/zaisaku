@@ -1,6 +1,6 @@
 # Asset specification
 
-These sizes are the logical cells. Pack 02’s pictures are the double-resolution files in `web/public/mineral/`, drawn into those cells with nearest-neighbour. They stay `temporary` until the screenshots are approved. The untouched pack is `assets/mineral-analog-02/`.
+These sizes are the logical cells. Pack 04 floors and architecture are the 64px files in `web/public/mineral/`, drawn into those cells with nearest-neighbour. Pack 02 characters and loose props stay beside them. Everything stays `temporary` until the screenshots are approved. Source archives are on `art/mineral-analog-packs`, not in the production bundle.
 
 | Kind | Pixels | Notes |
 | --- | --- | --- |
