@@ -7,7 +7,6 @@ import { homeScreen, settingsScreen } from './view/home.js';
 import { duelScreen, resultsScreen } from './view/duel.js';
 import { contractsScreen, marketScreen, vaultScreen } from './view/market.js';
 import { auctionScreen } from './view/auction.js';
-import { intent } from './world/intent.js';
 import { enterWorld, leaveWorld, onVisibility } from './world/gate.js';
 import { worldHud } from './world/hud.js';
 import { mountWorkshop, workshopScreen } from './world/workshop.js';
@@ -19,6 +18,7 @@ import {
   cancelLot,
   closePanel,
   inspectVault,
+  performTalk,
   openLot,
   persist,
   placeBid,
@@ -95,8 +95,10 @@ const onClick = (event: MouseEvent): void => {
   const id = node.dataset.id ?? session.selected;
   const duel = session.duel;
 
-  if (act === 'world-interact') {
-    intent.interact = true;
+  if (act === 'talk-go') {
+    const opens = node.dataset.opens ?? '';
+    const actorId = node.dataset.actor ?? '';
+    if (opens && actorId) performTalk(actorId, opens);
     return;
   }
   if (act === 'close-panel') closePanel();
@@ -161,44 +163,7 @@ const onClick = (event: MouseEvent): void => {
   }
 };
 
-let joyId: number | null = null;
-const joyAt = (event: PointerEvent): void => {
-  const joy = document.querySelector('[data-joy]');
-  if (!(joy instanceof HTMLElement) || joyId !== event.pointerId) return;
-  const rect = joy.getBoundingClientRect();
-  const dx = event.clientX - (rect.left + rect.width / 2);
-  const dy = event.clientY - (rect.top + rect.height / 2);
-  const len = Math.hypot(dx, dy) || 1;
-  const scale = Math.min(1, len / (rect.width / 3));
-  intent.x = (dx / len) * scale;
-  intent.y = (dy / len) * scale;
-  const knob = joy.querySelector('span');
-  if (knob instanceof HTMLElement) {
-    knob.style.transform = `translate(${(dx / len) * scale * 28}px, ${(dy / len) * scale * 28}px)`;
-  }
-};
-
 document.addEventListener('click', onClick);
-document.addEventListener('pointerdown', (event) => {
-  const joy = (event.target as HTMLElement | null)?.closest('[data-joy]');
-  if (!joy) return;
-  joyId = event.pointerId;
-  joyAt(event);
-});
-document.addEventListener('pointermove', joyAt);
-document.addEventListener('pointerup', (event) => {
-  if (joyId !== event.pointerId) return;
-  joyId = null;
-  intent.x = 0;
-  intent.y = 0;
-  const knob = document.querySelector('[data-joy] span');
-  if (knob instanceof HTMLElement) knob.style.transform = '';
-});
-document.addEventListener('pointercancel', () => {
-  joyId = null;
-  intent.x = 0;
-  intent.y = 0;
-});
 document.addEventListener('submit', (event) => {
   const form = event.target;
   if (!(form instanceof HTMLFormElement) || form.dataset.act !== 'rename') return;
