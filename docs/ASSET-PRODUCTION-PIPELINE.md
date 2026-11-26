@@ -1,6 +1,6 @@
 # Asset production pipeline
 
-There is no image-generation API in this project. New art is made outside the repo, then checked in as PNG. Pack 04 is the current World Mode ground and architecture, drawn from `web/public/mineral/`. Pack 02 characters and loose props stay in that folder. The manifest still says `temporary`. The procedural painters stay as a fallback if a file is missing.
+There is no image-generation API in this project. New art is made outside the repo, then checked in as PNG. Pack 04 is the World Mode ground and architecture, and pack 07 adds the remaining catalogue plates and the district joins, drawn from `web/public/mineral/`. Pack 02 characters and loose props stay in that folder. The manifest still says `temporary`. The procedural painters stay as a fallback if a file is missing.
 
 ## Steps
 

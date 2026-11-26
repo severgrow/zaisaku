@@ -1,4 +1,6 @@
-/** Runtime pictures. Logical cells stay 32px. Pack 04 floors and architecture are 64px sources. Characters stay Pack 02. */
+/** Runtime pictures. Logical cells stay 32px. Pack 04 floors and architecture are 64px sources. Pack 07 adds plates and joins. Characters stay Pack 02. */
+
+import { ceramicTransitionKeys } from '../../../src/world/connectors.js';
 
 export const mineralUrl = (file: string): string => new URL(`mineral/${file}`, document.baseURI).toString();
 
@@ -28,16 +30,18 @@ export const FLOOR_FILES: Readonly<Record<string, string>> = {
 
 const SIDES = ['n', 'e', 's', 'w'] as const;
 
-export const TRANSITION_FILES: Readonly<Record<string, string>> = Object.fromEntries(
-  SIDES.flatMap((side) => [
-    [`bone-ceramic-to-mineral-paving-${side}`, `transitions/bone-ceramic-to-mineral-paving-${side}.png`],
-    [`mineral-paving-to-soil-${side}`, `transitions/mineral-paving-to-soil-${side}.png`],
-  ]),
-);
+export const TRANSITION_FILES: Readonly<Record<string, string>> = Object.fromEntries([
+  ...SIDES.flatMap((side) => [[`mineral-paving-to-soil-${side}`, `transitions/mineral-paving-to-soil-${side}.png`]]),
+  ...ceramicTransitionKeys().map((key) => [key, `transitions/${key}.png`]),
+]);
 
 export const ARCHITECTURE_FILES: readonly string[] = [
   'door-frame-open.png',
+  'door-frame-open-e.png',
+  'door-frame-open-w.png',
   'window-open.png',
+  'window-frame-open-e.png',
+  'window-frame-open-w.png',
   'wall-straight-ew.png',
   'wall-straight-ns.png',
   'wall-inner-ne.png',
@@ -58,7 +62,10 @@ export const ARCHITECTURE_FILES: readonly string[] = [
   'wall-end-s.png',
   'wall-end-w.png',
   'roof-straight-ew.png',
+  'roof-straight-ew-bottom.png',
   'roof-straight-ns.png',
+  'wall-straight-ew-top-bridge.png',
+  'awning-north-door.png',
   'roof-end-n.png',
   'roof-end-e.png',
   'roof-end-s.png',
@@ -91,6 +98,8 @@ export const FURNITURE_FILES: Readonly<Record<string, string>> = {
   'furniture-shelf-native': 'furniture/furniture-display-shelf.png',
   'furniture-glass-native': 'furniture/furniture-glass-display.png',
   'furniture-pedestal-native': 'furniture/furniture-display-pedestal.png',
+  'glass-case-base': 'furniture/glass-case-base.png',
+  'glass-case-front': 'furniture/glass-case-front.png',
 };
 
 export const PLAYER_FACINGS = ['n', 'e', 's', 'w'] as const;
@@ -99,4 +108,3 @@ export const NPCS = ['ivo', 'ness', 'archivist'] as const;
 export const playerFile = (facing: string, frame: number): string => `player-${facing}-${frame}.png`;
 export const npcFile = (id: string, facing: string): string => `person-${id}-${facing}.png`;
 
-export const catalogue64 = (plateFile: string): string => plateFile.replace('catalogue/', 'catalogue64/');
