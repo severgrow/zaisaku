@@ -1,0 +1,140 @@
+{
+  "manifest": {
+    "pack": "ZA-DETAILS-01",
+    "status": "technical-candidate",
+    "assets": [
+      {
+        "id": "vey-floor",
+        "kind": "texture",
+        "width": 64,
+        "height": 64,
+        "source": "source/vey-floor.svg",
+        "anchor": "top-left",
+        "logicalScale": 0.5
+      },
+      {
+        "id": "oru-floor",
+        "kind": "texture",
+        "width": 64,
+        "height": 64,
+        "source": "source/oru-floor.svg",
+        "anchor": "top-left",
+        "logicalScale": 0.5
+      },
+      {
+        "id": "industrial-floor",
+        "kind": "texture",
+        "width": 64,
+        "height": 64,
+        "source": "source/industrial-floor.svg",
+        "anchor": "top-left",
+        "logicalScale": 0.5
+      },
+      {
+        "id": "basin-floor",
+        "kind": "texture",
+        "width": 64,
+        "height": 64,
+        "source": "source/basin-floor.svg",
+        "anchor": "top-left",
+        "logicalScale": 0.5
+      },
+      {
+        "id": "vent-grille",
+        "kind": "detail",
+        "width": 32,
+        "height": 32,
+        "source": "source/vent-grille.svg",
+        "anchor": "bottom-center",
+        "logicalScale": 0.5
+      },
+      {
+        "id": "conduit",
+        "kind": "detail",
+        "width": 64,
+        "height": 32,
+        "source": "source/conduit.svg",
+        "anchor": "bottom-center",
+        "logicalScale": 0.5
+      },
+      {
+        "id": "sera-indicator",
+        "kind": "detail",
+        "width": 32,
+        "height": 32,
+        "source": "source/sera-indicator.svg",
+        "anchor": "bottom-center",
+        "logicalScale": 0.5
+      },
+      {
+        "id": "cargo-case",
+        "kind": "detail",
+        "width": 64,
+        "height": 64,
+        "source": "source/cargo-case.svg",
+        "anchor": "bottom-center",
+        "logicalScale": 0.5
+      },
+      {
+        "id": "parcel",
+        "kind": "detail",
+        "width": 64,
+        "height": 64,
+        "source": "source/parcel.svg",
+        "anchor": "bottom-center",
+        "logicalScale": 0.5
+      },
+      {
+        "id": "planter",
+        "kind": "detail",
+        "width": 64,
+        "height": 64,
+        "source": "source/planter.svg",
+        "anchor": "bottom-center",
+        "logicalScale": 0.5
+      },
+      {
+        "id": "service-post",
+        "kind": "detail",
+        "width": 32,
+        "height": 64,
+        "source": "source/service-post.svg",
+        "anchor": "bottom-center",
+        "logicalScale": 0.5
+      },
+      {
+        "id": "ceramic-seat",
+        "kind": "detail",
+        "width": 64,
+        "height": 64,
+        "source": "source/ceramic-seat.svg",
+        "anchor": "bottom-center",
+        "logicalScale": 0.5
+      },
+      {
+        "id": "ground-contact",
+        "kind": "effect",
+        "width": 64,
+        "height": 32,
+        "source": "source/ground-contact.svg",
+        "anchor": "bottom-center",
+        "logicalScale": 0.5
+      }
+    ]
+  },
+  "masters": {
+    "vey-floor": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"64\" height=\"64\" viewBox=\"0 0 64 64\" shape-rendering=\"crispEdges\"><rect x=\"0\" y=\"0\" width=\"64\" height=\"64\" fill=\"#b9aa91\"/><rect x=\"0\" y=\"0\" width=\"64\" height=\"2\" fill=\"#a69982\"/><rect x=\"0\" y=\"2\" width=\"64\" height=\"1\" fill=\"#d0c1a4\"/><rect x=\"0\" y=\"0\" width=\"2\" height=\"64\" fill=\"#a69982\"/><rect x=\"2\" y=\"0\" width=\"1\" height=\"64\" fill=\"#d0c1a4\"/><rect x=\"5\" y=\"5\" width=\"2\" height=\"1\" fill=\"#d0c1a4\"/><rect x=\"22\" y=\"28\" width=\"2\" height=\"1\" fill=\"#a69982\"/><rect x=\"39\" y=\"51\" width=\"2\" height=\"1\" fill=\"#a69982\"/><rect x=\"56\" y=\"21\" width=\"2\" height=\"1\" fill=\"#d0c1a4\"/><rect x=\"20\" y=\"44\" width=\"2\" height=\"1\" fill=\"#a69982\"/><rect x=\"37\" y=\"14\" width=\"2\" height=\"1\" fill=\"#a69982\"/><rect x=\"54\" y=\"37\" width=\"2\" height=\"1\" fill=\"#d0c1a4\"/><rect x=\"18\" y=\"7\" width=\"2\" height=\"1\" fill=\"#a69982\"/><rect x=\"35\" y=\"30\" width=\"2\" height=\"1\" fill=\"#a69982\"/><rect x=\"52\" y=\"53\" width=\"2\" height=\"1\" fill=\"#d0c1a4\"/><rect x=\"16\" y=\"23\" width=\"2\" height=\"1\" fill=\"#a69982\"/><rect x=\"33\" y=\"46\" width=\"2\" height=\"1\" fill=\"#a69982\"/><rect x=\"50\" y=\"16\" width=\"2\" height=\"1\" fill=\"#d0c1a4\"/><rect x=\"14\" y=\"39\" width=\"2\" height=\"1\" fill=\"#a69982\"/><rect x=\"31\" y=\"9\" width=\"2\" height=\"1\" fill=\"#a69982\"/><rect x=\"48\" y=\"32\" width=\"2\" height=\"1\" fill=\"#d0c1a4\"/><rect x=\"12\" y=\"55\" width=\"2\" height=\"1\" fill=\"#a69982\"/><rect x=\"29\" y=\"25\" width=\"2\" height=\"1\" fill=\"#a69982\"/><rect x=\"46\" y=\"48\" width=\"2\" height=\"1\" fill=\"#d0c1a4\"/><rect x=\"10\" y=\"18\" width=\"2\" height=\"1\" fill=\"#a69982\"/><rect x=\"27\" y=\"41\" width=\"2\" height=\"1\" fill=\"#a69982\"/><rect x=\"44\" y=\"11\" width=\"2\" height=\"1\" fill=\"#d0c1a4\"/><rect x=\"8\" y=\"34\" width=\"2\" height=\"1\" fill=\"#a69982\"/><rect x=\"25\" y=\"57\" width=\"2\" height=\"1\" fill=\"#a69982\"/><rect x=\"42\" y=\"27\" width=\"2\" height=\"1\" fill=\"#d0c1a4\"/></svg>",
+    "oru-floor": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"64\" height=\"64\" viewBox=\"0 0 64 64\" shape-rendering=\"crispEdges\"><rect x=\"0\" y=\"0\" width=\"64\" height=\"64\" fill=\"#545d51\"/><rect x=\"0\" y=\"0\" width=\"64\" height=\"2\" fill=\"#465045\"/><rect x=\"0\" y=\"2\" width=\"64\" height=\"1\" fill=\"#687261\"/><rect x=\"0\" y=\"0\" width=\"2\" height=\"64\" fill=\"#465045\"/><rect x=\"2\" y=\"0\" width=\"1\" height=\"64\" fill=\"#687261\"/><rect x=\"16\" y=\"12\" width=\"2\" height=\"1\" fill=\"#687261\"/><rect x=\"33\" y=\"35\" width=\"2\" height=\"1\" fill=\"#465045\"/><rect x=\"50\" y=\"5\" width=\"2\" height=\"1\" fill=\"#465045\"/><rect x=\"14\" y=\"28\" width=\"2\" height=\"1\" fill=\"#687261\"/><rect x=\"31\" y=\"51\" width=\"2\" height=\"1\" fill=\"#465045\"/><rect x=\"48\" y=\"21\" width=\"2\" height=\"1\" fill=\"#465045\"/><rect x=\"12\" y=\"44\" width=\"2\" height=\"1\" fill=\"#687261\"/><rect x=\"29\" y=\"14\" width=\"2\" height=\"1\" fill=\"#465045\"/><rect x=\"46\" y=\"37\" width=\"2\" height=\"1\" fill=\"#465045\"/><rect x=\"10\" y=\"7\" width=\"2\" height=\"1\" fill=\"#687261\"/><rect x=\"27\" y=\"30\" width=\"2\" height=\"1\" fill=\"#465045\"/><rect x=\"44\" y=\"53\" width=\"2\" height=\"1\" fill=\"#465045\"/><rect x=\"8\" y=\"23\" width=\"2\" height=\"1\" fill=\"#687261\"/><rect x=\"25\" y=\"46\" width=\"2\" height=\"1\" fill=\"#465045\"/><rect x=\"42\" y=\"16\" width=\"2\" height=\"1\" fill=\"#465045\"/><rect x=\"6\" y=\"39\" width=\"2\" height=\"1\" fill=\"#687261\"/><rect x=\"23\" y=\"9\" width=\"2\" height=\"1\" fill=\"#465045\"/><rect x=\"40\" y=\"32\" width=\"2\" height=\"1\" fill=\"#465045\"/><rect x=\"57\" y=\"55\" width=\"2\" height=\"1\" fill=\"#687261\"/><rect x=\"21\" y=\"25\" width=\"2\" height=\"1\" fill=\"#465045\"/><rect x=\"38\" y=\"48\" width=\"2\" height=\"1\" fill=\"#465045\"/><rect x=\"55\" y=\"18\" width=\"2\" height=\"1\" fill=\"#687261\"/><rect x=\"19\" y=\"41\" width=\"2\" height=\"1\" fill=\"#465045\"/><rect x=\"36\" y=\"11\" width=\"2\" height=\"1\" fill=\"#465045\"/><rect x=\"53\" y=\"34\" width=\"2\" height=\"1\" fill=\"#687261\"/></svg>",
+    "industrial-floor": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"64\" height=\"64\" viewBox=\"0 0 64 64\" shape-rendering=\"crispEdges\"><rect x=\"0\" y=\"0\" width=\"64\" height=\"64\" fill=\"#66574d\"/><rect x=\"0\" y=\"0\" width=\"64\" height=\"2\" fill=\"#55483e\"/><rect x=\"0\" y=\"2\" width=\"64\" height=\"1\" fill=\"#817065\"/><rect x=\"0\" y=\"0\" width=\"2\" height=\"64\" fill=\"#55483e\"/><rect x=\"2\" y=\"0\" width=\"1\" height=\"64\" fill=\"#817065\"/><rect x=\"27\" y=\"19\" width=\"2\" height=\"1\" fill=\"#817065\"/><rect x=\"44\" y=\"42\" width=\"2\" height=\"1\" fill=\"#55483e\"/><rect x=\"8\" y=\"12\" width=\"2\" height=\"1\" fill=\"#55483e\"/><rect x=\"25\" y=\"35\" width=\"2\" height=\"1\" fill=\"#817065\"/><rect x=\"42\" y=\"5\" width=\"2\" height=\"1\" fill=\"#55483e\"/><rect x=\"6\" y=\"28\" width=\"2\" height=\"1\" fill=\"#55483e\"/><rect x=\"23\" y=\"51\" width=\"2\" height=\"1\" fill=\"#817065\"/><rect x=\"40\" y=\"21\" width=\"2\" height=\"1\" fill=\"#55483e\"/><rect x=\"57\" y=\"44\" width=\"2\" height=\"1\" fill=\"#55483e\"/><rect x=\"21\" y=\"14\" width=\"2\" height=\"1\" fill=\"#817065\"/><rect x=\"38\" y=\"37\" width=\"2\" height=\"1\" fill=\"#55483e\"/><rect x=\"55\" y=\"7\" width=\"2\" height=\"1\" fill=\"#55483e\"/><rect x=\"19\" y=\"30\" width=\"2\" height=\"1\" fill=\"#817065\"/><rect x=\"36\" y=\"53\" width=\"2\" height=\"1\" fill=\"#55483e\"/><rect x=\"53\" y=\"23\" width=\"2\" height=\"1\" fill=\"#55483e\"/><rect x=\"17\" y=\"46\" width=\"2\" height=\"1\" fill=\"#817065\"/><rect x=\"34\" y=\"16\" width=\"2\" height=\"1\" fill=\"#55483e\"/><rect x=\"51\" y=\"39\" width=\"2\" height=\"1\" fill=\"#55483e\"/><rect x=\"15\" y=\"9\" width=\"2\" height=\"1\" fill=\"#817065\"/><rect x=\"32\" y=\"32\" width=\"2\" height=\"1\" fill=\"#55483e\"/><rect x=\"49\" y=\"55\" width=\"2\" height=\"1\" fill=\"#55483e\"/><rect x=\"13\" y=\"25\" width=\"2\" height=\"1\" fill=\"#817065\"/><rect x=\"30\" y=\"48\" width=\"2\" height=\"1\" fill=\"#55483e\"/><rect x=\"47\" y=\"18\" width=\"2\" height=\"1\" fill=\"#55483e\"/><rect x=\"11\" y=\"41\" width=\"2\" height=\"1\" fill=\"#817065\"/></svg>",
+    "basin-floor": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"64\" height=\"64\" viewBox=\"0 0 64 64\" shape-rendering=\"crispEdges\"><rect x=\"0\" y=\"0\" width=\"64\" height=\"64\" fill=\"#78868b\"/><rect x=\"0\" y=\"0\" width=\"64\" height=\"2\" fill=\"#66767d\"/><rect x=\"0\" y=\"2\" width=\"64\" height=\"1\" fill=\"#a4b3b5\"/><rect x=\"0\" y=\"0\" width=\"2\" height=\"64\" fill=\"#66767d\"/><rect x=\"2\" y=\"0\" width=\"1\" height=\"64\" fill=\"#a4b3b5\"/><rect x=\"38\" y=\"26\" width=\"2\" height=\"1\" fill=\"#a4b3b5\"/><rect x=\"55\" y=\"49\" width=\"2\" height=\"1\" fill=\"#66767d\"/><rect x=\"19\" y=\"19\" width=\"2\" height=\"1\" fill=\"#66767d\"/><rect x=\"36\" y=\"42\" width=\"2\" height=\"1\" fill=\"#a4b3b5\"/><rect x=\"53\" y=\"12\" width=\"2\" height=\"1\" fill=\"#66767d\"/><rect x=\"17\" y=\"35\" width=\"2\" height=\"1\" fill=\"#66767d\"/><rect x=\"34\" y=\"5\" width=\"2\" height=\"1\" fill=\"#a4b3b5\"/><rect x=\"51\" y=\"28\" width=\"2\" height=\"1\" fill=\"#66767d\"/><rect x=\"15\" y=\"51\" width=\"2\" height=\"1\" fill=\"#66767d\"/><rect x=\"32\" y=\"21\" width=\"2\" height=\"1\" fill=\"#a4b3b5\"/><rect x=\"49\" y=\"44\" width=\"2\" height=\"1\" fill=\"#66767d\"/><rect x=\"13\" y=\"14\" width=\"2\" height=\"1\" fill=\"#66767d\"/><rect x=\"30\" y=\"37\" width=\"2\" height=\"1\" fill=\"#a4b3b5\"/><rect x=\"47\" y=\"7\" width=\"2\" height=\"1\" fill=\"#66767d\"/><rect x=\"11\" y=\"30\" width=\"2\" height=\"1\" fill=\"#66767d\"/><rect x=\"28\" y=\"53\" width=\"2\" height=\"1\" fill=\"#a4b3b5\"/><rect x=\"45\" y=\"23\" width=\"2\" height=\"1\" fill=\"#66767d\"/><rect x=\"9\" y=\"46\" width=\"2\" height=\"1\" fill=\"#66767d\"/><rect x=\"26\" y=\"16\" width=\"2\" height=\"1\" fill=\"#a4b3b5\"/><rect x=\"43\" y=\"39\" width=\"2\" height=\"1\" fill=\"#66767d\"/><rect x=\"7\" y=\"9\" width=\"2\" height=\"1\" fill=\"#66767d\"/><rect x=\"24\" y=\"32\" width=\"2\" height=\"1\" fill=\"#a4b3b5\"/><rect x=\"41\" y=\"55\" width=\"2\" height=\"1\" fill=\"#66767d\"/><rect x=\"5\" y=\"25\" width=\"2\" height=\"1\" fill=\"#66767d\"/><rect x=\"22\" y=\"48\" width=\"2\" height=\"1\" fill=\"#a4b3b5\"/></svg>",
+    "vent-grille": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\" viewBox=\"0 0 32 32\" shape-rendering=\"crispEdges\"><rect x=\"2\" y=\"6\" width=\"28\" height=\"22\" fill=\"#282f28\"/><rect x=\"4\" y=\"4\" width=\"24\" height=\"22\" fill=\"#555d50\"/><rect x=\"4\" y=\"4\" width=\"24\" height=\"2\" fill=\"#818977\"/><rect x=\"6\" y=\"7\" width=\"20\" height=\"2\" fill=\"#282f28\"/><rect x=\"6\" y=\"11\" width=\"20\" height=\"2\" fill=\"#282f28\"/><rect x=\"6\" y=\"15\" width=\"20\" height=\"2\" fill=\"#282f28\"/><rect x=\"6\" y=\"19\" width=\"20\" height=\"2\" fill=\"#282f28\"/><rect x=\"6\" y=\"23\" width=\"20\" height=\"2\" fill=\"#282f28\"/></svg>",
+    "conduit": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"64\" height=\"32\" viewBox=\"0 0 64 32\" shape-rendering=\"crispEdges\"><rect x=\"0\" y=\"10\" width=\"64\" height=\"14\" fill=\"#483e32\"/><rect x=\"0\" y=\"8\" width=\"64\" height=\"12\" fill=\"#807260\"/><rect x=\"0\" y=\"8\" width=\"64\" height=\"3\" fill=\"#a89b7f\"/><rect x=\"8\" y=\"6\" width=\"5\" height=\"18\" fill=\"#483e32\"/><rect x=\"48\" y=\"6\" width=\"5\" height=\"18\" fill=\"#483e32\"/></svg>",
+    "sera-indicator": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\" viewBox=\"0 0 32 32\" shape-rendering=\"crispEdges\"><rect x=\"6\" y=\"4\" width=\"20\" height=\"24\" fill=\"#2e3328\"/><rect x=\"8\" y=\"2\" width=\"16\" height=\"24\" fill=\"#6d7550\"/><rect x=\"11\" y=\"8\" width=\"10\" height=\"10\" fill=\"#2e3328\"/><rect x=\"13\" y=\"10\" width=\"6\" height=\"6\" fill=\"#d29a3a\"/><rect x=\"14\" y=\"11\" width=\"4\" height=\"2\" fill=\"#f1d49a\"/></svg>",
+    "cargo-case": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"64\" height=\"64\" viewBox=\"0 0 64 64\" shape-rendering=\"crispEdges\"><rect x=\"7\" y=\"27\" width=\"50\" height=\"33\" fill=\"#343b30\"/><rect x=\"7\" y=\"21\" width=\"50\" height=\"30\" fill=\"#6d7550\"/><rect x=\"10\" y=\"18\" width=\"44\" height=\"5\" fill=\"#c9b59a\"/><rect x=\"12\" y=\"25\" width=\"40\" height=\"3\" fill=\"#343b30\"/><rect x=\"30\" y=\"22\" width=\"4\" height=\"29\" fill=\"#c9b59a\"/><rect x=\"25\" y=\"34\" width=\"14\" height=\"7\" fill=\"#343b30\"/><rect x=\"27\" y=\"35\" width=\"10\" height=\"3\" fill=\"#c9b59a\"/></svg>",
+    "parcel": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"64\" height=\"64\" viewBox=\"0 0 64 64\" shape-rendering=\"crispEdges\"><rect x=\"10\" y=\"32\" width=\"44\" height=\"26\" fill=\"#685a48\"/><rect x=\"10\" y=\"26\" width=\"44\" height=\"26\" fill=\"#b5a286\"/><rect x=\"12\" y=\"24\" width=\"40\" height=\"4\" fill=\"#e6d7c3\"/><rect x=\"30\" y=\"25\" width=\"3\" height=\"28\" fill=\"#685a48\"/><rect x=\"10\" y=\"38\" width=\"44\" height=\"3\" fill=\"#685a48\"/></svg>",
+    "planter": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"64\" height=\"64\" viewBox=\"0 0 64 64\" shape-rendering=\"crispEdges\"><rect x=\"10\" y=\"47\" width=\"44\" height=\"11\" fill=\"#504839\"/><rect x=\"8\" y=\"43\" width=\"48\" height=\"6\" fill=\"#a99579\"/><rect x=\"12\" y=\"45\" width=\"40\" height=\"3\" fill=\"#7d8a62\"/><rect x=\"14\" y=\"30\" width=\"10\" height=\"15\" fill=\"#586648\"/><rect x=\"22\" y=\"25\" width=\"10\" height=\"15\" fill=\"#586648\"/><rect x=\"30\" y=\"30\" width=\"10\" height=\"15\" fill=\"#586648\"/><rect x=\"38\" y=\"25\" width=\"10\" height=\"15\" fill=\"#586648\"/><rect x=\"46\" y=\"30\" width=\"10\" height=\"15\" fill=\"#586648\"/><rect x=\"16\" y=\"28\" width=\"7\" height=\"6\" fill=\"#91a078\"/><rect x=\"24\" y=\"23\" width=\"7\" height=\"6\" fill=\"#91a078\"/><rect x=\"32\" y=\"28\" width=\"7\" height=\"6\" fill=\"#91a078\"/><rect x=\"40\" y=\"23\" width=\"7\" height=\"6\" fill=\"#91a078\"/><rect x=\"48\" y=\"28\" width=\"7\" height=\"6\" fill=\"#91a078\"/></svg>",
+    "service-post": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"64\" viewBox=\"0 0 32 64\" shape-rendering=\"crispEdges\"><rect x=\"4\" y=\"53\" width=\"24\" height=\"8\" fill=\"#2e3328\"/><rect x=\"8\" y=\"49\" width=\"16\" height=\"6\" fill=\"#6d7550\"/><rect x=\"11\" y=\"12\" width=\"10\" height=\"38\" fill=\"#6d7550\"/><rect x=\"14\" y=\"15\" width=\"3\" height=\"30\" fill=\"#2e3328\"/><rect x=\"7\" y=\"5\" width=\"18\" height=\"15\" fill=\"#2e3328\"/><rect x=\"9\" y=\"3\" width=\"14\" height=\"13\" fill=\"#6d7550\"/><rect x=\"12\" y=\"6\" width=\"8\" height=\"7\" fill=\"#d29a3a\"/></svg>",
+    "ceramic-seat": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"64\" height=\"64\" viewBox=\"0 0 64 64\" shape-rendering=\"crispEdges\"><rect x=\"5\" y=\"42\" width=\"54\" height=\"16\" fill=\"#726653\"/><rect x=\"7\" y=\"38\" width=\"50\" height=\"13\" fill=\"#c9b59a\"/><rect x=\"9\" y=\"35\" width=\"46\" height=\"7\" fill=\"#e6d7c3\"/><rect x=\"10\" y=\"22\" width=\"44\" height=\"15\" fill=\"#726653\"/><rect x=\"13\" y=\"19\" width=\"38\" height=\"15\" fill=\"#c9b59a\"/><rect x=\"15\" y=\"22\" width=\"34\" height=\"9\" fill=\"#6d7550\"/><rect x=\"8\" y=\"48\" width=\"7\" height=\"10\" fill=\"#c9b59a\"/><rect x=\"49\" y=\"48\" width=\"7\" height=\"10\" fill=\"#c9b59a\"/></svg>",
+    "ground-contact": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"64\" height=\"32\" viewBox=\"0 0 64 32\" shape-rendering=\"crispEdges\"><ellipse cx=\"32\" cy=\"17\" rx=\"27\" ry=\"9\" fill=\"#1a1814\" opacity=\".16\"/><ellipse cx=\"32\" cy=\"17\" rx=\"19\" ry=\"6\" fill=\"#1a1814\" opacity=\".19\"/></svg>"
+  }
+}
