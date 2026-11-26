@@ -332,11 +332,7 @@ html.large-text { font-size: 118%; }
   bottom: calc(10px + env(safe-area-inset-bottom));
   max-height: 46vh;
   overflow: auto;
-<<<<<<< HEAD
   background: var(--bg);
-=======
-  background: var(--bg-2);
->>>>>>> 4573b6953b957eecd99aba8461d38108e64e39c4
   border: 1px solid var(--line);
   padding: 12px;
   touch-action: pan-y;
