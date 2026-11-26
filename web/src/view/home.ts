@@ -16,17 +16,17 @@ export const homeScreen = (session: Session): string => {
     <p class="kicker">Floor ${profile.tick}</p>
     <h1>${esc(profile.name)}</h1>
     <p class="lede">Everything on this floor has a price. Nothing has a fixed value.</p>
-    <form class="field" data-act="rename">
-      <label class="za-label" for="collector">How the house should address you</label>
-      <div class="row">
-        <input class="za-field" id="collector" name="collector" maxlength="24" value="${esc(profile.name)}" />
-        <button class="btn za-btn" data-kind="primary" type="submit">Keep</button>
-      </div>
-    </form>
+    <nav class="links" aria-label="Rooms">
+      <a class="za-btn" id="go-world" href="#/world">${icon('world')}<span class="room-copy"><strong>District</strong><span>Walk the exchange</span></span></a>
+      <a class="za-btn" id="start-duel" href="#/duel">${icon('duel')}<span class="room-copy"><strong>${duelOpen ? 'Return' : 'Duel'}</strong><span>${duelOpen ? 'The match is still open' : 'Six rounds, sealed bids'}</span></span></a>
+      <a class="za-btn" id="go-market" href="#/market">${icon('market')}<span class="room-copy"><strong>Market</strong><span>Buy with your balance</span></span></a>
+      <a class="za-btn" id="go-auction" href="#/auction">${icon('auction')}<span class="room-copy"><strong>Auction</strong><span>One timed lot</span></span></a>
+      <a class="za-btn" id="go-vault" href="#/vault">${icon('vault')}<span class="room-copy"><strong>Vault</strong><span>${profile.inventory.length} kept</span></span></a>
+    </nav>
     <section class="za-panel">
       <p class="za-label">Permanent balance</p>
       <p class="za-balance num" style="font-size:2rem;margin:4px 0 8px">${zai(profile.wallets.permanent)} <span class="muted">Zai</span></p>
-      <p class="meta">Reserved ${zai(profile.wallets.reserved)} · cosmetic balance is not in use</p>
+      ${profile.wallets.reserved ? `<p class="meta">Reserved for auction ${zai(profile.wallets.reserved)}</p>` : ''}
     </section>
     <div class="notice za-notice">
       <p class="za-label">Transmission</p>
@@ -39,13 +39,6 @@ export const homeScreen = (session: Session): string => {
       <p class="num">${request ? `${request.progress} / ${request.target}` : ''} · ${request ? zai(request.reward) : 0} if you finish</p>
       <div class="meter" style="--p:${progress}"><span></span></div>
     </section>
-    <nav class="links" aria-label="Rooms">
-      <a class="za-btn" id="go-world" href="#/world">${icon('world')}<span class="room-copy"><strong>District</strong><span>Walk the exchange</span></span></a>
-      <a class="za-btn" id="start-duel" href="#/duel">${icon('duel')}<span class="room-copy"><strong>${duelOpen ? 'Return' : 'Duel'}</strong><span>${duelOpen ? 'The match is still open' : 'Six rounds, sealed bids'}</span></span></a>
-      <a class="za-btn" id="go-market" href="#/market">${icon('market')}<span class="room-copy"><strong>Market</strong><span>Buy with your balance</span></span></a>
-      <a class="za-btn" id="go-auction" href="#/auction">${icon('auction')}<span class="room-copy"><strong>Auction</strong><span>One timed lot</span></span></a>
-      <a class="za-btn" id="go-vault" href="#/vault">${icon('vault')}<span class="room-copy"><strong>Vault</strong><span>${profile.inventory.length} kept</span></span></a>
-    </nav>
     <p class="row" style="margin-top:12px">
       <a class="btn za-btn" data-kind="quiet" href="#/contracts">${icon('requests')}<span>Requests</span></a>
       <a class="btn za-btn" data-kind="quiet" href="#/results">${icon('results')}<span>Last result</span></a>
@@ -61,6 +54,13 @@ export const settingsScreen = (session: Session): string => {
     <p class="kicker">House manners</p>
     <h1>Settings</h1>
     <div class="stack">
+      <form class="field" data-act="rename">
+        <label class="za-label" for="collector">Collector name</label>
+        <div class="row">
+          <input class="za-field" id="collector" name="collector" maxlength="24" value="${esc(session.profile.name)}" />
+          <button class="btn za-btn" data-kind="primary" type="submit">Save name</button>
+        </div>
+      </form>
       <section class="za-panel">
         <p class="kicker">Motion</p>
         <div class="row">

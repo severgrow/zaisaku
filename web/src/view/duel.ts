@@ -56,7 +56,7 @@ export const duelScreen = (session: Session): string => {
       <header class="instrument-clock">
         <span class="num">R${view.round}/${view.maxRounds}</span>
         <span>You <b class="num">${zai(view.cash)}</b></span>
-        <span class="muted">${esc(view.opponentName)} <b class="num">${zai(view.opponentCash)}</b></span>
+        <span class="muted opponent-cash" title="Simulated opponent">${esc(view.opponentName)} <b class="num">${zai(view.opponentCash)}</b></span>
         <span class="clock-face" data-timer>${view.phase === 'decide' && !view.youLocked ? clock(session.clockMs) : '—'}</span>
       </header>
       <div class="exchange">
@@ -65,8 +65,10 @@ export const duelScreen = (session: Session): string => {
         </div>
       </div>
       <section class="instrument-detail">
-        <p class="kicker">Your request · hidden from the other chair</p>
-        <h2>${esc(contract?.title ?? 'Sealed')}</h2>
+        <div class="private-request">
+          <img src="${asset('private-envelope.png')}" alt="" width="38" height="28" />
+          <div><p class="kicker">Your private request</p><h2>${esc(contract?.title ?? 'Sealed')}</h2></div>
+        </div>
         <p class="meta">${esc(contract?.description ?? '')}</p>
         <p class="num">${contract ? `${contract.progress} / ${contract.target}` : ''} · ${contract ? zai(contract.reward) : ''}</p>
         <div class="meter" style="--p:${progress}"><span></span></div>
@@ -99,7 +101,7 @@ export const duelScreen = (session: Session): string => {
                 <button class="btn za-btn" data-kind="quiet" data-act="inspect" ${selected ? '' : 'disabled'}>Inspect</button>
                 <button class="btn za-btn" data-kind="quiet" data-act="pass">Pass</button>
               </div>
-              <p class="meta">${view.youLocked ? 'Sealed. Waiting for the other chair.' : 'Lock one action. Both open together.'}</p>
+              <p class="meta duel-feedback" role="status">${view.youLocked ? 'Sealed. Waiting for the other chair.' : esc(session.notice ?? 'Choose one sealed decision.')}</p>
             </div>`
       }
       ${lines.length ? `<ol class="log">${lines.map((line) => `<li>${esc(line)}</li>`).join('')}</ol>` : ''}
@@ -138,6 +140,7 @@ export const resultsScreen = (session: Session): string => {
     <ol class="log">${result.decisions.flatMap((round) => round.notes.map((note) => `<li>Round ${round.round}. ${esc(note)}</li>`)).join('')}</ol>
     <div class="row">
       <button class="btn za-btn" data-kind="primary" data-act="begin-duel">Sit again</button>
+      <a class="btn za-btn" data-kind="quiet" href="#/world">Return to district</a>
       <a class="btn za-btn" data-kind="quiet" href="#/home">Home</a>
     </div>
   `;

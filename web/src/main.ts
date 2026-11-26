@@ -66,6 +66,17 @@ const screen = (): string => {
   }
 };
 
+const replaceScreen = (app: Element, html: string): void => {
+  const active = document.activeElement;
+  const key = active instanceof HTMLButtonElement && active.matches(':focus-visible') ? active.dataset : null;
+  app.innerHTML = html;
+  if (!key?.act) return;
+  const next = Array.from(app.querySelectorAll<HTMLButtonElement>('button[data-act]')).find((button) =>
+    button.dataset.act === key.act && button.dataset.id === key.id && button.dataset.value === key.value && !button.disabled,
+  );
+  next?.focus({ preventScroll: true });
+};
+
 const render = (): void => {
   const app = document.querySelector('#app');
   const host = document.querySelector('#world-host');
@@ -74,15 +85,15 @@ const render = (): void => {
   if (session.route === 'world') {
     app.classList.add('world-mode');
     if (host instanceof HTMLElement) host.hidden = false;
-    app.innerHTML = screen();
+    replaceScreen(app, screen());
     void enterWorld();
     return;
   }
   app.classList.remove('world-mode');
   if (host instanceof HTMLElement) host.hidden = true;
   leaveWorld();
-  const noteHtml = session.notice ? `<p class="notice za-notice" role="status">${esc(session.notice)}</p>` : '';
-  app.innerHTML = shell(session, noteHtml + screen());
+  const noteHtml = session.notice && !(session.route === 'duel' && session.duel) ? `<p class="notice za-notice" role="status">${esc(session.notice)}</p>` : '';
+  replaceScreen(app, shell(session, noteHtml + screen()));
   if (session.route === 'workshop') mountWorkshop();
 };
 

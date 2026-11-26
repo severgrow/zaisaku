@@ -288,7 +288,7 @@ export const beginDuel = (): void => {
   session.route = 'duel';
   session.panel = null;
   session.focus = null;
-  session.notice = 'Clerk Vesper sits opposite. A simulated opponent, not a live player.';
+  session.notice = null;
   session.selected = null;
   roundWatch = session.duel.round;
   location.hash = '#/duel';

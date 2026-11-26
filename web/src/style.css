@@ -595,7 +595,7 @@ html.large-text { font-size: 118%; }
   .exchange .lot .price { display: none; }
   .instrument-hold { grid-template-columns: 1fr 1fr; align-items: start; }
   .instrument-hold .kicker { margin-bottom: 2px; }
-  .instrument-detail .meta { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
   .instrument .log { display: none; }
 }
 
@@ -631,4 +631,29 @@ html.large-text { font-size: 118%; }
   .instrument > .btn,
   .instrument > .log,
   .instrument > a { grid-column: 1 / -1; }
+}
+
+.private-request { display: flex; gap: 9px; align-items: center; margin-bottom: 4px; }
+.private-request img { flex: none; object-fit: contain; image-rendering: pixelated; }
+.private-request .kicker { margin: 0 0 2px; }
+.duel-feedback { margin: 0; }
+@media (max-width: 899px) and (orientation: portrait) {
+  .instrument-clock { padding-block: 6px; gap: 4px 10px; }
+  .instrument-clock .opponent-cash { min-width: 0; }
+  .clock-face { font-size: 23px; }
+  .instrument-detail { padding-block: 4px; }
+  .instrument-detail .kicker { margin-bottom: 3px; }
+  .duel-feedback { max-height: 2.9em; overflow-y: auto; }
+}
+@media (max-width: 899px) and (orientation: landscape) {
+  .instrument {
+    grid-template-columns: minmax(230px, 1fr) minmax(220px, 1fr);
+    align-items: start;
+  }
+  .instrument-clock, .instrument-hold, .instrument > .btn, .instrument > a { grid-column: 1 / -1; }
+  .instrument .exchange { max-width: 390px; }
+  .instrument .actions { grid-template-columns: minmax(230px, 1fr) minmax(190px, auto); padding-top: 5px; }
+  .instrument .actions .row { flex-wrap: nowrap; justify-content: flex-end; }
+  .instrument .duel-feedback { grid-column: 1 / -1; }
+  .screen:has(.actions) { padding-bottom: calc(var(--nav) + 104px); }
 }
