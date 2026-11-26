@@ -1,5 +1,8 @@
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { ASSET_MANIFEST, chromaKey, readPngSize, sliceGrid, validateManifest } from '../src/world/assets.js';
+import { DISTRICT_PLACEMENTS, IDENTITY_SPRITES, contractPicture, isSouthOpening, occupiedTiles } from '../src/world/identity.js';
 import { ARTWORK } from '../src/world/artwork.js';
 import { cornerDiagonal, floorKey, openingFile, pieceFile } from '../src/world/connectors.js';
 import { buildDistrict, buildResidence, LOCATIONS, poseFor } from '../src/world/locations.js';
@@ -130,6 +133,69 @@ describe('pack 04 connectors', () => {
     expect(floorKey('mineral-paving', { w: 'soil' })).toBe('mineral-paving-to-soil-w');
     expect(floorKey('resonance-path', { n: 'mineral-paving' })).toBe('floor-resonance-path');
     expect(floorKey('interior-floor', {})).toBe('floor-interior-floor');
+  });
+});
+
+describe('pack 08B runtime', () => {
+  it('keeps the validated sprites temporary and locks their bytes', () => {
+    expect(validateManifest(ASSET_MANIFEST)).toEqual([]);
+    const ids = IDENTITY_SPRITES.map((sprite) => sprite.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(ASSET_MANIFEST.find((item) => item.id === 'player')?.note).toContain('pack 02');
+    expect(ASSET_MANIFEST.find((item) => item.id === 'person')?.note).toContain('pack 02');
+    expect(ASSET_MANIFEST.find((item) => item.id === 'tree')?.note).toContain('pack 02');
+    for (const sprite of IDENTITY_SPRITES) {
+      const record = ASSET_MANIFEST.find((item) => item.id === sprite.id);
+      expect(record?.status).toBe('temporary');
+      expect(record?.width).toBe(sprite.width);
+      expect(record?.height).toBe(sprite.height);
+      const bytes = new Uint8Array(readFileSync(`web/public/mineral/${sprite.file}`));
+      expect(readPngSize(bytes)).toEqual({ width: sprite.sourceWidth, height: sprite.sourceHeight });
+      expect(sprite.sourceWidth).toBe(sprite.width * 2);
+      expect(sprite.sourceHeight).toBe(sprite.height * 2);
+      expect(createHash('sha256').update(bytes).digest('hex')).toBe(sprite.sha256);
+    }
+    expect(contractPicture('persistent', 'active')).toBe('identity/contract-open.png');
+    expect(contractPicture('persistent', 'complete')).toBe('identity/contract-sealed.png');
+    expect(contractPicture('match', 'active')).toBe('identity/duel-contract-open.png');
+    expect(contractPicture('match', 'expired')).toBe('identity/duel-contract-sealed.png');
+  });
+
+  it('blocks prop feet without sealing a door or the tree canopy', () => {
+    const district = buildDistrict();
+    const tree = occupiedTiles(DISTRICT_PLACEMENTS.find((item) => item.id === 'plaza-tree')!);
+    expect(tree).toEqual([{ tx: 10, ty: 18 }]);
+    expect(district.solid[18]?.[10]).toBe(true);
+    expect(district.solid[18]?.[9]).toBe(false);
+    expect(district.solid[18]?.[11]).toBe(false);
+    const board = occupiedTiles(DISTRICT_PLACEMENTS.find((item) => item.id === 'notice-board')!);
+    expect(board).toEqual([
+      { tx: 12, ty: 15 },
+      { tx: 13, ty: 15 },
+      { tx: 12, ty: 14 },
+      { tx: 13, ty: 14 },
+    ]);
+    for (const cell of board) expect(district.solid[cell.ty]?.[cell.tx]).toBe(true);
+    const south: string[] = [];
+    for (let y = 0; y < district.height; y += 1) {
+      for (let x = 0; x < district.width; x += 1) {
+        if (isSouthOpening(district.tiles, x, y)) south.push(`${x},${y}`);
+      }
+    }
+    expect(south).toEqual(['6,6', '25,6']);
+    expect(district.solid[6]?.[6]).toBe(true);
+    expect(district.solid[6]?.[25]).toBe(true);
+    expect(district.solid[7]?.[6]).toBe(false);
+    expect(district.solid[7]?.[25]).toBe(false);
+    expect(isSouthOpening(district.tiles, 7, 12)).toBe(false);
+    expect(isSouthOpening(buildResidence().tiles, 7, 8)).toBe(false);
+    const goals = ['ivo', 'ness', 'archivist', 'stall', 'research-door', 'duel-door', 'auction-door', 'to-residence'] as const;
+    for (const id of goals) {
+      const actor = district.actors.find((item) => item.id === id) ?? district.exits.find((item) => item.id === id);
+      const stand = neighbor(district, actor!.tx, actor!.ty);
+      expect(stand, id).toBeTruthy();
+      expect(reachable(district.solid, GATE, stand!)).toBe(true);
+    }
   });
 });
 

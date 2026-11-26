@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { definition } from '../../../src/engine/definitions.js';
 import { ARTWORK } from '../../../src/world/artwork.js';
 import { DIRS, cornerDiagonal, floorKey, openingFile, pieceFile, stepOf, type Dir, type FloorMaterial } from '../../../src/world/connectors.js';
+import { DISTRICT_PLACEMENTS, IDENTITY_SPRITES, anchorPixel, isSouthOpening } from '../../../src/world/identity.js';
 import { locationById } from '../../../src/world/locations.js';
 import { feetOf, move, nearest, tileAt, wish } from '../../../src/world/movement.js';
 import { paletteById } from '../../../src/world/palettes.js';
@@ -46,6 +47,7 @@ const STRUCTURE = new Set<number>([TILE.roof, TILE.wall, TILE.interior, TILE.doo
 export class DistrictScene extends Phaser.Scene {
   private place: LocationDef = locationById('district-01');
   private body: Phaser.GameObjects.Image | null = null;
+  private contactShadow: Phaser.GameObjects.Image | null = null;
   private props: Phaser.GameObjects.Image[] = [];
   private rings: Phaser.GameObjects.Graphics | null = null;
   private keys: Record<string, Phaser.Input.Keyboard.Key> = {};
@@ -74,6 +76,7 @@ export class DistrictScene extends Phaser.Scene {
     for (const id of NPCS) {
       for (const facing of PLAYER_FACINGS) this.load.image(`person-${id}-${facing}`, mineralUrl(npcFile(id, facing)));
     }
+    for (const sprite of IDENTITY_SPRITES) this.load.image(sprite.id, mineralUrl(sprite.file));
   }
 
   create(): void {
@@ -87,6 +90,7 @@ export class DistrictScene extends Phaser.Scene {
       for (let frame = 0; frame < 4; frame += 1) this.nearest(`you-${facing}-${frame}`);
       for (const id of NPCS) this.nearest(`person-${id}-${facing}`);
     }
+    for (const sprite of IDENTITY_SPRITES) this.nearest(sprite.id);
     this.input.keyboard?.addCapture('W,A,S,D,UP,DOWN,LEFT,RIGHT,E,SPACE');
     this.keys = (this.input.keyboard?.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT,E,SPACE') ?? {}) as Record<string, Phaser.Input.Keyboard.Key>;
     this.cameras.main.setBackgroundColor('#5c5348');
@@ -126,8 +130,10 @@ export class DistrictScene extends Phaser.Scene {
     for (const prop of this.props) prop.destroy();
     this.props = [];
     this.body?.destroy();
+    this.contactShadow?.destroy();
     this.rings?.destroy();
     this.body = null;
+    this.contactShadow = null;
     this.rings = null;
     this.place = locationById(session.world.locationId);
     this.displayKey = JSON.stringify(session.world.displays);
@@ -163,11 +169,24 @@ export class DistrictScene extends Phaser.Scene {
           continue;
         }
         const key = OVERLAY[tile];
+        if (key === 'lantern' && this.textures.exists('lantern-plant')) {
+          this.placeSprite('lantern-plant', x, y);
+          continue;
+        }
         if (key) this.overlay(key, x, y);
       }
     }
+    for (const placement of DISTRICT_PLACEMENTS) this.placeSprite(placement.id, placement.tx, placement.ty);
+    if (this.place.resonance && this.textures.exists('resonance-mark')) {
+      const mark = this.place.resonance;
+      const image = this.add.image(mark.tx * TILE_SIZE + TILE_SIZE / 2, mark.ty * TILE_SIZE + TILE_SIZE / 2, 'resonance-mark');
+      image.setOrigin(0.5, 0.5).setDisplaySize(32, 32).setDepth(1);
+      this.props.push(image);
+    }
     for (const actor of this.place.actors) {
       if (actor.form === 'person') {
+        const feet = feetOf(actor.tx, actor.ty);
+        this.groundShadow(feet.x, feet.y, true);
         const key = `person-${actor.id}-${actor.facing}`;
         if (this.textures.exists(key)) this.prop(key, actor.tx, actor.ty, 24, 32);
         else {
@@ -191,6 +210,7 @@ export class DistrictScene extends Phaser.Scene {
         }
       }
     }
+    this.contactShadow = this.groundShadow(session.world.x, session.world.y, false);
     this.body = this.add.image(session.world.x, session.world.y, `you-${session.world.facing}-0`).setOrigin(0.5, 1);
     this.body.setDisplaySize(24, 32);
     this.body.setDepth(session.world.y);
@@ -274,7 +294,8 @@ export class DistrictScene extends Phaser.Scene {
     }
     const opening = tile === TILE.door || tile === TILE.window ? openingFile(tile === TILE.door ? 'door' : 'window', this.horizontalRun(x, y) ? ['e', 'w'] : []) : null;
     if (opening) {
-      this.overlay(opening, x, y);
+      const vault = tile === TILE.door && isSouthOpening(this.place.tiles, x, y) && this.textures.exists('vault-door');
+      this.overlay(vault ? 'vault-door' : opening, x, y);
       return;
     }
     if (tile === TILE.window && this.verticalRun(x, y)) {
@@ -313,6 +334,23 @@ export class DistrictScene extends Phaser.Scene {
     this.texture('floor-interior-floor', paintTile(TILE.interior, palette));
     this.texture('floor-industrial-metal', paintTile(TILE.interior, palette));
     this.texture('floor-soil', paintTile(TILE.ground, palette));
+  }
+
+  private placeSprite(id: string, tx: number, ty: number): void {
+    const sprite = IDENTITY_SPRITES.find((item) => item.id === id);
+    if (!sprite || !this.textures.exists(id)) return;
+    const at = anchorPixel(sprite, tx, ty);
+    const image = this.add.image(at.x, at.y, id).setOrigin(sprite.originX, sprite.originY);
+    image.setDisplaySize(sprite.width, sprite.height);
+    image.setDepth(at.y);
+    this.props.push(image);
+  }
+
+  private groundShadow(x: number, y: number, keep: boolean): Phaser.GameObjects.Image | null {
+    if (!this.textures.exists('contact-shadow')) return null;
+    const image = this.add.image(x, y, 'contact-shadow').setOrigin(0.5, 0.5).setDisplaySize(32, 16).setDepth(y - 1);
+    if (keep) this.props.push(image);
+    return image;
   }
 
   private prop(key: string, tx: number, ty: number, width: number, height: number): void {
@@ -358,6 +396,8 @@ export class DistrictScene extends Phaser.Scene {
     this.body.setTexture(`you-${facing}-${frame}`);
     this.body.setDisplaySize(24, 32);
     this.body.setDepth(next.y);
+    this.contactShadow?.setPosition(Math.round(next.x), Math.round(next.y));
+    this.contactShadow?.setDepth(next.y - 1);
     this.lookAt(next.x, next.y);
     this.seq += 1;
     if (this.seq % 30 === 0) transport.send({ locationId: this.place.id, x: next.x, y: next.y, facing, seq: this.seq });

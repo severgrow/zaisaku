@@ -1,5 +1,6 @@
 import { ASSET_MANIFEST } from '../../../src/world/assets.js';
 import { ARTWORK } from '../../../src/world/artwork.js';
+import { IDENTITY_SPRITES } from '../../../src/world/identity.js';
 import { DISTRICT_RESONANCE, ringRadius } from '../../../src/world/resonance.js';
 import { ARCHITECTURE_FILES, FLOOR_FILES, FURNITURE_FILES, MINERAL_TILES, NPCS, PLAYER_FACINGS, TRANSITION_FILES, mineralUrl, npcFile, playerFile } from './mineral.js';
 
@@ -8,7 +9,7 @@ import { ARCHITECTURE_FILES, FLOOR_FILES, FURNITURE_FILES, MINERAL_TILES, NPCS, 
 export const workshopScreen = (): string => `
   <p class="kicker">Development</p>
   <h1>Asset workshop</h1>
-  <p class="lede">Mineral Analog pack 04 floors, transitions, connected walls and empty displays. Still temporary until you approve the screenshots. Characters and loose props remain pack 02. Each sprite is shown at its source size and at half size.</p>
+  <p class="lede">Mineral Analog pack 04 floors, transitions, connected walls and empty displays. Pack 08B adds the validated plaza props, ground decals and contract envelopes. Still temporary until you approve the screenshots. Characters and loose props remain pack 02. Pack 08 facades and poses are not here. Each sprite is shown at its source size and at half size.</p>
   <div data-workshop class="workshop"></div>
 `;
 
@@ -34,6 +35,7 @@ export const mountWorkshop = (): void => {
     ...ARCHITECTURE_FILES.map((file) => `architecture/${file}`),
     ...Object.values(FURNITURE_FILES),
     ...ARTWORK.flatMap((item) => (item.plateFile ? [item.plateFile] : [])),
+    ...IDENTITY_SPRITES.map((sprite) => sprite.file),
     ...Object.values(MINERAL_TILES),
     ...PLAYER_FACINGS.flatMap((facing) => [0, 1, 2, 3].map((frame) => playerFile(facing, frame))),
     ...NPCS.flatMap((id) => PLAYER_FACINGS.map((facing) => npcFile(id, facing))),

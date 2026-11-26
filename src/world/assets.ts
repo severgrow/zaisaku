@@ -1,4 +1,4 @@
-export type AssetCategory = 'terrain' | 'architecture' | 'flora' | 'character' | 'object' | 'collectible' | 'furniture';
+export type AssetCategory = 'terrain' | 'architecture' | 'flora' | 'character' | 'object' | 'collectible' | 'furniture' | 'prop' | 'decal' | 'interface';
 export type AssetStatus = 'temporary' | 'approved';
 
 export interface AssetRecord {
@@ -60,6 +60,17 @@ export const ASSET_MANIFEST: readonly AssetRecord[] = [
   tile('display-shelf', 'furniture', 32, 32, 'Pack 04 empty shelf, temporary. Owned pictures are drawn on top, not baked in.'),
   tile('display-glass', 'furniture', 32, 32, 'Pack 04 empty case, temporary. The glass image is one opaque plate, so the owned picture sits on it.'),
   tile('display-pedestal', 'furniture', 32, 32, 'Pack 04 empty pedestal, temporary. Drawn on the residence counter that has no actor.'),
+  tile('plaza-tree', 'prop', 96, 96, 'Pack 08B plaza tree, temporary. 192px source drawn at 96px. Canopy overhangs; collision is the trunk tile only.'),
+  tile('notice-board', 'prop', 64, 64, 'Pack 08B notice board, temporary. 128px source drawn at 64px. Blocks its two-by-two footprint.'),
+  tile('plaza-bench', 'prop', 64, 32, 'Pack 08B bench, temporary. 128×64 source drawn at 64×32. Blocks the two tiles under the seat.'),
+  tile('lantern-plant', 'prop', 32, 64, 'Pack 08B lantern plant, temporary. 64×128 source drawn at 32×64 on the existing lantern tiles. The tile stays the footprint.'),
+  tile('vault-door', 'prop', 32, 32, 'Pack 08B vault door, temporary. Closed overlay on a south-facing opening. Collision is unchanged.'),
+  { id: 'contact-shadow', category: 'decal', width: 32, height: 16, status: 'temporary', anchorX: 16, anchorY: 8, note: 'Pack 08B contact shadow, temporary. 64×32 source drawn at 32×16, centre anchor, under a person.' },
+  { id: 'resonance-mark', category: 'decal', width: 32, height: 32, status: 'temporary', anchorX: 16, anchorY: 16, note: 'Pack 08B resonance mark, temporary. Ground decal on the ring tile. The rings themselves are unchanged.' },
+  { id: 'contract-open', category: 'interface', width: 64, height: 64, status: 'temporary', anchorX: 32, anchorY: 32, note: 'Pack 08B open request envelope, temporary. 128px source shown at 64px.' },
+  { id: 'contract-sealed', category: 'interface', width: 64, height: 64, status: 'temporary', anchorX: 32, anchorY: 32, note: 'Pack 08B sealed request envelope, temporary. 128px source shown at 64px.' },
+  { id: 'duel-contract-open', category: 'interface', width: 64, height: 64, status: 'temporary', anchorX: 32, anchorY: 32, note: 'Pack 08B open duel envelope, temporary. 128px source shown at 64px.' },
+  { id: 'duel-contract-sealed', category: 'interface', width: 64, height: 64, status: 'temporary', anchorX: 32, anchorY: 32, note: 'Pack 08B sealed duel envelope, temporary. 128px source shown at 64px.' },
   { id: 'collectible-plate', category: 'collectible', width: 64, height: 64, status: 'temporary', anchorX: 32, anchorY: 64, note: 'Shared fallback plate for catalogue objects Pack 04 does not draw. Temporary.' },
   ...[
     'bone-dice',
@@ -98,6 +109,9 @@ const SIZE: Record<AssetCategory, (width: number, height: number) => boolean> = 
   object: (w, h) => w === 32 && h === 32,
   collectible: (w, h) => w === 64 && h === 64,
   furniture: (w, h) => w > 0 && h > 0 && w % 32 === 0 && h % 32 === 0,
+  prop: (w, h) => w > 0 && h > 0 && w % 32 === 0 && h % 32 === 0,
+  decal: (w, h) => (w === 32 && h === 16) || (w === 32 && h === 32),
+  interface: (w, h) => w === 64 && h === 64,
 };
 
 export const validateManifest = (records: readonly AssetRecord[]): string[] => {
