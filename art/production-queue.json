@@ -1,0 +1,118 @@
+{
+  "version": 1,
+  "units": {
+    "tile": 32,
+    "actor": {
+      "width": 24,
+      "height": 32
+    },
+    "sourceScale": 2
+  },
+  "rules": {
+    "camera": "orthographic top-down, south-visible vertical face; no isometric rotation",
+    "palette": "existing Mineral Analog palette; match current world reference",
+    "status": "candidate only until reviewed",
+    "source": "GPT image generation; no baked ground or UI text; separate opaque collision footprint from overhang"
+  },
+  "packs": [
+    {
+      "id": "A01",
+      "priority": 1,
+      "title": "Architecture scale calibration",
+      "status": "queued",
+      "assets": [
+        {
+          "id": "exchange-south",
+          "footprint": [
+            9,
+            6
+          ],
+          "facing": "s"
+        },
+        {
+          "id": "research-south",
+          "footprint": [
+            9,
+            6
+          ],
+          "facing": "s"
+        },
+        {
+          "id": "duel-east",
+          "footprint": [
+            6,
+            5
+          ],
+          "facing": "e"
+        },
+        {
+          "id": "auction-west",
+          "footprint": [
+            6,
+            5
+          ],
+          "facing": "w"
+        },
+        {
+          "id": "residence-north",
+          "footprint": [
+            8,
+            4
+          ],
+          "facing": "n"
+        }
+      ],
+      "acceptance": "Show 32px actor next to each building; doors visually fit human, roof mass and height believable; entrance coordinates remain unchanged; create separated roof/foreground where needed."
+    },
+    {
+      "id": "A02",
+      "priority": 2,
+      "title": "Inhabited plaza",
+      "status": "queued",
+      "assets": [
+        "market-stall",
+        "notice-board",
+        "bench",
+        "tree",
+        "planter",
+        "low-wall",
+        "paving-inlay",
+        "lamp",
+        "crates",
+        "contact-shadow"
+      ],
+      "acceptance": "Reconcile existing approved Pack 08B first; cluster around edges, retain open central routes."
+    },
+    {
+      "id": "A03",
+      "priority": 3,
+      "title": "Residence and interiors",
+      "status": "queued",
+      "assets": [
+        "bed",
+        "workbench",
+        "storage",
+        "display-cabinet",
+        "rug",
+        "lamp",
+        "wall-shelves"
+      ],
+      "acceptance": "Reuse existing Pack 10 furniture where suitable; no obstruction of entrances or displays."
+    },
+    {
+      "id": "A04",
+      "priority": 4,
+      "title": "District atmosphere",
+      "status": "queued",
+      "assets": [
+        "warm-window",
+        "lantern-glow",
+        "canopy-shadow",
+        "ambient-dust",
+        "signage-emblems",
+        "edge-details"
+      ],
+      "acceptance": "Subtle, readable, reduced-motion safe, no heavy overlays."
+    }
+  ]
+}
