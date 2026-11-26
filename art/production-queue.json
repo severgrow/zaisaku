@@ -118,7 +118,7 @@
   "governance": {
     "constitution": "docs/ZAISAKU-ART-CONSTITUTION.md",
     "references": "docs/art-direction/canonical-references/",
-    "referenceStatus": "original PNG transfer pending",
+    "referenceStatus": "five unchanged original PNGs and SHA256SUMS committed",
     "previous30": "quarantined; no runtime promotion",
     "qualityGate": "compare actual gameplay with canonical targets; preserve approved assets"
   }

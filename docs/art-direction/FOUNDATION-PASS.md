@@ -1,7 +1,7 @@
 # Foundation pass — ten priorities
 
 1. Constitution: complete creator text committed; governing source.
-2. References: upload five original PNGs unchanged; verify hashes and paths. Pending transfer.
+2. References: five original PNGs stored unchanged with SHA-256 checksums.
 3. Agents: mandatory root instructions and linked production workflow.
 4. Audit: quarantine prior 30 ornate AI candidates. Pitched roofs, horn arches, banners, medieval vaults, excessive crystals/glow and front-facing compositions conflict with sections 9, 14, 20, 57. Do not promote to runtime. Preserve existing approved art.
 5. Architecture: compare actual 32px actor/tile reference and shell footprints; entrances remain correctly oriented. Design differentiated instrument-like shells with upper surfaces, foundations, recesses and correct anchors. Do not stretch facades.
@@ -11,4 +11,4 @@
 9. Interface: preserve Quiet Instrument, tap-to-walk, keyboard option, dynamic typography, sealed exchange clarity and existing save behaviour.
 10. Quality: immutable packs, original references, validation metadata, screenshots at desktop/portrait/landscape, technical checks and creator review; no blind implementation.
 
-Status: 1 and 3 documented; 4 initial audit complete; 2 and 5–10 runtime work pending. This plan is not an implementation report.
+The constitution, reference binaries and agent instructions are in place. The initial quarantine is recorded. See the integration handover for runtime status. This plan is not an implementation report.
