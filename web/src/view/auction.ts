@@ -13,7 +13,7 @@ export const auctionScreen = (session: Session): string => {
       <p class="kicker">Auction</p>
       <h1>One lot on the block</h1>
       <p class="lede">A timed sale with two house bidders. They are simulated, and the screen says so. Your bid is held aside until you win, withdraw, or the clock ends under the reserve.</p>
-      <button class="btn primary" data-act="open-auction">Bring out a lot</button>
+      <button class="btn za-btn" data-kind="primary" data-act="open-auction">Bring out a lot</button>
     `;
   }
   const def = definition(auction.item.definitionId);
@@ -42,13 +42,13 @@ export const auctionScreen = (session: Session): string => {
           ${
             auction.status === 'open'
               ? `<div class="row">
-                  <button class="btn primary" data-act="auction-bid" data-amount="${next}">Bid ${zai(next)}</button>
-                  <button class="btn" data-act="auction-bid" data-amount="${next + auction.increment}">Bid ${zai(next + auction.increment)}</button>
-                  <button class="btn quiet" data-act="withdraw-bid">Withdraw</button>
-                  <button class="btn quiet" data-act="cancel-auction">Cancel the lot</button>
+                  <button class="btn za-btn" data-kind="primary" data-act="auction-bid" data-amount="${next}">Bid ${zai(next)}</button>
+                  <button class="btn za-btn" data-act="auction-bid" data-amount="${next + auction.increment}">Bid ${zai(next + auction.increment)}</button>
+                  <button class="btn za-btn" data-kind="quiet" data-act="withdraw-bid">Withdraw</button>
+                  <button class="btn za-btn" data-kind="danger" data-act="cancel-auction">Cancel the lot</button>
                 </div>`
               : `<p>${auction.status === 'settled' ? (auction.winnerId === session.profile.id ? 'You won it. It is in the vault.' : 'A house bidder won. Your reserved Zai is back.') : 'The reserve was not met. Every bid is refunded.'}</p>
-                 <button class="btn" data-act="open-auction">Bring another lot</button>`
+                 <button class="btn za-btn" data-kind="primary" data-act="open-auction">Bring another lot</button>`
           }
           <p class="meta">Moth and Hinge are simulated house bidders. A bid in the last moments can extend the clock.</p>
         </section>
