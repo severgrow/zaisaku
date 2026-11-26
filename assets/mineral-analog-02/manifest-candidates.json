@@ -1,0 +1,162 @@
+[
+  {
+    "file": "native/terrain-ground.png",
+    "size": [
+      32,
+      32
+    ],
+    "status": "temporary"
+  },
+  {
+    "file": "native/terrain-path.png",
+    "size": [
+      32,
+      32
+    ],
+    "status": "temporary"
+  },
+  {
+    "file": "native/architecture-wall.png",
+    "size": [
+      32,
+      32
+    ],
+    "status": "temporary"
+  },
+  {
+    "file": "native/architecture-roof.png",
+    "size": [
+      32,
+      32
+    ],
+    "status": "temporary"
+  },
+  {
+    "file": "native/architecture-window.png",
+    "size": [
+      32,
+      32
+    ],
+    "status": "temporary"
+  },
+  {
+    "file": "native/architecture-door.png",
+    "size": [
+      32,
+      32
+    ],
+    "status": "temporary"
+  },
+  {
+    "file": "native/architecture-awning.png",
+    "size": [
+      32,
+      32
+    ],
+    "status": "temporary"
+  },
+  {
+    "file": "native/architecture-pipe.png",
+    "size": [
+      32,
+      32
+    ],
+    "status": "temporary"
+  },
+  {
+    "file": "native/architecture-vent.png",
+    "size": [
+      32,
+      32
+    ],
+    "status": "temporary"
+  },
+  {
+    "file": "native/architecture-interior.png",
+    "size": [
+      32,
+      32
+    ],
+    "status": "temporary"
+  },
+  {
+    "file": "native/flora-tree.png",
+    "size": [
+      32,
+      32
+    ],
+    "status": "temporary"
+  },
+  {
+    "file": "native/flora-reed.png",
+    "size": [
+      32,
+      32
+    ],
+    "status": "temporary"
+  },
+  {
+    "file": "native/flora-lantern.png",
+    "size": [
+      32,
+      32
+    ],
+    "status": "temporary"
+  },
+  {
+    "file": "native/object-lamp.png",
+    "size": [
+      32,
+      32
+    ],
+    "status": "temporary"
+  },
+  {
+    "file": "native/object-terminal.png",
+    "size": [
+      32,
+      32
+    ],
+    "status": "temporary"
+  },
+  {
+    "file": "native/furniture-counter.png",
+    "size": [
+      32,
+      32
+    ],
+    "status": "temporary"
+  },
+  {
+    "file": "native/collectible-collectible-plate.png",
+    "size": [
+      64,
+      64
+    ],
+    "status": "temporary"
+  },
+  {
+    "file": "native/flora-vein.png",
+    "size": [
+      32,
+      32
+    ],
+    "status": "temporary"
+  },
+  {
+    "file": "native/character-player.png",
+    "size": [
+      24,
+      32
+    ],
+    "status": "temporary"
+  },
+  {
+    "file": "native/character-person.png",
+    "size": [
+      24,
+      32
+    ],
+    "status": "temporary"
+  }
+]

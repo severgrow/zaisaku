@@ -1,6 +1,6 @@
 # Asset specification
 
-These sizes are the working spec. They are not locked as eternal law until a sheet of approved art has been checked at gameplay zoom. Until then, stand-ins use them so later files drop into the same cells.
+These sizes are the logical cells. Pack 02’s pictures are the double-resolution files in `web/public/mineral/`, drawn into those cells with nearest-neighbour. They stay `temporary` until the screenshots are approved. The untouched pack is `assets/mineral-analog-02/`.
 
 | Kind | Pixels | Notes |
 | --- | --- | --- |

@@ -42,7 +42,7 @@ About 70% of what a player sees is a settlement doing ordinary work: paths, door
 
 ## What the pictures are
 
-Every sprite the game draws today is a procedural stand-in painted in `web/src/world/art.ts`. The manifest marks them `temporary`. They are the scale and perspective reference. They are not approved production art.
+World Mode draws Mineral Analog pack 02. The 32px reductions lose the mineral detail, so the game uses the 64px alternatives and scales them onto the existing 32px grid. At the normal camera zoom that is one source pixel per screen pixel. Player frames are 48×64, shown at 24×32, four directions and four walk steps. Ivo, Ness and the Archivist have four idle facings and do not walk. The manifest status is still `temporary`. The procedural painters in `web/src/world/art.ts` remain only if a file fails to load.
 
 ## Avoid
 

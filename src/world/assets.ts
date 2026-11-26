@@ -12,9 +12,9 @@ export interface AssetRecord {
   note: string;
 }
 
-const TEMP = 'Procedural stand-in. Not approved production art.';
+const TEMP = 'Mineral Analog pack 02, not yet approved. A 64px drawing is shown on the 32px cell.';
 
-const tile = (id: string, category: AssetCategory, width = 32, height = 32): AssetRecord => ({
+const tile = (id: string, category: AssetCategory, width = 32, height = 32, note = TEMP): AssetRecord => ({
   id,
   category,
   width,
@@ -22,7 +22,7 @@ const tile = (id: string, category: AssetCategory, width = 32, height = 32): Ass
   status: 'temporary',
   anchorX: width / 2,
   anchorY: height,
-  note: TEMP,
+  note,
 });
 
 export const ASSET_MANIFEST: readonly AssetRecord[] = [
@@ -42,8 +42,8 @@ export const ASSET_MANIFEST: readonly AssetRecord[] = [
   tile('vein', 'flora'),
   tile('lantern', 'flora'),
   tile('interior', 'architecture'),
-  tile('player', 'character', 24, 32),
-  tile('person', 'character', 24, 32),
+  tile('player', 'character', 24, 32, 'Mineral Analog pack 02. Four directions, four walk frames, 48×64 drawn at 24×32. Temporary until approved.'),
+  tile('person', 'character', 24, 32, 'Mineral Analog pack 02. Ivo, Ness and the Archivist, four idle facings, 48×64 drawn at 24×32. Temporary until approved.'),
   tile('terminal', 'object'),
   { id: 'collectible-plate', category: 'collectible', width: 64, height: 64, status: 'temporary', anchorX: 32, anchorY: 64, note: TEMP },
 ];

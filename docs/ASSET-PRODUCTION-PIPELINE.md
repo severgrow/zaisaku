@@ -1,6 +1,6 @@
 # Asset production pipeline
 
-There is no image-generation API in this project. New art is made outside the repo, then checked in as PNG. Until a file is approved, the game keeps the procedural stand-in and the manifest says `temporary`.
+There is no image-generation API in this project. New art is made outside the repo, then checked in as PNG. Pack 02 is the current World Mode picture, drawn from `web/public/mineral/`. The manifest still says `temporary`. The procedural painters stay as a fallback if a file is missing.
 
 ## Steps
 

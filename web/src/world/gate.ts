@@ -5,11 +5,20 @@ let loading: Promise<void> | null = null;
 let wanted = false;
 let asleep = false;
 
+const fitWorld = (): void => {
+  if (!game) return;
+  const host = document.querySelector('#world-host');
+  const rect = host?.getBoundingClientRect();
+  const width = Math.round(rect?.width || window.innerWidth);
+  const height = Math.round(rect?.height || window.innerHeight);
+  if (width < 32 || height < 32) return;
+  game.scale.resize(width, height);
+};
+
 if (typeof window !== 'undefined') {
-  window.addEventListener('resize', () => {
-    if (!game) return;
-    game.scale.resize(Math.max(320, window.innerWidth), Math.max(320, window.innerHeight));
-  });
+  window.addEventListener('resize', fitWorld);
+  const host = document.querySelector('#world-host');
+  if (host && typeof ResizeObserver !== 'undefined') new ResizeObserver(fitWorld).observe(host);
 }
 
 const ensure = async (): Promise<void> => {
@@ -35,6 +44,7 @@ const ensure = async (): Promise<void> => {
       scene: [DistrictScene],
       audio: { noAudio: true },
     });
+    fitWorld();
   })();
   try {
     await loading;
@@ -50,7 +60,7 @@ export const enterWorld = async (): Promise<void> => {
       game.loop.wake();
       asleep = false;
     }
-    game.scale.refresh();
+    fitWorld();
     return;
   }
   await ensure();

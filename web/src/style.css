@@ -360,7 +360,7 @@ html.large-text { font-size: 118%; }
 }
 .workshop { display: grid; gap: 12px; }
 .sheet { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; background: #2a2622; padding: 12px; }
-.sheet-grid { background: #2a2622; image-rendering: pixelated; width: 256px; height: 128px; }
+.sheet-grid { background: #2a2622; image-rendering: pixelated; width: auto; height: auto; max-width: 100%; }
 
 @media (min-width: 900px) {
   .joy, .use { display: none; }
