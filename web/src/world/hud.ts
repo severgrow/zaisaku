@@ -4,6 +4,8 @@ import { auctionScreen } from '../view/auction.js';
 import { contractsScreen, marketScreen, vaultScreen } from '../view/market.js';
 import { symbol } from '../ui/symbols.js';
 import { definition } from '../../../src/engine/definitions.js';
+import { locationById } from '../../../src/world/locations.js';
+import { PORTRAITS } from './mineral.js';
 
 export const worldHud = (session: Session): string => {
   const free = session.profile.wallets.permanent - session.profile.wallets.reserved;
@@ -22,10 +24,23 @@ export const worldHud = (session: Session): string => {
   `;
 };
 
+const speakerOf = (session: Session) => {
+  if (!session.speaker) return null;
+  const file = PORTRAITS[session.speaker];
+  if (!file) return null;
+  const actor = locationById(session.world.locationId).actors.find((item) => item.id === session.speaker);
+  if (!actor) return null;
+  return { actor, file };
+};
+
 const panel = (session: Session): string => {
   if (!session.panel) return '';
-  const close = `<button class="btn quiet" type="button" data-act="close-panel">Close</button>`;
-  const note = session.notice ? `<p class="notice" role="status">${esc(session.notice)}</p>` : '';
+  const speaker = speakerOf(session);
+  const talk = speaker
+    ? `<div class="talk"><img src="mineral/${speaker.file}" alt="" width="128" height="128"><div><h2>${esc(speaker.actor.name)}</h2><p>${esc(speaker.actor.line)}</p></div></div>`
+    : '';
+  const close = `<button class="btn quiet" type="button" data-act="close-panel">${talk ? 'Leave' : 'Close'}</button>`;
+  const note = session.notice && session.notice !== speaker?.actor.line ? `<p class="notice" role="status">${esc(session.notice)}</p>` : '';
   let body = '';
   if (session.panel === 'merchant') body = marketScreen(session);
   else if (session.panel === 'auction') body = auctionScreen(session);
@@ -35,7 +50,7 @@ const panel = (session: Session): string => {
   else if (session.panel === 'display') body = display(session);
   else if (session.panel === 'duel') body = `<p>A sealed match against Clerk Vesper. The clerk is simulated.</p><button class="btn primary" type="button" data-act="begin-duel">Sit the duel</button>`;
   else body = `<p>${esc(session.notice ?? '')}</p>`;
-  return `<section class="world-panel hud-hit" role="dialog" aria-label="Interaction">${close}${note}${body}</section>`;
+  return `<section class="world-panel hud-hit" role="dialog" aria-label="Interaction">${talk}${close}${note}${body}</section>`;
 };
 
 const research = (session: Session): string => {
