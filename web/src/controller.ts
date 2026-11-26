@@ -53,11 +53,8 @@ const fresh = (): Session => ({
   revision: 0,
   panel: null,
   displaySlot: null,
-<<<<<<< HEAD
   focus: null,
-=======
   talk: null,
->>>>>>> 4573b6953b957eecd99aba8461d38108e64e39c4
 });
 
 const boot = (): Session => {
@@ -85,11 +82,8 @@ const boot = (): Session => {
     revision: loaded.revision,
     panel: null,
     displaySlot: null,
-<<<<<<< HEAD
     focus: null,
-=======
     talk: null,
->>>>>>> 4573b6953b957eecd99aba8461d38108e64e39c4
   };
 };
 
@@ -161,26 +155,15 @@ export const travelTo = (locationId: string, spawn: string): void => {
     discovered: session.world.discovered.includes(pose.locationId) ? session.world.discovered : [...session.world.discovered, pose.locationId],
   };
   session.panel = null;
-<<<<<<< HEAD
   session.focus = null;
-  clearIntent();
-=======
   session.talk = null;
   bumpNavigation();
->>>>>>> 4573b6953b957eecd99aba8461d38108e64e39c4
   persist();
   notify();
 };
 
-<<<<<<< HEAD
 const PORTRAITS = new Set(['ivo', 'ness', 'archivist']);
 
-export const openWorldThing = (actor: ActorDef): void => {
-  session.world = markFlag(session.world, `met:${actor.id}`);
-  clearIntent();
-  session.focus =
-    actor.form === 'person' && PORTRAITS.has(actor.id) ? { id: actor.id, name: actor.name, line: actor.line } : null;
-=======
 export const showTalk = (actor: ActorDef, actions: readonly TalkAction[]): void => {
   session.world = markFlag(session.world, `met:${actor.id}`);
   bumpNavigation();
@@ -204,8 +187,10 @@ export const performTalk = (actorId: string, opens: string): void => {
 export const openWorldThing = (actor: ActorDef): void => {
   session.world = markFlag(session.world, `met:${actor.id}`);
   session.talk = null;
+  session.focus = actor.form === 'person' && PORTRAITS.has(actor.id)
+    ? { id: actor.id, name: actor.name, line: actor.line }
+    : null;
   bumpNavigation();
->>>>>>> 4573b6953b957eecd99aba8461d38108e64e39c4
   if (actor.kind === 'terminal') {
     persist();
     location.hash = '#/';
@@ -242,13 +227,9 @@ export const openWorldThing = (actor: ActorDef): void => {
 
 export const closePanel = (): void => {
   session.panel = null;
-<<<<<<< HEAD
   session.focus = null;
-  clearIntent();
-=======
   session.talk = null;
   bumpNavigation();
->>>>>>> 4573b6953b957eecd99aba8461d38108e64e39c4
   notify();
 };
 
