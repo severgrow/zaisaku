@@ -137,7 +137,7 @@ const decoded = decodeSave(raw);
 if (!decoded || decoded.profile.inventory.length < 1) problems.push('the loop did not keep a purchase');
 await page.reload({ waitUntil: 'networkidle' });
 const still = await page.locator('[data-screen]').getAttribute('data-screen');
-const balance = await page.locator('.funds').innerText();
+const balance = await page.locator('.funds:visible').first().innerText();
 if (balance.includes('2,400')) problems.push(`reload did not keep the purchase: ${balance}`);
 if (loop.errors.length) problems.push(`loop: ${loop.errors.join(' | ')}`);
 console.log(JSON.stringify({ screen: still, balance, problems }, null, 2));
