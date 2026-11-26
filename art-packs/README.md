@@ -25,6 +25,18 @@ Use full-cell opaque 64px floors on the existing 32px logical grid. Do not alpha
 
 Run asset validation, typecheck, tests, build and visual seam checks. The supplied runtime validation reported 186 checks passed; actual Phaser integration is not yet tested.
 
+## Pack 05 — duel instrument sheets
+
+Nothing here replaces Pack 04 or Pack 02. The upload is stored unchanged under `art-packs/pack-05/`. Both original source sheets are also kept beside the zip, on this branch only. They are not part of the game bundle. Checksums in `art-packs/pack-05/SHA256SUMS` match the digests below. The zip is under 10 MB, so it is one blob.
+
+| Stored file | Bytes | SHA-256 |
+|---|---:|---|
+| pack-05/zaisaku_duel_asset_packs_01_bc4e.zip | 4330916 | 147e631b9b06378096667fd281e517b998cd8e464e7ad8600d33028a854a3c16 |
+| pack-05/sources/pack05_duel_ui_set_a.png | 2080964 | 7526e522dc7eea1e41f31e3ba445851b31dc236816ab02d7e6120d22146e3e11 |
+| pack-05/sources/pack05_duel_ui_set_b.png | 2539236 | 32939053ff38c2b0cab51e9684388f8126ab4e72a7e7e1192bd80fe5ed15d499 |
+
+The zip is the byte-for-byte upload `zaisaku_duel_asset_packs_01_bc4e.zip`. The two PNGs inside it are the Mineral Analog duel sheets (bone ceramic, green-grey alloy, amber, muted burgundy). The game crops individual components from them. Do not copy either full sheet into `web/public` or into a script bundle.
+
 ## Ongoing workflow
 
 Stage numbered immutable ZIP files and checksums here. Keep each ZIP below 10,000,000 bytes. Use a separate runtime archive and source archive(s). Cursor fetches the staging branch, checks hashes, imports the runtime pack into the active development branch, and records asset approval after screenshots. No gameplay changes or confidential lore in asset staging.
