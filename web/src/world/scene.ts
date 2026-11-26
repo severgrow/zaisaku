@@ -343,6 +343,7 @@ export class DistrictScene extends Phaser.Scene {
   }
 
   private ensureFallback(palette: ReturnType<typeof paletteById>): void {
+    if (!this.textures.exists('floor-residence-inlay')) this.texture('floor-residence-inlay', paintTile(TILE.interior, palette));
     if (this.textures.exists('floor-mineral-paving')) return;
     this.texture('floor-mineral-paving', paintTile(TILE.ground, palette));
     this.texture('floor-bone-ceramic', paintTile(TILE.interior, palette));
