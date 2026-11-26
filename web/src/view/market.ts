@@ -1,4 +1,6 @@
 import { definition } from '../../../src/engine/definitions.js';
+import { collectorGraphic, duelObjectiveGraphic } from '../../../src/world/identity.js';
+import { mineralUrl } from '../world/mineral.js';
 import { activeAtTick } from '../../../src/engine/events.js';
 import { appraise } from '../../../src/engine/valuation.js';
 import { marketContext } from '../../../src/economy/profile.js';
@@ -96,11 +98,17 @@ export const contractsScreen = (session: Session): string => {
   const rows = session.profile.requests
     .map((request) => {
       const progress = Math.min(1, request.target ? request.progress / request.target : 0);
+      const graphic = collectorGraphic(request.status === 'active' || request.status === 'complete');
       return `<article class="panel">
-        <p class="kicker">${esc(request.scope)} · ${esc(request.status)}</p>
-        <h2>${esc(request.title)}</h2>
-        <p>${esc(request.description)}</p>
-        <p class="num">${request.progress} / ${request.target} · ${request.reward} Zai</p>
+        <div class="seal-row">
+          <img class="seal" alt="" src="${mineralUrl(graphic.file)}" />
+          <div>
+            <p class="kicker">${esc(request.scope)} · ${esc(request.status)}</p>
+            <h2>${esc(request.title)}</h2>
+            <p>${esc(request.description)}</p>
+            <p class="num">${request.progress} / ${request.target} · ${request.reward} Zai</p>
+          </div>
+        </div>
         <div class="meter" style="--p:${progress}"><span></span></div>
       </article>`;
     })
@@ -109,6 +117,10 @@ export const contractsScreen = (session: Session): string => {
     <p class="kicker">Requests</p>
     <h1>What the house is asking</h1>
     <p class="lede">A persistent request pays your balance once. A duel request pays only the match, and the other player cannot read it.</p>
+    <div class="seal-row">
+      <img class="seal" alt="" src="${mineralUrl(duelObjectiveGraphic('opponent', true).file)}" />
+      <p class="meta">A private duel objective stays sealed. The picture does not open it.</p>
+    </div>
     <div class="stack">${rows || '<p>No request is open.</p>'}</div>
   `;
 };

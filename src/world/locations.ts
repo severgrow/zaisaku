@@ -1,4 +1,5 @@
 import type { ActorDef, ExitDef, LocationDef } from './types.js';
+import { extraSolids } from './identity.js';
 import { feetOf } from './movement.js';
 import { GATE } from './state.js';
 import { stampShell } from './stamp.js';
@@ -44,14 +45,11 @@ export const buildDistrict = (): LocationDef => {
     if (tiles[16]![x] === TILE.ground) set(tiles, x, 16, TILE.path);
   }
   for (let y = 8; y <= 18; y += 1) if (tiles[y]![16] === TILE.ground) set(tiles, 16, y, TILE.path);
-  set(tiles, 4, 17, TILE.tree);
-  set(tiles, 27, 17, TILE.tree);
   set(tiles, 8, 15, TILE.reed);
   set(tiles, 22, 15, TILE.reed);
   set(tiles, 11, 9, TILE.vein);
   set(tiles, 20, 9, TILE.vein);
   set(tiles, 14, 11, TILE.lantern);
-  set(tiles, 18, 14, TILE.lantern);
   set(tiles, 10, 9, TILE.lamp);
   set(tiles, 21, 9, TILE.lamp);
   set(tiles, 13, 13, TILE.counter);
@@ -105,13 +103,14 @@ export const buildDistrict = (): LocationDef => {
     { id: 'research-door', name: 'Research bench', tx: research.doorTx, ty: research.doorTy, facing: 's', kind: 'research', symbol: 'research', form: 'terminal', coat: '#4c5340', accessory: 'none', line: 'The bench reads papers you already own.', slot: null },
     { id: 'duel-door', name: 'Duel terminal', tx: duel.doorTx, ty: duel.doorTy, facing: 'e', kind: 'duel', symbol: 'exchange', form: 'terminal', coat: '#2e3328', accessory: 'none', line: 'A sealed match. Clerk Vesper is simulated.', slot: null },
     { id: 'auction-door', name: 'Auction desk', tx: auction.doorTx, ty: auction.doorTy, facing: 'w', kind: 'auction', symbol: 'auction', form: 'terminal', coat: '#6d7550', accessory: 'none', line: 'One lot. The house bidders are simulated.', slot: null },
-    { id: 'plaza-lantern', name: 'Lantern growth', tx: 18, ty: 14, facing: 's', kind: 'flora', symbol: 'cultivation', form: 'flora', coat: '#7d8a62', accessory: 'none', line: 'It drinks the evening and gives a little back.', slot: null },
+    { id: 'plaza-lantern', name: 'Lantern growth', tx: 14, ty: 11, facing: 's', kind: 'flora', symbol: 'cultivation', form: 'flora', coat: '#7d8a62', accessory: 'none', line: 'It drinks the evening and gives a little back.', slot: null },
     { id: 'plaza-rings', name: 'Rings', tx: 16, ty: 12, facing: 's', kind: 'resonance', symbol: 'resonance', form: 'flora', coat: '#d29a3a', accessory: 'none', line: 'The rings are not on any notice.', slot: null },
   );
   for (const actor of actors) {
     if (actor.kind === 'resonance') continue;
     occupy(solid, actor.tx, actor.ty);
   }
+  for (const block of extraSolids('district-01')) occupy(solid, block.tx, block.ty);
   const exits: ExitDef[] = [
     { id: 'to-residence', tx: residence.doorTx, ty: residence.doorTy, to: 'residence', spawn: 'door', label: 'Residence', symbol: 'residence' },
   ];
@@ -158,6 +157,7 @@ export const buildResidence = (): LocationDef => {
     { id: 'house-plant', name: 'Lantern growth', tx: 5, ty: 4, facing: 's', kind: 'flora', symbol: 'cultivation', form: 'flora', coat: '#7d8a62', accessory: 'none', line: 'It drinks the evening and gives a little back.', slot: null },
   ];
   for (const actor of actors) occupy(solid, actor.tx, actor.ty);
+  for (const block of extraSolids('residence')) occupy(solid, block.tx, block.ty);
   return {
     id: 'residence',
     name: 'Residence',

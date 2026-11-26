@@ -1,8 +1,13 @@
 import { viewFor } from '../../../src/engine/view.js';
+import { DUEL_INSTRUMENT_HOOK, duelObjectiveGraphic } from '../../../src/world/identity.js';
 import { plate } from '../ui/art.js';
 import { clock, esc, signed, zai } from '../ui/text.js';
+import { mineralUrl } from '../world/mineral.js';
 import type { Session } from '../session.js';
 import type { PublicItem } from '../../../src/engine/types.js';
+
+const seal = (file: string): string => `<img class="seal" alt="" src="${mineralUrl(file)}" />`;
+const portrait = (): string => `<img class="seal portrait" alt="" src="${mineralUrl('identity/vesper-portrait.png')}" />`;
 
 const lot = (item: PublicItem, selected: boolean): string => `
   <button class="lot ${selected ? 'selected' : ''}" data-act="select" data-id="${esc(item.instanceId)}" data-kind="offer">
@@ -23,8 +28,16 @@ export const duelScreen = (session: Session): string => {
       <p class="kicker">Table</p>
       <h1>A sealed duel</h1>
       <p class="lede">Two collectors. ${1000} Zai each, kept apart from your vault. Six rounds, three objects, one hidden request. Highest net worth takes the table. Draws stand.</p>
+      <div class="seal-row">
+        ${portrait()}
+        ${seal(duelObjectiveGraphic('you', false).file)}
+        <div>
+          <p class="kicker">Clerk Vesper</p>
+          <p class="meta">House player. Simulated. Not a live person. The request stays sealed until you sit.</p>
+        </div>
+      </div>
+      <div data-duel-instrument="${DUEL_INSTRUMENT_HOOK}"></div>
       <button class="btn primary" id="begin-duel" data-act="begin-duel">Sit down</button>
-      <p class="meta">Your opponent is Clerk Vesper, a house player. Simulated. Not a live person.</p>
     `;
   }
   const view = viewFor(duel, 'p0');
@@ -43,10 +56,15 @@ export const duelScreen = (session: Session): string => {
     <div class="board">
       <div class="stack">
         <section class="panel">
-          <p class="kicker">Your request · hidden from the other chair</p>
-          <h2>${esc(contract?.title ?? 'Sealed')}</h2>
-          <p class="meta">${esc(contract?.description ?? '')}</p>
-          <p class="num">${contract ? `${contract.progress} / ${contract.target}` : ''} · ${contract ? zai(contract.reward) : ''}</p>
+          <div class="seal-row">
+            ${seal(duelObjectiveGraphic('you', true).file)}
+            <div>
+              <p class="kicker">Your request · hidden from the other chair</p>
+              <h2>${esc(contract?.title ?? 'Sealed')}</h2>
+              <p class="meta">${esc(contract?.description ?? '')}</p>
+              <p class="num">${contract ? `${contract.progress} / ${contract.target}` : ''} · ${contract ? zai(contract.reward) : ''}</p>
+            </div>
+          </div>
           <div class="meter" style="--p:${progress}"><span></span></div>
         </section>
         ${view.activeEvents.map((event) => `<p class="notice">${esc(event.name)}. ${esc(event.summary)}</p>`).join('')}
@@ -59,10 +77,17 @@ export const duelScreen = (session: Session): string => {
       </div>
       <div class="stack">
         <section class="panel">
-          <p class="kicker">Worth now</p>
-          <p class="num">${zai(view.worth.netWorth)}</p>
-          <p class="meta">Cash ${zai(view.worth.cash)} · shelf ${zai(view.worth.inventoryValue)}</p>
-          <p class="meta">${esc(view.opponentName)} is a simulated opponent. Their request stays sealed.</p>
+          <div class="seal-row">
+            ${portrait()}
+            ${seal(duelObjectiveGraphic('opponent', true).file)}
+            <div>
+              <p class="kicker">Worth now</p>
+              <p class="num">${zai(view.worth.netWorth)}</p>
+              <p class="meta">Cash ${zai(view.worth.cash)} · shelf ${zai(view.worth.inventoryValue)}</p>
+              <p class="meta">${esc(view.opponentName)} is a simulated opponent. Their request stays sealed.</p>
+            </div>
+          </div>
+          <div data-duel-instrument="${DUEL_INSTRUMENT_HOOK}"></div>
         </section>
         <div>
           <p class="kicker">Your shelf</p>

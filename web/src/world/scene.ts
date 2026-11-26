@@ -2,6 +2,18 @@ import Phaser from 'phaser';
 import { definition } from '../../../src/engine/definitions.js';
 import { ARTWORK } from '../../../src/world/artwork.js';
 import { DIRS, cornerDiagonal, floorKey, openingFile, pieceFile, stepOf, type Dir, type FloorMaterial } from '../../../src/world/connectors.js';
+import {
+  IDENTITY_FACINGS,
+  IDENTITY_PEOPLE,
+  IDENTITY_SCALE,
+  coveredTiles,
+  entranceFronts,
+  facingToward,
+  identityFrame,
+  identityFrameFile,
+  identitySheets,
+  type IdentitySheet,
+} from '../../../src/world/identity.js';
 import { locationById } from '../../../src/world/locations.js';
 import { feetOf, move, nearest, tileAt, wish } from '../../../src/world/movement.js';
 import { paletteById } from '../../../src/world/palettes.js';
@@ -46,8 +58,14 @@ const STRUCTURE = new Set<number>([TILE.roof, TILE.wall, TILE.interior, TILE.doo
 export class DistrictScene extends Phaser.Scene {
   private place: LocationDef = locationById('district-01');
   private body: Phaser.GameObjects.Image | null = null;
+  private shade: Phaser.GameObjects.Image | null = null;
   private props: Phaser.GameObjects.Image[] = [];
+  private foreground: Phaser.GameObjects.Image[] = [];
+  private people: { id: string; facing: Facing; image: Phaser.GameObjects.Image }[] = [];
   private rings: Phaser.GameObjects.Graphics | null = null;
+  private useUntil = 0;
+  private npcUntil = new Map<string, number>();
+  private npcFace = new Map<string, Facing>();
   private keys: Record<string, Phaser.Input.Keyboard.Key> = {};
   private walked = 0;
   private seq = 0;
@@ -74,6 +92,22 @@ export class DistrictScene extends Phaser.Scene {
     for (const id of NPCS) {
       for (const facing of PLAYER_FACINGS) this.load.image(`person-${id}-${facing}`, mineralUrl(npcFile(id, facing)));
     }
+    const files = new Set(identitySheets(locationById('district-01')).concat(identitySheets(locationById('residence'))).map((sheet) => sheet.file));
+    for (const file of files) this.load.image(file, mineralUrl(file));
+    this.load.image('identity/contact-shadow.png', mineralUrl('identity/contact-shadow.png'));
+    for (const person of IDENTITY_PEOPLE) {
+      for (const facing of IDENTITY_FACINGS) {
+        const idle = identityFrameFile(person, facing, 'idle-1');
+        const use = identityFrameFile(person, facing, 'use');
+        if (person === 'player') {
+          this.load.image(identityFrame.playerIdle(facing, 1), mineralUrl(idle));
+          this.load.image(identityFrame.playerUse(facing), mineralUrl(use));
+        } else {
+          this.load.image(identityFrame.npcIdle(person, facing, 1), mineralUrl(idle));
+          this.load.image(identityFrame.npcUse(person, facing), mineralUrl(use));
+        }
+      }
+    }
   }
 
   create(): void {
@@ -87,6 +121,18 @@ export class DistrictScene extends Phaser.Scene {
       for (let frame = 0; frame < 4; frame += 1) this.nearest(`you-${facing}-${frame}`);
       for (const id of NPCS) this.nearest(`person-${id}-${facing}`);
     }
+    for (const person of IDENTITY_PEOPLE) {
+      for (const facing of IDENTITY_FACINGS) {
+        if (person === 'player') {
+          this.nearest(identityFrame.playerIdle(facing, 1));
+          this.nearest(identityFrame.playerUse(facing));
+        } else {
+          this.nearest(identityFrame.npcIdle(person, facing, 1));
+          this.nearest(identityFrame.npcUse(person, facing));
+        }
+      }
+    }
+    this.nearest('identity/contact-shadow.png');
     this.input.keyboard?.addCapture('W,A,S,D,UP,DOWN,LEFT,RIGHT,E,SPACE');
     this.keys = (this.input.keyboard?.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT,E,SPACE') ?? {}) as Record<string, Phaser.Input.Keyboard.Key>;
     this.cameras.main.setBackgroundColor('#5c5348');
@@ -125,9 +171,12 @@ export class DistrictScene extends Phaser.Scene {
   private bootPlace(): void {
     for (const prop of this.props) prop.destroy();
     this.props = [];
+    this.foreground = [];
+    this.people = [];
     this.body?.destroy();
     this.rings?.destroy();
     this.body = null;
+    this.shade = null;
     this.rings = null;
     this.place = locationById(session.world.locationId);
     this.displayKey = JSON.stringify(session.world.displays);
@@ -153,9 +202,12 @@ export class DistrictScene extends Phaser.Scene {
     this.props.push(base);
     const occupied = new Set(this.place.actors.map((actor) => `${actor.tx},${actor.ty}`));
     const displays = new Set(this.place.actors.filter((actor) => actor.slot).map((actor) => `${actor.tx},${actor.ty}`));
+    const covered = coveredTiles(this.place);
+    const fronts = entranceFronts(this.place);
     for (let y = 0; y < this.place.height; y += 1) {
       for (let x = 0; x < this.place.width; x += 1) {
         const tile = this.place.tiles[y]?.[x] ?? 0;
+        if (tile === TILE.lantern || covered.has(`${x},${y}`)) continue;
         this.architecture(x, y, tile);
         if (tile === TILE.counter && displays.has(`${x},${y}`)) continue;
         if (tile === TILE.counter && !occupied.has(`${x},${y}`)) {
@@ -163,13 +215,19 @@ export class DistrictScene extends Phaser.Scene {
           continue;
         }
         const key = OVERLAY[tile];
+        if (key === 'awning' && fronts.has(`${x},${y}`)) continue;
         if (key) this.overlay(key, x, y);
       }
     }
     for (const actor of this.place.actors) {
       if (actor.form === 'person') {
         const key = `person-${actor.id}-${actor.facing}`;
-        if (this.textures.exists(key)) this.prop(key, actor.tx, actor.ty, 24, 32);
+        if (this.textures.exists(key)) {
+          const feet = feetOf(actor.tx, actor.ty);
+          this.shadowAt(feet.x, feet.y, feet.y - 2);
+          const image = this.prop(key, actor.tx, actor.ty, 24, 32);
+          this.people.push({ id: actor.id, facing: actor.facing, image });
+        }
         else {
           const painted = `npc-${actor.id}`;
           this.texture(painted, paintActor(actor.facing, 0, actor.coat, actor.accessory, palette));
@@ -191,6 +249,8 @@ export class DistrictScene extends Phaser.Scene {
         }
       }
     }
+    for (const sheet of identitySheets(this.place)) this.addSheet(sheet);
+    this.shade = this.shadowAt(session.world.x, session.world.y, session.world.y - 2);
     this.body = this.add.image(session.world.x, session.world.y, `you-${session.world.facing}-0`).setOrigin(0.5, 1);
     this.body.setDisplaySize(24, 32);
     this.body.setDepth(session.world.y);
@@ -315,10 +375,52 @@ export class DistrictScene extends Phaser.Scene {
     this.texture('floor-soil', paintTile(TILE.ground, palette));
   }
 
-  private prop(key: string, tx: number, ty: number, width: number, height: number): void {
+  private prop(key: string, tx: number, ty: number, width: number, height: number): Phaser.GameObjects.Image {
     const feet = feetOf(tx, ty);
     const image = this.add.image(feet.x, feet.y, key).setOrigin(0.5, 1).setDisplaySize(width, height).setDepth(feet.y);
     this.props.push(image);
+    return image;
+  }
+
+  private shadowAt(x: number, y: number, depth: number): Phaser.GameObjects.Image | null {
+    if (!this.textures.exists('identity/contact-shadow.png')) return null;
+    const image = this.add.image(x, y, 'identity/contact-shadow.png').setOrigin(0.5, 0.5).setDisplaySize(32, 16).setDepth(depth);
+    this.props.push(image);
+    return image;
+  }
+
+  /** Slice a sheet into cells so a roof fades only where it covers the player. */
+  private addSheet(sheet: IdentitySheet): void {
+    if (!this.textures.exists(sheet.file)) return;
+    this.nearest(sheet.file);
+    const source = this.textures.get(sheet.file).getSourceImage() as CanvasImageSource;
+    const cell = 64;
+    for (let sy = 0; sy < sheet.sourceH; sy += cell) {
+      for (let sx = 0; sx < sheet.sourceW; sx += cell) {
+        const sw = Math.min(cell, sheet.sourceW - sx);
+        const sh = Math.min(cell, sheet.sourceH - sy);
+        const canvas = document.createElement('canvas');
+        canvas.width = sw;
+        canvas.height = sh;
+        const pen = canvas.getContext('2d');
+        if (!pen) continue;
+        pen.imageSmoothingEnabled = false;
+        pen.drawImage(source, sx, sy, sw, sh, 0, 0, sw, sh);
+        const data = pen.getImageData(0, 0, sw, sh).data;
+        let opaque = 0;
+        for (let i = 3; i < data.length; i += 4) if ((data[i] ?? 0) > 16) opaque += 1;
+        if (opaque < 8) continue;
+        const key = `${sheet.id}-${sx}-${sy}`;
+        this.texture(key, canvas);
+        const left = sheet.worldX + (sx - sheet.anchorX) * IDENTITY_SCALE;
+        const bottom = sheet.worldY + (sy + sh - sheet.anchorY) * IDENTITY_SCALE;
+        const image = this.add.image(left, bottom, key).setOrigin(0, 1);
+        image.setDisplaySize(sw * IDENTITY_SCALE, sh * IDENTITY_SCALE);
+        image.setDepth(sheet.foreground ? bottom : sheet.depth);
+        this.props.push(image);
+        if (sheet.foreground) this.foreground.push(image);
+      }
+    }
   }
 
   private itemOnShelf(key: string, tx: number, ty: number): void {
@@ -340,6 +442,7 @@ export class DistrictScene extends Phaser.Scene {
       return;
     }
     this.drawRings(document.documentElement.classList.contains('reduce') ? 0 : this.time.now);
+    this.posePeople();
     if (session.panel) {
       intent.interact = false;
       return;
@@ -350,14 +453,19 @@ export class DistrictScene extends Phaser.Scene {
     const next = move(this.place.solid, session.world.x, session.world.y, step.dx, step.dy, RADIUS);
     const facing = facingOf(step.dx, step.dy, session.world.facing);
     if (next.x !== session.world.x || next.y !== session.world.y) this.walked += Math.hypot(next.x - session.world.x, next.y - session.world.y);
-    const frame = step.dx === 0 && step.dy === 0 ? 0 : Math.floor(this.walked / 8) % 4;
+    const moving = step.dx !== 0 || step.dy !== 0;
+    const frame = moving ? Math.floor(this.walked / 8) % 4 : 0;
     session.world.x = next.x;
     session.world.y = next.y;
     session.world.facing = facing;
+    const pose = this.time.now < this.useUntil ? identityFrame.playerUse(facing) : moving ? `you-${facing}-${frame}` : identityFrame.playerIdle(facing, (Math.floor(this.time.now / 1100) % 2) as 0 | 1);
     this.body.setPosition(Math.round(next.x), Math.round(next.y));
-    this.body.setTexture(`you-${facing}-${frame}`);
+    if (this.textures.exists(pose)) this.body.setTexture(pose);
     this.body.setDisplaySize(24, 32);
     this.body.setDepth(next.y);
+    this.shade?.setPosition(Math.round(next.x), Math.round(next.y));
+    this.shade?.setDepth(next.y - 2);
+    this.occlude();
     this.lookAt(next.x, next.y);
     this.seq += 1;
     if (this.seq % 30 === 0) transport.send({ locationId: this.place.id, x: next.x, y: next.y, facing, seq: this.seq });
@@ -369,8 +477,43 @@ export class DistrictScene extends Phaser.Scene {
     const pressed = intent.interact || this.just('E') || this.just('SPACE');
     if (!pressed) return;
     intent.interact = false;
+    const target = actor ?? exit;
+    if (target) {
+      const look = facingToward(here.tx, here.ty, target.tx, target.ty, session.world.facing);
+      session.world.facing = look;
+      this.useUntil = this.time.now + 680;
+      if (this.textures.exists(identityFrame.playerUse(look))) {
+        this.body.setTexture(identityFrame.playerUse(look));
+        this.body.setDisplaySize(24, 32);
+      }
+      if (actor?.form === 'person') {
+        this.npcUntil.set(actor.id, this.time.now + 680);
+        this.npcFace.set(actor.id, facingToward(actor.tx, actor.ty, here.tx, here.ty, actor.facing));
+      }
+    }
     if (actor) openWorldThing(actor);
     else if (exit) travelTo(exit.to, exit.spawn);
+  }
+
+  private posePeople(): void {
+    for (const person of this.people) {
+      const posing = this.time.now < (this.npcUntil.get(person.id) ?? 0);
+      const facing = posing ? (this.npcFace.get(person.id) ?? person.facing) : person.facing;
+      const frame = (Math.floor(this.time.now / 1100) % 2) as 0 | 1;
+      const key = posing ? identityFrame.npcUse(person.id, facing) : identityFrame.npcIdle(person.id, facing, frame);
+      if (!this.textures.exists(key)) continue;
+      person.image.setTexture(key);
+      person.image.setDisplaySize(24, 32);
+    }
+  }
+
+  private occlude(): void {
+    if (!this.body) return;
+    const body = this.body.getBounds();
+    for (const image of this.foreground) {
+      const covers = image.depth > this.body.depth - 1 && Phaser.Geom.Intersects.RectangleToRectangle(body, image.getBounds());
+      image.setAlpha(covers ? 0.42 : 1);
+    }
   }
 
   private lookAt(x: number, y: number): void {
