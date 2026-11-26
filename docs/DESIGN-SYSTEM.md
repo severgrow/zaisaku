@@ -29,11 +29,11 @@ Kickers are small, tracked, uppercase mono. Titles are serif, medium weight, sli
 
 ## Layout
 
-Mobile first. The shell is a top bar (wordmark, free Zai) and a five-item dock: Home, Duel, Market, Sale, Vault. Requests, Result, and Settings sit on the home floor and in the side column.
+Mobile first. The shell is a top bar (wordmark, free Zai) and a five-item dock: Home, Duel, Market, Auction, Vault. Requests, Result, and Settings sit on the home floor and in the side column.
 
 At 900px and wider the dock hides. A side column lists every room and repeats the balance. The duel becomes two columns: the table on the left, the decision on the right.
 
-The duel decision bar is fixed above the dock on a phone, so bid, sell, inspect, and hold stay reachable at 360×800 and 390×844. The table scrolls behind it. On a wide screen the bar returns to the column.
+The duel decision bar is fixed above the dock on a phone, so bid, sell, inspect, and pass stay reachable at 360×800 and 390×844. The table scrolls behind it. On a wide screen the bar returns to the column.
 
 Controls are at least 44px tall. Borders are 1px. Corners are square. One primary button per group is filled burgundy. The rest are line buttons.
 

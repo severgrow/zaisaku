@@ -74,7 +74,7 @@ export const duelScreen = (session: Session): string => {
                       (item) => `<button class="chip ${item.instanceId === session.selected ? 'selected' : ''}" data-act="select" data-id="${esc(item.instanceId)}" data-kind="own"><b>${esc(item.name)}</b><small>${zai(item.quote.liquidation)} sell${item.warning ? ' · warm' : ''}</small></button>`,
                     )
                     .join('')
-                : '<p class="muted">Nothing kept yet. Holding is free.</p>'
+                : '<p class="muted">Nothing kept yet. Owned objects stay until you sell them.</p>'
             }
           </div>
         </div>
@@ -103,7 +103,7 @@ export const duelScreen = (session: Session): string => {
                 <div class="row">
                   <button class="btn" data-act="sell" ${mine ? '' : 'disabled'}>Sell${mine ? ` · ${zai(mine.quote.liquidation)}` : ''}</button>
                   <button class="btn" data-act="inspect" ${selected || mine ? '' : 'disabled'}>Inspect</button>
-                  <button class="btn quiet" data-act="pass">Hold</button>
+                  <button class="btn quiet" data-act="pass">Pass</button>
                 </div>
                 <p class="meta">${view.youLocked ? 'Sealed. Waiting for the other chair.' : 'Lock one action. Both open together.'}</p>
               </div>`

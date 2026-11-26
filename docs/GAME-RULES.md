@@ -32,7 +32,7 @@ Bids are checked against cash from before the resolution. Selling in the same ro
 
 **Inspect.** Reveals hidden papers on one object, on the table or on your shelf. Memory Lens reveals one extra property. The opponent does not learn what you read.
 
-**Hold.** An explicit pass. Keeping what you already own is free. You do not have to name a held object to keep it.
+**Pass.** Take no action this round. Cash stays put, and every object you already own stays with you. Keeping an object is not an action and does not need a button.
 
 ## Objects that nobody buys
 
@@ -70,4 +70,4 @@ A bot receives the same view a human would, and the same validator. It does not 
 
 ## Draws and abandoned matches
 
-A match where both chairs only hold can draw. Leaving the match from the client discards the duel state and does not touch the permanent wallet.
+A match where both chairs only pass can draw. Leaving the match from the client discards the duel state and does not touch the permanent wallet.

@@ -27,7 +27,7 @@ Other commands:
 
 ## What you can do
 
-- Sit a six-round duel against Clerk Vesper, a labelled simulated opponent. Bid, inspect, sell, or hold. Your request stays hidden. Effects and a market event can change the table. The result shows both scores.
+- Sit a six-round duel against Clerk Vesper, a labelled simulated opponent. Bid, inspect, sell, or pass. Owned objects stay without a separate action. Your request stays hidden. Effects and a market event can change the table. The result shows both scores.
 - Buy from the market with the permanent balance, keep the object in the vault, inspect it, and sell it back. An immediate flip loses money.
 - Finish the collector's request on the home floor. The opening request is Three Rooms.
 - Open one timed auction. Moth and Hinge are simulated house bidders. A late bid can extend the clock.

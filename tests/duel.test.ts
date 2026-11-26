@@ -71,7 +71,7 @@ describe('bids', () => {
 });
 
 describe('duel resolution', () => {
-  it('draws a match where both players only hold', () => {
+  it('draws a match where both players only pass', () => {
     let state = createDuel(3, { rules: { rounds: 3 } });
     while (state.phase !== 'complete') {
       const a = submit(state, 'p0', { type: 'pass' });
@@ -81,6 +81,7 @@ describe('duel resolution', () => {
       state = b.value;
     }
     expect(state.result?.winner).toBe('draw');
+    expect(state.log.some((line) => line.endsWith('passed.'))).toBe(true);
     const [left, right] = state.result!.scores;
     expect(left.netWorth).toBe(right.netWorth);
     expect(left.netWorth).toBe(left.cash + left.inventoryValue);

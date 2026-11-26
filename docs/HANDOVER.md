@@ -12,7 +12,7 @@ The production client is static files in `web/dist`. There is no environment var
 
 The first visit creates a guest named Guest, seed from `crypto.getRandomValues`, permanent balance 2,400, six lots, and the request Three Rooms. The home floor shows the name, the balance, one transmission, the request, and the four rooms.
 
-Duel starts a match that does not touch that balance. Lock a bid, an inspection, a sale, or a hold. Clerk Vesper locks as well. After six rounds, or when the objects and the clock run out, the result screen shows both chairs. Rematch starts another isolated match.
+Duel starts a match that does not touch that balance. Lock a bid, an inspection, a sale, or a pass. Owned objects stay without a separate action. Clerk Vesper locks as well. After six rounds, or when the objects and the clock run out, the result screen shows both chairs. Rematch starts another isolated match.
 
 Market buy spends permanent Zai. Vault inspect reveals papers. Vault sell pays liquidation, which is less than the ask if the wire has not moved. Advance the transmission to change the event and the prices. The auction escrows a bid, ticks once a second, and settles or refunds.
 

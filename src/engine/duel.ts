@@ -187,7 +187,7 @@ const resolve = (state: DuelState): DuelState => {
     const name = draft.players[id].name;
     const action = actions[id];
     if (draft.expired[id] && action.type === 'pass') notes.push(`${name} let the clock run out.`);
-    else if (action.type === 'pass') notes.push(`${name} held.`);
+    else if (action.type === 'pass') notes.push(`${name} passed.`);
     if (action.type !== 'inspect') continue;
     const player = draft.players[id];
     const offer = draft.offered.find((row) => row.item.id === action.instanceId);
