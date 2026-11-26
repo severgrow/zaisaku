@@ -96,6 +96,17 @@ The user called these `ZAISAKU_09_Runtime.zip` and `ZAISAKU_09_Sources.zip`. The
 
 The runtime zip is the only archive the game imports. It carries `manifest.json`, `README.md`, a contact sheet, and 31 runtime PNGs whose hashes match the manifest. The contact sheet is not a sprite. The source zip holds the original sheets and stays on this branch, out of `web/public`. East and west window glass is not in this delivery. Status in the game stays `temporary`.
 
+## Pack 10 — district connections and interiors
+
+Nothing here replaces Pack 02, Pack 04, Pack 05, Pack 06B, Pack 07, Pack 08, Pack 08B, or Pack 09. Both uploads are stored unchanged under `art-packs/pack-10/`. The source zip is visual reference only and stays out of the game bundle. Checksums in `art-packs/pack-10/SHA256SUMS` match the digests below. Each archive is under 10 MB.
+
+| Stored file | Bytes | SHA-256 |
+|---|---:|---|
+| pack-10/ZAISAKU_10_Runtime_620a.zip | 194872 | 872f42328cc41523ab3d73c59825b124d5dc5ebde76042bf0c710ce045950e3c |
+| pack-10/ZAISAKU_10_Sources_e315.zip | 3934166 | 3cc6e9d2dae92215ff5b837235fac4f8f0102ce6409b5f402415fa4e4bfbd521 |
+
+The runtime zip is the byte-for-byte upload called `ZAISAKU_10_Runtime.zip`. The source zip is the byte-for-byte upload called `ZAISAKU_10_Sources.zip`. The runtime carries eight paving-to-path transitions, the residence inlay, five furniture sprites, and the unchanged Ivo, Ness, and Archivist busts, plus `manifest.json`, `validation.json`, and a preview. Three generated building fronts are south-facing and are not in this runtime. Status stays `temporary`.
+
 ## Ongoing workflow
 
 Stage numbered immutable ZIP files and checksums here. Keep each ZIP below 10,000,000 bytes. Use a separate runtime archive and source archive(s). Cursor fetches the staging branch, checks hashes, imports the runtime pack into the active development branch, and records asset approval after screenshots. No gameplay changes or confidential lore in asset staging.
