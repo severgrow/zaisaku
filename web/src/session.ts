@@ -23,6 +23,8 @@ export interface Session {
   revision: number;
   panel: Panel | null;
   displaySlot: string | null;
+  /** The person whose bust is open. Not saved. */
+  speaker: string | null;
 }
 
 export const routeOf = (hash: string): Route => {

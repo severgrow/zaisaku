@@ -354,10 +354,26 @@ html.large-text { font-size: 118%; }
   bottom: calc(120px + env(safe-area-inset-bottom));
   max-height: 52vh;
   overflow: auto;
-  background: var(--surface);
+  background: var(--bg);
   border: 1px solid var(--line);
   padding: 12px;
 }
+.talk {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 12px;
+  align-items: center;
+  margin: 0 0 12px;
+}
+.talk img {
+  width: 64px;
+  height: 64px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  background: var(--bg-3);
+}
+.talk h2 { margin: 0 0 4px; font-size: 22px; }
+.talk p { margin: 0; }
 .workshop { display: grid; gap: 12px; }
 .sheet { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; background: #2a2622; padding: 12px; }
 .sheet-grid { background: #2a2622; image-rendering: pixelated; width: auto; height: auto; max-width: 100%; }

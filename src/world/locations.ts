@@ -129,6 +129,11 @@ export const buildDistrict = (): LocationDef => {
     },
     exits,
     actors,
+    furnishings: [
+      { id: 'exchange-counter', sprite: 'exchange-counter', tx: 5, ty: 5, span: 2 },
+      { id: 'paper-rack', sprite: 'paper-rack', tx: 22, ty: 5, span: 1 },
+      { id: 'research-bench', sprite: 'work-bench', tx: 28, ty: 5, span: 1 },
+    ],
     resonance: { tx: 16, ty: 12 },
     audioBed: null,
     blurb: 'A public square in the exchange. The notices are ordinary. The light is not.',
@@ -140,24 +145,19 @@ export const buildResidence = (): LocationDef => {
   const height = 10;
   const tiles = blank(width, height, TILE.ground);
   border(tiles);
-  set(tiles, 2, 3, TILE.counter);
-  set(tiles, 3, 3, TILE.counter);
-  set(tiles, 10, 3, TILE.counter);
-  set(tiles, 12, 3, TILE.counter);
-  set(tiles, 3, 6, TILE.counter);
-  set(tiles, 11, 6, TILE.counter);
   set(tiles, 5, 4, TILE.lantern);
   set(tiles, 7, 8, TILE.door);
   const solid = solidFrom(tiles);
   const actors: ActorDef[] = [
-    { id: 'bed', name: 'Bed', tx: 2, ty: 3, facing: 's', kind: 'rest', symbol: 'residence', form: 'furnishing', coat: '#c9b59a', accessory: 'none', line: 'You sit for a moment. The room does not charge you.', slot: null },
+    { id: 'bed', name: 'Bed', tx: 1, ty: 1, facing: 's', kind: 'rest', symbol: 'residence', form: 'furnishing', coat: '#c9b59a', accessory: 'none', line: 'You sit for a moment. The room does not charge you.', slot: null },
     { id: 'shelf-a', name: 'Shelf', tx: 10, ty: 3, facing: 's', kind: 'display', symbol: 'storage', form: 'furnishing', coat: '#e6d7c3', accessory: 'none', line: 'A place for one object you actually own.', slot: 'shelf-a' },
     { id: 'shelf-b', name: 'Shelf', tx: 12, ty: 3, facing: 's', kind: 'display', symbol: 'storage', form: 'furnishing', coat: '#e6d7c3', accessory: 'none', line: 'A second place, still one object.', slot: 'shelf-b' },
     { id: 'terminal', name: 'Terminal', tx: 3, ty: 6, facing: 'e', kind: 'terminal', symbol: 'exchange', form: 'terminal', coat: '#6d7550', accessory: 'none', line: 'The same terminal as the floor.', slot: null },
-    { id: 'bench', name: 'Workbench', tx: 11, ty: 6, facing: 'w', kind: 'research', symbol: 'research', form: 'terminal', coat: '#4c5340', accessory: 'none', line: 'The bench reads papers. It does not invent them.', slot: null },
+    { id: 'bench', name: 'Workbench', tx: 12, ty: 1, facing: 's', kind: 'research', symbol: 'research', form: 'terminal', coat: '#4c5340', accessory: 'none', line: 'The bench reads papers. It does not invent them.', slot: null },
     { id: 'house-plant', name: 'Lantern growth', tx: 5, ty: 4, facing: 's', kind: 'flora', symbol: 'cultivation', form: 'flora', coat: '#7d8a62', accessory: 'none', line: 'It drinks the evening and gives a little back.', slot: null },
   ];
   for (const actor of actors) occupy(solid, actor.tx, actor.ty);
+  occupy(solid, 2, 1);
   return {
     id: 'residence',
     name: 'Residence',
@@ -171,6 +171,11 @@ export const buildResidence = (): LocationDef => {
     },
     exits: [{ id: 'to-district', tx: 7, ty: 8, to: 'district-01', spawn: 'from-residence', label: 'District', symbol: 'transit' }],
     actors,
+    furnishings: [
+      { id: 'sleeping-ledge', sprite: 'sleeping-ledge', tx: 1, ty: 1, span: 1 },
+      { id: 'bedside-cabinet', sprite: 'bedside-cabinet', tx: 2, ty: 1, span: 1 },
+      { id: 'work-bench', sprite: 'work-bench', tx: 12, ty: 1, span: 1 },
+    ],
     resonance: null,
     audioBed: null,
     blurb: 'A small room. Bed, shelf, terminal, and one organism that is not from anywhere you know.',

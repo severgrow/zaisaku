@@ -1,4 +1,4 @@
-export type AssetCategory = 'terrain' | 'architecture' | 'flora' | 'character' | 'object' | 'collectible' | 'furniture';
+export type AssetCategory = 'terrain' | 'architecture' | 'flora' | 'character' | 'object' | 'collectible' | 'furniture' | 'portrait';
 export type AssetStatus = 'temporary' | 'approved';
 
 export interface AssetRecord {
@@ -14,6 +14,7 @@ export interface AssetRecord {
 
 const TEMP = 'Mineral Analog pack 04, temporary until the creator approves screenshots. A 64px drawing is shown on the 32px cell.';
 const PACK02 = 'Mineral Analog pack 02, temporary. Kept: characters and loose props the new pack does not replace.';
+const PACK10 = 'Pack 10, temporary. A paving neighbor of the resonance path picks the straight or the outer corner. Not approved.';
 
 const tile = (id: string, category: AssetCategory, width = 32, height = 32, note = TEMP): AssetRecord => ({
   id,
@@ -53,8 +54,10 @@ export const ASSET_MANIFEST: readonly AssetRecord[] = [
   tile('floor-interior-floor', 'terrain', 32, 32, 'Pack 04 interior floor, temporary. Reads as a brick course, so the residence uses bone ceramic instead.'),
   tile('floor-industrial-metal', 'terrain', 32, 32, TEMP),
   tile('floor-soil', 'terrain', 32, 32, 'Pack 04 soil, temporary. The current maps have no soil region, and the pack has no corner transitions.'),
+  tile('floor-residence-inlay', 'terrain', 32, 32, 'Pack 10 residence inlay, temporary. Seamless, and used for the whole residence so the room is not the street.'),
   tile('transition-bone-paving', 'terrain', 32, 32, 'Pack 04 straights and Pack 07 outer and inner corners, temporary. Two paving sides use the corner named by those sides.'),
-  tile('transition-ceramic-path', 'terrain', 32, 32, 'Pack 07 bone ceramic to resonance path, temporary. Straights and corners. A cell uses one only when that neighbor is actually the path.'),
+  tile('transition-ceramic-path', 'terrain', 32, 32, 'Pack 07 bone ceramic to resonance path, temporary. Straights and corners. A cell uses one only when that neighbor is actually the path. District 01 does not draw these.'),
+  tile('transition-paving-path', 'terrain', 32, 32, PACK10),
   tile('transition-paving-soil', 'terrain', 32, 32, TEMP),
   tile('wall-kit', 'architecture', 32, 32, 'Pack 04 connected walls, temporary. East-west doors and windows keep those frames. North-south runs use the Pack 07 east and west openings.'),
   tile('roof-kit', 'architecture', 32, 32, 'Pack 04 roof caps, temporary. A straight east-west eave uses the Pack 07 extended roof with the wall bridge on the cell below. Corners stay Pack 04.'),
@@ -65,7 +68,42 @@ export const ASSET_MANIFEST: readonly AssetRecord[] = [
   tile('display-glass', 'furniture', 32, 32, 'Pack 04 glass plate kept on disk, temporary. The residence case is the Pack 07 base, the owned plate, and the front rails.'),
   tile('glass-case-base', 'furniture', 128, 128, 'Pack 07 glass case back, temporary. The owned plate is drawn at [64, 92], then the front rails.'),
   tile('glass-case-front', 'furniture', 128, 128, 'Pack 07 glass rails, temporary. The center is clear so the owned plate stays visible.'),
-  tile('display-pedestal', 'furniture', 32, 32, 'Pack 04 empty pedestal, temporary. Drawn on the residence counter that has no actor.'),
+  tile('display-pedestal', 'furniture', 32, 32, 'Pack 04 empty pedestal, temporary. Kept for an empty counter. The residence no longer uses it.'),
+  tile('sleeping-ledge', 'furniture', 32, 32, 'Pack 10 sleeping ledge, temporary. South-facing, against the residence wall. The bed interaction stays on this cell.'),
+  tile('work-bench', 'furniture', 32, 32, 'Pack 10 workbench, temporary. South-facing. The press and blank paper are part of the sprite. Catalogue plates are not baked onto it.'),
+  tile('bedside-cabinet', 'furniture', 32, 32, 'Pack 10 bedside cabinet, temporary. The top is empty for a later object. Nothing is baked onto it.'),
+  tile('exchange-counter', 'furniture', 64, 32, 'Pack 10 exchange counter, temporary. Two cells wide, against the back wall. The top stays empty.'),
+  tile('paper-rack', 'furniture', 32, 32, 'Pack 10 paper rack, temporary. Research interior, south-facing.'),
+  {
+    id: 'portrait-ivo',
+    category: 'portrait',
+    width: 128,
+    height: 128,
+    status: 'temporary',
+    anchorX: 64,
+    anchorY: 128,
+    note: 'Pack 10 bust, the Pack 02 Ivo identity, unchanged from Pack 09. Conversation panel only. Vesper is not replaced.',
+  },
+  {
+    id: 'portrait-ness',
+    category: 'portrait',
+    width: 128,
+    height: 128,
+    status: 'temporary',
+    anchorX: 64,
+    anchorY: 128,
+    note: 'Pack 10 bust, the Pack 02 Ness identity, unchanged from Pack 09. Conversation panel only.',
+  },
+  {
+    id: 'portrait-archivist',
+    category: 'portrait',
+    width: 128,
+    height: 128,
+    status: 'temporary',
+    anchorX: 64,
+    anchorY: 128,
+    note: 'Pack 10 bust, the Pack 02 Archivist identity, unchanged from Pack 09. Conversation panel only.',
+  },
   { id: 'collectible-plate', category: 'collectible', width: 64, height: 64, status: 'temporary', anchorX: 32, anchorY: 64, note: 'Shared fallback plate for catalogue objects Pack 04 does not draw. Temporary.' },
   ...[
     'bone-dice',
@@ -135,6 +173,7 @@ const SIZE: Record<AssetCategory, (width: number, height: number) => boolean> = 
   object: (w, h) => w === 32 && h === 32,
   collectible: (w, h) => w === 64 && h === 64,
   furniture: (w, h) => w > 0 && h > 0 && w % 32 === 0 && h % 32 === 0,
+  portrait: (w, h) => w === 128 && h === 128,
 };
 
 export const validateManifest = (records: readonly AssetRecord[]): string[] => {

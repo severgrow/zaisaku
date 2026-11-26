@@ -56,6 +56,15 @@ export interface ActorDef {
   slot: string | null;
 }
 
+/** A drawn prop. Span is the width in cells, extending east. It does not add an interaction. */
+export interface PropDef {
+  id: string;
+  sprite: string;
+  tx: number;
+  ty: number;
+  span: number;
+}
+
 export interface ExitDef {
   id: string;
   tx: number;
@@ -77,6 +86,7 @@ export interface LocationDef {
   spawns: Record<string, Spawn>;
   exits: ExitDef[];
   actors: ActorDef[];
+  furnishings: PropDef[];
   resonance: { tx: number; ty: number } | null;
   audioBed: string | null;
   blurb: string;

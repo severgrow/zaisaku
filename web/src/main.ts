@@ -102,6 +102,7 @@ const onClick = (event: MouseEvent): void => {
   if (act === 'close-panel') closePanel();
   else if (act === 'world-vault') {
     session.panel = 'storage';
+    session.speaker = null;
     session.notice = 'The same vault as the terminal.';
     render();
   } else if (act === 'place' && node.dataset.slot && node.dataset.id) placeDisplay(node.dataset.slot, node.dataset.id);

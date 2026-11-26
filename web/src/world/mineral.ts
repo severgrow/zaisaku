@@ -1,6 +1,6 @@
 /** Runtime pictures. Logical cells stay 32px. Pack 04 floors and architecture are 64px sources. Pack 07 adds plates and joins. Characters stay Pack 02. */
 
-import { ceramicTransitionKeys } from '../../../src/world/connectors.js';
+import { ceramicTransitionKeys, pavingToPathKeys } from '../../../src/world/connectors.js';
 
 export const mineralUrl = (file: string): string => new URL(`mineral/${file}`, document.baseURI).toString();
 
@@ -26,6 +26,7 @@ export const FLOOR_FILES: Readonly<Record<string, string>> = {
   'floor-interior-floor': 'floors/floor-interior-floor.png',
   'floor-industrial-metal': 'floors/floor-industrial-metal.png',
   'floor-soil': 'floors/floor-soil.png',
+  'floor-residence-inlay': 'floors/residence-inlay.png',
 };
 
 const SIDES = ['n', 'e', 's', 'w'] as const;
@@ -33,6 +34,7 @@ const SIDES = ['n', 'e', 's', 'w'] as const;
 export const TRANSITION_FILES: Readonly<Record<string, string>> = Object.fromEntries([
   ...SIDES.flatMap((side) => [[`mineral-paving-to-soil-${side}`, `transitions/mineral-paving-to-soil-${side}.png`]]),
   ...ceramicTransitionKeys().map((key) => [key, `transitions/${key}.png`]),
+  ...pavingToPathKeys().map((key) => [key, `transitions/${key}.png`]),
 ]);
 
 export const ARCHITECTURE_FILES: readonly string[] = [
@@ -100,6 +102,17 @@ export const FURNITURE_FILES: Readonly<Record<string, string>> = {
   'furniture-pedestal-native': 'furniture/furniture-display-pedestal.png',
   'glass-case-base': 'furniture/glass-case-base.png',
   'glass-case-front': 'furniture/glass-case-front.png',
+  'sleeping-ledge': 'furniture/sleeping-ledge.png',
+  'work-bench': 'furniture/work-bench.png',
+  'bedside-cabinet': 'furniture/bedside-cabinet.png',
+  'exchange-counter': 'furniture/exchange-counter.png',
+  'paper-rack': 'furniture/paper-rack.png',
+};
+
+export const PORTRAITS: Readonly<Record<string, string>> = {
+  ivo: 'portraits/portrait-ivo.png',
+  ness: 'portraits/portrait-ness.png',
+  archivist: 'portraits/portrait-archivist.png',
 };
 
 export const PLAYER_FACINGS = ['n', 'e', 's', 'w'] as const;

@@ -4,7 +4,7 @@ import { TILE } from './tiles.js';
 
 export type Dir = 'n' | 'e' | 's' | 'w';
 export type Corner = 'ne' | 'es' | 'sw' | 'nw';
-export type FloorMaterial = 'mineral-paving' | 'bone-ceramic' | 'resonance-path' | 'interior-floor' | 'industrial-metal' | 'soil';
+export type FloorMaterial = 'mineral-paving' | 'bone-ceramic' | 'resonance-path' | 'interior-floor' | 'industrial-metal' | 'soil' | 'residence-inlay';
 export type PieceFamily = 'wall' | 'roof' | 'rail';
 
 export const DIRS: readonly Dir[] = ['n', 'e', 's', 'w'];
@@ -90,7 +90,7 @@ export const glassItemOffset = (caseSize: number): { x: number; y: number; size:
 
 export const floorMaterial = (locationId: string, tile: number | null): FloorMaterial | null => {
   if (tile === null) return null;
-  if (locationId === 'residence') return 'bone-ceramic';
+  if (locationId === 'residence') return 'residence-inlay';
   if (tile === TILE.path) return 'resonance-path';
   if (tile === TILE.roof || tile === TILE.interior || tile === TILE.door || tile === TILE.window || tile === TILE.pipe || tile === TILE.vent) {
     return 'bone-ceramic';
@@ -139,6 +139,26 @@ export const ceramicTransition = (
   return notches.length === 1 ? notches[0]! : null;
 };
 
+/**
+ * A paving cell takes the straight or the outer corner named by its resonance-path neighbors.
+ * Opposite sides and three-side cells have no piece, so they keep plain paving.
+ */
+export const pavingToPath = (neighbors: Partial<Record<Dir, FloorMaterial | null>>): string | null => {
+  const sides = DIRS.filter((dir) => neighbors[dir] === 'resonance-path');
+  const side = sides[0];
+  if (sides.length === 1 && side) return `paving-to-path-${side}`;
+  if (sides.length === 2) {
+    const name = cornerFile(sides);
+    return name ? `paving-to-path-outer-${name}` : null;
+  }
+  return null;
+};
+
+export const pavingToPathKeys = (): string[] => [
+  ...DIRS.map((side) => `paving-to-path-${side}`),
+  ...(['ne', 'es', 'sw', 'wn'] as const).map((pair) => `paving-to-path-outer-${pair}`),
+];
+
 export const ceramicTransitionKeys = (): string[] => {
   const keys: string[] = [];
   for (const target of CERAMIC_TARGETS) {
@@ -156,7 +176,10 @@ export const floorKey = (
   diagonals: Partial<Record<Corner, FloorMaterial | null>> = {},
 ): string => {
   if (here === 'bone-ceramic') return ceramicTransition(neighbors, diagonals) ?? `floor-${here}`;
+  if (here === 'residence-inlay') return 'floor-residence-inlay';
   if (here === 'mineral-paving') {
+    const path = pavingToPath(neighbors);
+    if (path) return path;
     const sides = DIRS.filter((dir) => neighbors[dir] === 'soil');
     if (sides.length === 1) return `mineral-paving-to-soil-${sides[0]}`;
   }

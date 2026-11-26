@@ -4,6 +4,7 @@ import { ARTWORK } from '../src/world/artwork.js';
 import { buildDistrict, buildResidence, LOCATIONS, poseFor } from '../src/world/locations.js';
 import {
   ceramicTransitionKeys,
+  pavingToPathKeys,
   cornerDiagonal,
   eaveFiles,
   floorKey,
@@ -19,6 +20,7 @@ import {
 } from '../src/world/connectors.js';
 import { MATERIALS } from '../src/world/materials.js';
 import { feetOf, inRange, move, reachable, wish } from '../src/world/movement.js';
+import { TILE } from '../src/world/tiles.js';
 import { PALETTES } from '../src/world/palettes.js';
 import { ringRadius } from '../src/world/resonance.js';
 import { defaultWorld, GATE, reconcileDisplays } from '../src/world/state.js';
@@ -187,8 +189,21 @@ describe('pack 04 connectors', () => {
     expect(floorKey('bone-ceramic', { n: 'mineral-paving', e: 'resonance-path' })).toBe('floor-bone-ceramic');
     expect(floorKey('bone-ceramic', { n: 'mineral-paving', s: 'mineral-paving' })).toBe('floor-bone-ceramic');
     expect(floorKey('mineral-paving', { w: 'soil' })).toBe('mineral-paving-to-soil-w');
+    expect(floorKey('mineral-paving', { n: 'resonance-path' })).toBe('paving-to-path-n');
+    expect(floorKey('mineral-paving', { e: 'resonance-path' })).toBe('paving-to-path-e');
+    expect(floorKey('mineral-paving', { s: 'resonance-path' })).toBe('paving-to-path-s');
+    expect(floorKey('mineral-paving', { w: 'resonance-path' })).toBe('paving-to-path-w');
+    expect(floorKey('mineral-paving', { n: 'resonance-path', e: 'resonance-path' })).toBe('paving-to-path-outer-ne');
+    expect(floorKey('mineral-paving', { e: 'resonance-path', s: 'resonance-path' })).toBe('paving-to-path-outer-es');
+    expect(floorKey('mineral-paving', { s: 'resonance-path', w: 'resonance-path' })).toBe('paving-to-path-outer-sw');
+    expect(floorKey('mineral-paving', { w: 'resonance-path', n: 'resonance-path' })).toBe('paving-to-path-outer-wn');
+    expect(floorKey('mineral-paving', { n: 'resonance-path', s: 'resonance-path' })).toBe('floor-mineral-paving');
+    expect(floorKey('mineral-paving', { n: 'resonance-path', e: 'resonance-path', w: 'resonance-path' })).toBe('floor-mineral-paving');
+    expect(floorKey('mineral-paving', { w: 'soil', n: 'resonance-path' })).toBe('paving-to-path-n');
     expect(floorKey('resonance-path', { n: 'mineral-paving' })).toBe('floor-resonance-path');
     expect(floorKey('interior-floor', {})).toBe('floor-interior-floor');
+    expect(floorKey('residence-inlay', { n: 'mineral-paving' })).toBe('floor-residence-inlay');
+    expect(pavingToPathKeys()).toHaveLength(8);
     const keys = new Set(ceramicTransitionKeys());
     expect(keys.has('bone-ceramic-to-resonance-path-outer-es')).toBe(true);
     expect(keys.has('bone-ceramic-to-mineral-paving-inner-wn')).toBe(true);
@@ -217,8 +232,42 @@ describe('pack 04 connectors', () => {
       }
     }
     expect(pathJoins).toEqual([]);
+    const used = new Set<string>();
+    for (let y = 0; y < district.height; y += 1) {
+      for (let x = 0; x < district.width; x += 1) {
+        const key = at(x, y);
+        if (key.startsWith('paving-to-path')) used.add(key);
+      }
+    }
+    expect([...used].sort()).toEqual([...pavingToPathKeys()].sort());
     const home = buildResidence();
-    expect(floorMaterial(home.id, home.tiles[1]![1]!)).toBe('bone-ceramic');
+    expect(floorMaterial(home.id, home.tiles[1]![1]!)).toBe('residence-inlay');
+    expect(home.tiles.flat().includes(TILE.counter)).toBe(false);
+    expect(home.furnishings.map((item) => [item.id, item.tx, item.ty, item.span])).toEqual([
+      ['sleeping-ledge', 1, 1, 1],
+      ['bedside-cabinet', 2, 1, 1],
+      ['work-bench', 12, 1, 1],
+    ]);
+    expect(home.solid[1]?.[1]).toBe(true);
+    expect(home.solid[1]?.[2]).toBe(true);
+    expect(home.solid[1]?.[12]).toBe(true);
+    expect(home.solid[6]?.[7]).toBe(false);
+    expect(home.tiles[8]?.[7]).toBe(TILE.door);
+    expect(home.actors.find((item) => item.id === 'shelf-a')).toMatchObject({ tx: 10, ty: 3, slot: 'shelf-a' });
+    expect(home.actors.find((item) => item.id === 'shelf-b')).toMatchObject({ tx: 12, ty: 3, slot: 'shelf-b' });
+    expect(reachable(home.solid, { tx: 7, ty: 6 }, { tx: 1, ty: 2 })).toBe(true);
+    expect(reachable(home.solid, { tx: 7, ty: 6 }, { tx: 12, ty: 2 })).toBe(true);
+    expect(reachable(home.solid, { tx: 7, ty: 6 }, { tx: 7, ty: 7 })).toBe(true);
+    const counter = district.furnishings.find((item) => item.id === 'exchange-counter');
+    expect(counter).toMatchObject({ sprite: 'exchange-counter', tx: 5, ty: 5, span: 2 });
+    expect(district.tiles[counter!.ty]?.[counter!.tx]).not.toBe(TILE.door);
+    expect(district.tiles[6]?.[6]).toBe(TILE.door);
+    expect(district.furnishings.find((item) => item.id === 'paper-rack')).toMatchObject({ tx: 22, ty: 5, span: 1 });
+    expect(district.furnishings.find((item) => item.id === 'research-bench')).toMatchObject({ tx: 28, ty: 5, span: 1 });
+    const doorCells = new Set(['6,6', '25,6']);
+    for (const prop of district.furnishings) {
+      for (let index = 0; index < prop.span; index += 1) expect(doorCells.has(`${prop.tx + index},${prop.ty}`)).toBe(false);
+    }
   });
 });
 

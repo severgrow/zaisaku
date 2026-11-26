@@ -52,6 +52,7 @@ const fresh = (): Session => ({
   revision: 0,
   panel: null,
   displaySlot: null,
+  speaker: null,
 });
 
 const boot = (): Session => {
@@ -79,6 +80,7 @@ const boot = (): Session => {
     revision: loaded.revision,
     panel: null,
     displaySlot: null,
+    speaker: null,
   };
 };
 
@@ -150,6 +152,7 @@ export const travelTo = (locationId: string, spawn: string): void => {
     discovered: session.world.discovered.includes(pose.locationId) ? session.world.discovered : [...session.world.discovered, pose.locationId],
   };
   session.panel = null;
+  session.speaker = null;
   clearIntent();
   persist();
   notify();
@@ -157,6 +160,7 @@ export const travelTo = (locationId: string, spawn: string): void => {
 
 export const openWorldThing = (actor: ActorDef): void => {
   session.world = markFlag(session.world, `met:${actor.id}`);
+  session.speaker = actor.id;
   clearIntent();
   if (actor.kind === 'terminal') {
     location.hash = '#/';
@@ -188,6 +192,7 @@ export const openWorldThing = (actor: ActorDef): void => {
 
 export const closePanel = (): void => {
   session.panel = null;
+  session.speaker = null;
   clearIntent();
   notify();
 };

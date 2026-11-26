@@ -184,6 +184,8 @@ export class DistrictScene extends Phaser.Scene {
         if (key) this.overlay(key, x, y);
       }
     }
+    const furnished = new Set(this.place.furnishings.flatMap((prop) => Array.from({ length: prop.span }, (_, index) => `${prop.tx + index},${prop.ty}`)));
+    for (const prop of this.place.furnishings) this.furnishing(prop);
     for (const actor of this.place.actors) {
       if (actor.form === 'person') {
         const key = `person-${actor.id}-${actor.facing}`;
@@ -204,6 +206,9 @@ export class DistrictScene extends Phaser.Scene {
         }
         this.prop('furniture-shelf', actor.tx, actor.ty, TILE_SIZE, TILE_SIZE);
         if (picture) this.itemOnShelf(picture, actor.tx, actor.ty);
+      } else if (actor.form === 'terminal' && !furnished.has(`${actor.tx},${actor.ty}`)) {
+        const under = this.tile(actor.tx, actor.ty);
+        if (under !== TILE.door && under !== TILE.counter && under !== TILE.window) this.prop('terminal', actor.tx, actor.ty, TILE_SIZE, TILE_SIZE);
       }
     }
     this.body = this.add.image(session.world.x, session.world.y, `you-${session.world.facing}-0`).setOrigin(0.5, 1);
@@ -327,6 +332,7 @@ export class DistrictScene extends Phaser.Scene {
   }
 
   private ensureFallback(palette: ReturnType<typeof paletteById>): void {
+    if (!this.textures.exists('floor-residence-inlay')) this.texture('floor-residence-inlay', paintTile(TILE.interior, palette));
     if (this.textures.exists('floor-mineral-paving')) return;
     this.texture('floor-mineral-paving', paintTile(TILE.ground, palette));
     this.texture('floor-bone-ceramic', paintTile(TILE.interior, palette));
@@ -334,6 +340,16 @@ export class DistrictScene extends Phaser.Scene {
     this.texture('floor-interior-floor', paintTile(TILE.interior, palette));
     this.texture('floor-industrial-metal', paintTile(TILE.interior, palette));
     this.texture('floor-soil', paintTile(TILE.ground, palette));
+  }
+
+  /** Bottom-center anchor. A span of 2 covers this cell and the cell to the east. */
+  private furnishing(prop: { sprite: string; tx: number; ty: number; span: number }): void {
+    if (!this.textures.exists(prop.sprite)) return;
+    const width = TILE_SIZE * prop.span;
+    const image = this.add.image(prop.tx * TILE_SIZE + width / 2, (prop.ty + 1) * TILE_SIZE, prop.sprite).setOrigin(0.5, 1);
+    image.setDisplaySize(width, TILE_SIZE);
+    image.setDepth((prop.ty + 1) * TILE_SIZE);
+    this.props.push(image);
   }
 
   private prop(key: string, tx: number, ty: number, width: number, height: number): void {
