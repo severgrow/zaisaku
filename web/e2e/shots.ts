@@ -123,7 +123,7 @@ await page.locator('a[href="#/duel"]:visible').first().click();
 await page.click('#begin-duel');
 await page.click('.lot');
 await page.click('[data-act="lock-bid"]');
-await page.waitForSelector('.log');
+await page.locator('.log').first().waitFor({ state: 'attached' });
 await page.locator('a[href="#/market"]:visible').first().click();
 await page.click('[data-act="buy"]');
 await page.click('[data-act="advance"]');
