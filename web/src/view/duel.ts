@@ -64,16 +64,6 @@ export const duelScreen = (session: Session): string => {
           ${view.offers.map((item) => offer(item, item.instanceId === session.selected)).join('') || '<p class="muted">The table is clear.</p>'}
         </div>
       </div>
-      <div class="instrument-hold">
-        <div>
-          <p class="kicker">Your shelf</p>
-          ${tray(view.inventory, session, true, 'Nothing kept yet.')}
-        </div>
-        <div>
-          <p class="kicker">Across the table</p>
-          ${tray(view.opponentInventory, session, false, 'Empty hands.')}
-        </div>
-      </div>
       <section class="instrument-detail">
         <p class="kicker">Your request · hidden from the other chair</p>
         <h2>${esc(contract?.title ?? 'Sealed')}</h2>
@@ -84,6 +74,16 @@ export const duelScreen = (session: Session): string => {
         <p class="meta">Worth <b class="num">${zai(view.worth.netWorth)}</b> · cash ${zai(view.worth.cash)} · shelf ${zai(view.worth.inventoryValue)}</p>
         ${view.warnings.map((warning) => `<p class="burgundy">${esc(warning)}</p>`).join('')}
       </section>
+      <div class="instrument-hold">
+        <div>
+          <p class="kicker">Your shelf</p>
+          ${tray(view.inventory, session, true, 'Nothing kept yet.')}
+        </div>
+        <div>
+          <p class="kicker">Across the table</p>
+          ${tray(view.opponentInventory, session, false, 'Empty hands.')}
+        </div>
+      </div>
       ${
         view.phase === 'complete'
           ? `<a class="btn primary" href="#/results">Read the result</a>`
@@ -92,12 +92,12 @@ export const duelScreen = (session: Session): string => {
                 <button class="btn bid-key" data-act="bid-dec" aria-label="Lower bid"><img alt="" src="${asset('bid-minus.png')}" width="40" height="40" /></button>
                 <span class="num" id="bid-amount">${zai(session.bid)}</span>
                 <button class="btn bid-key" data-act="bid-inc" aria-label="Raise bid"><img alt="" src="${asset('bid-plus.png')}" width="40" height="40" /></button>
-                <button class="btn primary grow" data-act="lock-bid" ${view.offers.some((item) => item.instanceId === session.selected) ? '' : 'disabled'}>Lock bid</button>
+                <button class="btn za-btn grow" data-kind="primary" data-act="lock-bid" ${view.offers.some((item) => item.instanceId === session.selected) ? '' : 'disabled'}>Lock bid</button>
               </div>
               <div class="row">
-                <button class="btn" data-act="sell" ${mine ? '' : 'disabled'}>Sell${mine ? ` · ${zai(mine.quote.liquidation)}` : ''}</button>
-                <button class="btn" data-act="inspect" ${selected ? '' : 'disabled'}>Inspect</button>
-                <button class="btn quiet" data-act="pass">Pass</button>
+                <button class="btn za-btn" data-kind="quiet" data-act="sell" ${mine ? '' : 'disabled'}>Sell${mine ? ` · ${zai(mine.quote.liquidation)}` : ''}</button>
+                <button class="btn za-btn" data-kind="quiet" data-act="inspect" ${selected ? '' : 'disabled'}>Inspect</button>
+                <button class="btn za-btn" data-kind="quiet" data-act="pass">Pass</button>
               </div>
               <p class="meta">${view.youLocked ? 'Sealed. Waiting for the other chair.' : 'Lock one action. Both open together.'}</p>
             </div>`
