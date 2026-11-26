@@ -196,7 +196,7 @@ describe('pack 04 connectors', () => {
     expect(keys.has('bone-ceramic-to-mineral-paving-inner-wn')).toBe(true);
   });
 
-  it('follows District 01 neighbors and does not invent a path join', () => {
+  it('follows District 01 neighbors and preserves validated material joins', () => {
     const district = buildDistrict();
     const at = (x: number, y: number): string => {
       const neighbors: Partial<Record<Dir, FloorMaterial | null>> = {};
@@ -220,7 +220,7 @@ describe('pack 04 connectors', () => {
     }
     expect(pathJoins).toEqual([]);
     const home = buildResidence();
-    expect(floorMaterial(home.id, home.tiles[1]![1]!)).toBe('bone-ceramic');
+    expect(floorMaterial(home.id, home.tiles[1]![1]!)).toBe('residence-inlay');
   });
 });
 
