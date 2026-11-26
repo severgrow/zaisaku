@@ -103,8 +103,11 @@ const vault = async (width: number, height: number, file: string) => {
 };
 
 await home(390, 844, 'home-mobile.png');
+await home(360, 800, 'home-small-mobile.png');
 await home(1280, 800, 'home-desktop.png');
+await home(1440, 900, 'home-wide-desktop.png');
 await duel(390, 844, 'duel-mobile.png');
+await duel(360, 800, 'duel-small-mobile.png');
 await duel(1280, 800, 'duel-desktop.png');
 await market(390, 844, 'market-mobile.png');
 await market(1280, 800, 'market-desktop.png');
