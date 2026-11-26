@@ -5,6 +5,7 @@ import { feetOf, move, nearest, tileAt, wish } from '../../../src/world/movement
 import { paletteById } from '../../../src/world/palettes.js';
 import { DISTRICT_RESONANCE, ringRadius } from '../../../src/world/resonance.js';
 import { TILE, TILE_SIZE } from '../../../src/world/tiles.js';
+import { CATALOGUE_IDS } from '../../../src/presentation/catalogue.js';
 import { localTransport } from '../../../src/world/transport.js';
 import type { Facing, LocationDef } from '../../../src/world/types.js';
 import { session, travelTo, openWorldThing } from '../controller.js';
@@ -55,6 +56,8 @@ export class DistrictScene extends Phaser.Scene {
     for (const id of NPCS) {
       for (const facing of PLAYER_FACINGS) this.load.image(`person-${id}-${facing}`, mineralUrl(npcFile(id, facing)));
     }
+    this.load.image('duel-terminal', mineralUrl('duel/duel-terminal.png'));
+    for (const id of CATALOGUE_IDS) this.load.image(`cat-${id}`, mineralUrl(`catalogue/item-${id}.png`));
   }
 
   create(): void {
@@ -63,6 +66,8 @@ export class DistrictScene extends Phaser.Scene {
       for (let frame = 0; frame < 4; frame += 1) this.nearest(`you-${facing}-${frame}`);
       for (const id of NPCS) this.nearest(`person-${id}-${facing}`);
     }
+    this.nearest('duel-terminal');
+    for (const id of CATALOGUE_IDS) this.nearest(`cat-${id}`);
     this.input.keyboard?.addCapture('W,A,S,D,UP,DOWN,LEFT,RIGHT,E,SPACE');
     this.keys = (this.input.keyboard?.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT,E,SPACE') ?? {}) as Record<string, Phaser.Input.Keyboard.Key>;
     this.cameras.main.setBackgroundColor('#5c5348');
@@ -146,14 +151,20 @@ export class DistrictScene extends Phaser.Scene {
           this.texture(painted, paintActor(actor.facing, 0, actor.coat, actor.accessory, palette));
           this.prop(painted, actor.tx, actor.ty, 24, 32);
         }
+      } else if (actor.id === 'duel-door' && this.textures.exists('duel-terminal')) {
+        this.prop('duel-terminal', actor.tx, actor.ty, 48, 28);
       } else if (actor.form === 'furnishing' && actor.slot) {
         const slot = actor.slot;
         const owned = session.profile.inventory.find((item) => item.id === session.world.displays[slot]);
         if (owned) {
           const def = definition(owned.definitionId);
-          const key = `plate-${def.category}`;
-          if (!this.textures.exists('plate')) this.texture(key, paintPlate(palette.sera, palette));
-          this.prop(this.textures.exists('plate') ? 'plate' : key, actor.tx, actor.ty, 28, 28);
+          const catalogue = `cat-${def.id}`;
+          if (this.textures.exists(catalogue)) this.prop(catalogue, actor.tx, actor.ty, 24, 24);
+          else {
+            const key = `plate-${def.category}`;
+            if (!this.textures.exists('plate')) this.texture(key, paintPlate(palette.sera, palette));
+            this.prop(this.textures.exists('plate') ? 'plate' : key, actor.tx, actor.ty, 28, 28);
+          }
         }
       }
     }

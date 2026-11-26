@@ -4,7 +4,7 @@ import { viewFor } from '../../src/engine/view.js';
 import { esc } from './ui/text.js';
 import { shell } from './ui/shell.js';
 import { homeScreen, settingsScreen } from './view/home.js';
-import { duelScreen, resultsScreen } from './view/duel.js';
+import { duelScreen, linkTwins, resultsScreen } from './view/duel.js';
 import { contractsScreen, marketScreen, vaultScreen } from './view/market.js';
 import { auctionScreen } from './view/auction.js';
 import { intent } from './world/intent.js';
@@ -84,6 +84,7 @@ const render = (): void => {
   const noteHtml = session.notice ? `<p class="notice" role="status">${esc(session.notice)}</p>` : '';
   app.innerHTML = shell(session, noteHtml + screen());
   if (session.route === 'workshop') mountWorkshop();
+  linkTwins();
 };
 
 setRenderer(render);
@@ -108,8 +109,25 @@ const onClick = (event: MouseEvent): void => {
   else if (act === 'clear-display' && node.dataset.slot) placeDisplay(node.dataset.slot, null);
   else if (act === 'begin-duel') beginDuel();
   else if (act === 'abandon') abandonDuel();
-  else if (act === 'select' && id) {
+  else if (act === 'arm' && duel && duel.phase === 'decide' && !duel.decisions.p0) {
+    const kind = node.dataset.kind;
+    if (kind === 'pass') session.armed = { type: 'pass' };
+    else if ((kind === 'bid' || kind === 'inspect' || kind === 'sell') && id) session.armed = { type: kind, instanceId: id };
+    render();
+  } else if (act === 'confirm' && duel && session.armed && duel.phase === 'decide') {
+    const armed = session.armed;
+    if (armed.type === 'inspect') session.scan = { instanceId: armed.instanceId, round: duel.round };
+    session.armed = null;
+    if (armed.type === 'pass') played(submit(duel, 'p0', { type: 'pass' }));
+    else if (armed.type === 'bid') played(submit(duel, 'p0', { type: 'bid', instanceId: armed.instanceId, amount: session.bid }));
+    else if (armed.type === 'sell') played(submit(duel, 'p0', { type: 'sell', instanceId: armed.instanceId }));
+    else played(submit(duel, 'p0', { type: 'inspect', instanceId: armed.instanceId }));
+  } else if (act === 'cancel-arm') {
+    session.armed = null;
+    render();
+  } else if (act === 'select' && id) {
     session.selected = id;
+    session.armed = null;
     if (duel) {
       const view = viewFor(duel, 'p0');
       const offer = view.offers.find((item) => item.instanceId === id);
@@ -179,6 +197,58 @@ const joyAt = (event: PointerEvent): void => {
 };
 
 document.addEventListener('click', onClick);
+window.addEventListener('resize', () => linkTwins());
+document.addEventListener('keydown', (event) => {
+  if (session.route !== 'duel') return;
+  const tag = (event.target as HTMLElement | null)?.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+  const duel = session.duel;
+  if (!duel || duel.phase !== 'decide' || duel.decisions.p0) return;
+  const view = viewFor(duel, 'p0');
+  const key = event.key.toLowerCase();
+  if (event.key === 'Escape') {
+    session.armed = null;
+    render();
+    return;
+  }
+  if (event.key === 'Enter' && session.armed) {
+    event.preventDefault();
+    document.querySelector<HTMLButtonElement>('[data-act="confirm"]:not(:disabled)')?.click();
+    return;
+  }
+  if (/^[1-9]$/.test(event.key)) {
+    const offer = view.offers[Number(event.key) - 1];
+    if (!offer) return;
+    event.preventDefault();
+    session.selected = offer.instanceId;
+    session.armed = null;
+    const aimed = snapBid(Math.floor(offer.quote.liquidation * 0.85), view.minBid, view.increment);
+    const cap = snapBid(view.cash, view.minBid, view.increment);
+    session.bid = aimed > 0 && cap > 0 ? Math.min(aimed, cap) : view.minBid;
+    render();
+    return;
+  }
+  if (key === '+' || key === '=' || event.key === 'ArrowUp') {
+    event.preventDefault();
+    if (session.bid + view.increment <= view.cash) session.bid += view.increment;
+    render();
+    return;
+  }
+  if (key === '-' || key === '_' || event.key === 'ArrowDown') {
+    event.preventDefault();
+    if (session.bid - view.increment >= view.minBid) session.bid -= view.increment;
+    render();
+    return;
+  }
+  const arm = (kind: 'bid' | 'inspect' | 'sell' | 'pass'): void => {
+    const button = document.querySelector<HTMLButtonElement>(`[data-act="arm"][data-kind="${kind}"]:not(:disabled)`);
+    button?.click();
+  };
+  if (key === 'b') arm('bid');
+  else if (key === 'i') arm('inspect');
+  else if (key === 's') arm('sell');
+  else if (key === 'p') arm('pass');
+});
 document.addEventListener('pointerdown', (event) => {
   const joy = (event.target as HTMLElement | null)?.closest('[data-joy]');
   if (!joy) return;

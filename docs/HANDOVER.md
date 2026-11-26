@@ -14,7 +14,7 @@ The production client is static files in `web/dist`. There is no environment var
 
 The first visit creates a guest named Guest, seed from `crypto.getRandomValues`, permanent balance 2,400, six lots, the request Three Rooms, and a pose at the District 01 gate. The home floor shows the name, the balance, one transmission, the request, and the rooms, including District.
 
-Duel starts a match that does not touch that balance. Lock a bid, an inspection, a sale, or a pass. Owned objects stay without a separate action. Clerk Vesper locks as well. After six rounds, or when the objects and the clock run out, the result screen shows both chairs. Rematch starts another isolated match.
+Duel starts a match that does not touch that balance. Choose a bid, an inspection, a sale, or a pass, read what it will do, then confirm. Nothing is submitted before that confirm. Owned objects stay without a separate action. Clerk Vesper locks as well, in the same turn. After six rounds, or when the objects and the clock run out, the result screen shows both chairs. Rematch starts another isolated match. Leaving for the district keeps the world pose and the permanent balance.
 
 Market buy spends permanent Zai. Vault inspect reveals papers. Vault sell pays liquidation, which is less than the ask if the wire has not moved. Advance the transmission to change the event and the prices. The auction escrows a bid, ticks once a second, and settles or refunds.
 
@@ -47,7 +47,7 @@ The rules, the single price function, the ledger, the duel resolver, the save mi
 - Hidden condition can leak through a public price. The papers do not.
 - Screens are plain HTML strings rebuilt on each action. Focus returns to the screen. That is simple and it is not a virtual DOM.
 - The terminal script is about 34kb gzipped. Phaser is a separate chunk, about 338kb gzipped, fetched when World Mode opens.
-- District pictures are Mineral Analog pack 02, drawn from the 64px files onto the 32px grid. The manifest still says `temporary`. Ground corners were filled so the paving meets. Roof caps sit on the north edge of a shell. The green course is only the south foundation of a building. The residence floor uses the stone course, so the room is not outdoor paving.
+- District pictures are Mineral Analog pack 02, drawn from the 64px files onto the 32px grid. The manifest still says `temporary`. The duel instrument is cropped from pack 05. Sixteen pack 04 catalogue plates are wired by definition id. Both stay `temporary` until the creator approves screenshots. Full source sheets are not in the client. Ground corners were filled so the paving meets. Roof caps sit on the north edge of a shell. The green course is only the south foundation of a building. The residence floor uses the stone course, so the room is not outdoor paving.
 - The Confidential Creator Bible and the five visual mockups were not in the workspace, so they are not in the repo.
 - Other regions exist as palettes only. There is no northern basin map yet.
 - The world renderer is Canvas, one game instance, slept rather than destroyed when you leave. Headless Chrome on the development machine averaged about 16ms per Phaser update over the first 40 frames. That is not a phone measurement.

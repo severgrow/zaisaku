@@ -1,3 +1,4 @@
+import { duelAsset } from '../ui/assets.js';
 import { esc, zai } from '../ui/text.js';
 import type { Session } from '../session.js';
 import { auctionScreen } from '../view/auction.js';
@@ -33,7 +34,9 @@ const panel = (session: Session): string => {
   else if (session.panel === 'storage') body = vaultScreen(session);
   else if (session.panel === 'research') body = research(session);
   else if (session.panel === 'display') body = display(session);
-  else if (session.panel === 'duel') body = `<p>A sealed match against Clerk Vesper. The clerk is simulated.</p><button class="btn primary" type="button" data-act="begin-duel">Sit the duel</button>`;
+  else if (session.panel === 'duel') {
+    body = `<img class="pixel door-instrument" alt="" src="${esc(duelAsset('exchange-compact.png'))}" /><p>The exchange instrument. A sealed match against Clerk Vesper. The clerk is simulated.</p><button class="btn primary" type="button" data-act="begin-duel">Sit the duel</button>`;
+  }
   else body = `<p>${esc(session.notice ?? '')}</p>`;
   return `<section class="world-panel hud-hit" role="dialog" aria-label="Interaction">${close}${note}${body}</section>`;
 };

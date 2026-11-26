@@ -1,4 +1,7 @@
 import { hashString } from '../../../src/engine/prng.js';
+import { hasCatalogueArt } from '../../../src/presentation/catalogue.js';
+import { catalogueAsset } from './assets.js';
+import { esc } from './text.js';
 
 const ACCENT: Record<string, string> = {
   electronics: '#5f8f8a',
@@ -37,4 +40,10 @@ const generated = (ref: string, category: string): string => {
   return `<path d="M32 14v36M18 24c8 8 20 8 28 0M18 42c8-8 20-8 28 0" fill="none" stroke="${accent}"/>`;
 };
 
-export const plate = (ref: string, category: string): string => wrap(CUSTOM[ref] ?? generated(ref, category));
+/** Same plate in the duel, market, vault, auction, and anywhere else this helper is used. */
+export const plate = (ref: string, category: string): string => {
+  if (hasCatalogueArt(ref)) {
+    return `<img class="art pixel" alt="" src="${esc(catalogueAsset(ref))}" />`;
+  }
+  return wrap(CUSTOM[ref] ?? generated(ref, category));
+};
