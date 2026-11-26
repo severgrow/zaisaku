@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - codex/za-integrated-2026-11-26
-      - codex/za-nav-merge-probe-2026-11-26
   pull_request:
     branches:
       - main
