@@ -2,6 +2,9 @@
 
 Source of truth: `art/production-queue.json`. Work one pack at a time, beginning with A01. All new art is a candidate, not approved.
 
+## Mandatory creative gate
+Read [the full Constitution](ZAISAKU-ART-CONSTITUTION.md), [canonical reference index](art-direction/canonical-references/README.md) and [foundation pass](art-direction/FOUNDATION-PASS.md) before each run. Original PNG transfer is pending; do not generate replacement architecture without access to the creator references. Previous 30 ornate concepts are quarantined, not approved runtime assets. Use instrument-like architecture, native biology, Vey/Oru/Sera and purposeful lighting. Preserve Quiet Instrument and tap-to-walk.
+
 ## Cycle
 1. Read current integration head, queue, approved assets and actual browser screenshots. Review existing PRs to avoid duplicating work.
 2. Establish a scale board: logical tile 32px, actor 24×32px, typical source density 2×. Render the existing shell footprint and entrance coordinate beside the actual actor. A building must read as architecture, not furniture; test roof mass, door scale and visual hierarchy before changing maps. Preserve existing walkability and interaction positions until a deliberate map redesign is reviewed.
