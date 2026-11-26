@@ -37,6 +37,10 @@ jobs:
         run: |
           which google-chrome
           npx tsx web/e2e/nav-proof.ts
+      - name: Economy and duel visual journeys
+        env:
+          E2E_OUT: /tmp/zaisaku-e2e
+        run: npx tsx web/e2e/shots.ts
       - name: Preserve actual gameplay captures
         if: always()
         uses: actions/upload-artifact@v4
