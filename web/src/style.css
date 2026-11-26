@@ -268,7 +268,8 @@ button.lot { cursor: pointer; }
     bottom: 0;
     z-index: 2;
     padding: 8px var(--pad) calc(var(--nav) + 4px);
-    background: color-mix(in srgb, var(--za-bg) 94%, transparent);
+    background: var(--za-bg);
+    box-shadow: 0 -10px 24px rgba(0, 0, 0, 0.14);
     border-top: 1px solid var(--za-line);
   }
   .screen:has(.actions) { padding-bottom: calc(var(--nav) + 176px); }
